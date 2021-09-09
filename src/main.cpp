@@ -66,6 +66,7 @@ void setup()
   mainScreen->SetEthernetAvailable(isSTA);
 
   SetActiveScreen(mainScreen);
+  
 }
 
 void InitWiFi()
