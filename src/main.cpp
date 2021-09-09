@@ -35,10 +35,9 @@ TFT_eSPI lcd = TFT_eSPI();
 #define lcdRotate 3
 
 bool isSTA;
-
-Mode nowMode;
 String serialData = "";
 
+Mode nowMode;
 BaseScreen::Screen *activeScreen;
 
 BaseScreen::Screen *mainScreen;
