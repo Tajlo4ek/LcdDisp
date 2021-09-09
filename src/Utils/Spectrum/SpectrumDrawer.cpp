@@ -29,16 +29,10 @@ namespace SpectrumDrawer
 
         this->nowRightSpectrum = new byte[this->spectrumLineCount];
         this->maxRightSpectrumData = new byte[this->spectrumLineCount];
-
-        this->Reset();
-
-        this->lcd->drawString("wait data", 0, 0, 1, TFT_BLUE);
     }
 
     void SpectrumDrawer::DrawSpectrum(byte *spectrumLeft, byte *spectrumRight)
     {
-        this->lastUpdateTime = millis();
-
         int leftOffsetY = this->spectrumMaxSize + 1;
         int rightOffsetY = this->lcdHeight - this->spectrumMaxSize - 1;
 
@@ -209,19 +203,12 @@ namespace SpectrumDrawer
         return this->spectrumMaxSize;
     }
 
-    const unsigned long SpectrumDrawer::GetLastUpdateTime() const
-    {
-        return this->lastUpdateTime;
-    }
-
     void SpectrumDrawer::Reset()
     {
-        this->lastUpdateTime = millis();
         memset(this->nowLeftSpectrum, 0, this->spectrumLineCount);
         memset(this->maxLeftSpectrumData, 0, this->spectrumLineCount);
         memset(this->nowRightSpectrum, 0, this->spectrumLineCount);
         memset(this->maxRightSpectrumData, 0, this->spectrumLineCount);
-
         this->lcd->fillScreen(this->backColor);
     }
 

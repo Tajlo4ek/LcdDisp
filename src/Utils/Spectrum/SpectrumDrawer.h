@@ -33,7 +33,5 @@ namespace SpectrumDrawer
         uint16_t mediumColor;
         uint16_t highColor;
         uint16_t maxColor;
-
-        unsigned long lastUpdateTime;
     };
 }

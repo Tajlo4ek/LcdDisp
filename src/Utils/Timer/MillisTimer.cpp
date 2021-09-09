@@ -43,6 +43,11 @@ namespace MillisTimer
         this->enabled = false;
     }
 
+    void Timer::Reset()
+    {
+        this->Start();
+    }
+
     void Timer::SetInterval(unsigned long val)
     {
         this->interval = val;

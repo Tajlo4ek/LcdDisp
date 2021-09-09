@@ -11,7 +11,8 @@ namespace MainScreen
 #define WEATHER_CONFIG_CITY "city"
 #define WEATHER_CONFIG_APIKEY "apiKey"
 
-    MainScreen::MainScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, NotBlockDelay notBlockDelay)
+    MainScreen::MainScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, NotBlockDelay notBlockDelay)
+        : BaseScreen::Screen(onWorkEnd)
     {
         this->clockDrawer = new ClockDrawer::DigitalClockDrawer(lcd, lcdWidth, lcdHeight, this->myClock);
 
@@ -53,6 +54,11 @@ namespace MainScreen
         String json = FileSystem::ReadFile(FileSystem::WeatherConfigFileName);
         this->weatherCity = JsonParser::GetJsonData(json, WEATHER_CONFIG_CITY);
         this->weatherApiKey = JsonParser::GetJsonData(json, WEATHER_CONFIG_APIKEY);
+    }
+
+    String MainScreen::ParseMessage(String message)
+    {
+        return String();
     }
 
     void MainScreen::EnterFocus()
@@ -108,11 +114,6 @@ namespace MainScreen
         {
             clockDrawer->SetWeather(weather.temp, weather.description, weather.imageName);
         }
-    }
-
-    void MainScreen::SetEthernetAvailable(bool val)
-    {
-        this->hasEthernet = val;
     }
 
     MainScreen::~MainScreen()
