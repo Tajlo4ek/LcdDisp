@@ -35,6 +35,7 @@ namespace ClockDrawer
 
     public:
         BaseClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock);
+        virtual void Init() = 0;
 
         void SetMessage(String message);
         void SetWeather(int temp, String type, String imageName);

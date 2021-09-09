@@ -5,26 +5,19 @@
 
 namespace FileSystem
 {
-    struct WiFiConfig
-    {
-        String ssid;
-        String password;
-    };
+    const auto WifiConfigFileName = "/WifiConfig.json";
+    const auto WeatherConfigFileName = "/WeatherConfig.json";
 
     void Init();
 
-    WiFiConfig GetWiFiData();
-
-    void SaveWiFiData(WiFiConfig config);
-
     String ReadFile(String fileName);
+    void WriteFile(String fileName, String data);
 
     bool FileExists(String fileName);
 
     File OpenFile(String path, const char *mode);
-
     Dir OpenDir(String path);
 
-    bool Remove(String path); 
+    bool Remove(String path);
 
 }

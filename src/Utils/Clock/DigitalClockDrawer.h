@@ -33,6 +33,7 @@ namespace ClockDrawer
 
     public:
         DigitalClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock);
+        void Init() override;
     };
 
 }

@@ -1,27 +1,39 @@
 #include "Weather.h"
 
+#include "Utils/Parsers/JsonParser.h"
+
 namespace Weather
 {
-    void parseJson(String &json, WeatherData &weather, bool &isOk);
-    WeatherData GetWether(NonBlockDelay nonBlockDelay, bool &isOk);
-    String GetJsonData(String &json, String name, bool &isOk);
+    void ParseWeather(String &json, WeatherData &weather, bool &isOk);
+    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, String city, String apiKey);
 
-    WeatherData GetWether(NonBlockDelay nonBlockDelay, bool &isOk)
+    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, String city, String apiKey)
     {
+        auto host = F("api.openweathermap.org");
+
         WeatherData weatherData;
         WiFiClient client;
         const int httpPort = 80;
-        if (!client.connect(HOST, httpPort))
+
+        if (!client.connect(host, httpPort))
         {
             isOk = false;
             return weatherData;
         }
 
-        client.println(String(F("GET ")) + PATH + String(F(" HTTP/1.1")));
-        client.println(String(F("Host: ")) + HOST);
+        client.print(String(F("GET ")));
+        client.print("/data/2.5/weather?q=");
+        client.print(city);
+        client.print("&appid=");
+        client.print(apiKey);
+        client.println(String(F(" HTTP/1.1")));
+
+        client.print(String(F("Host: ")));
+        client.println(host);
         client.println(F("Connection: close"));
         client.println();
 
+        //TODO: mb client.flush()
         delay(1000);
 
         String json;
@@ -44,34 +56,30 @@ namespace Weather
         }
         json += '}';
 
-        parseJson(json, weatherData, isOk);
+        ParseWeather(json, weatherData, isOk);
 
         return weatherData;
     }
 
-    void parseJson(String &json, WeatherData &weather, bool &isOk)
+    void ParseWeather(String &json, WeatherData &weather, bool &isOk)
     {
-        auto description = GetJsonData(json, F("\"description\""), isOk);
+        auto description = JsonParser::GetJsonData(json, F("description"), isOk);
         if (!isOk)
         {
             return;
         }
 
-        auto icon = GetJsonData(json, F("\"icon\""), isOk);
+        auto icon = JsonParser::GetJsonData(json, F("icon"), isOk);
         if (!isOk)
         {
             return;
         }
 
-        auto temp = GetJsonData(json, F("\"temp\""), isOk);
+        auto temp = JsonParser::GetJsonData(json, F("temp"), isOk);
         if (!isOk)
         {
             return;
         }
-
-        description.replace("\"", "");
-        icon.replace("\"", "");
-        temp.replace("\"", "");
 
         auto firstChar = description[0];
         if (firstChar >= 'a' && firstChar <= 'z')
@@ -84,48 +92,6 @@ namespace Weather
         weather.description = description;
 
         isOk = true;
-    }
-
-    String GetJsonData(String &json, String name, bool &isOk)
-    {
-        auto dataStart = json.indexOf(name);
-        if (dataStart == -1)
-        {
-            isOk = false;
-            return "";
-        }
-
-        int startInd = json.indexOf(':', dataStart);
-        if (startInd == -1)
-        {
-            isOk = false;
-            return "";
-        }
-
-        String res = "";
-        int openBracket = 0;
-        for (uint i = startInd + 1; i < json.length(); i++)
-        {
-            auto ch = json[i];
-            if (ch == '[' || ch == '{')
-            {
-                openBracket++;
-            }
-            else if (ch == ']' || ch == '}')
-            {
-                openBracket--;
-            }
-
-            if ((ch == ',' && openBracket == 0) || openBracket < 0)
-            {
-                break;
-            }
-
-            res += ch;
-        }
-
-        isOk = true;
-        return res;
     }
 
 }

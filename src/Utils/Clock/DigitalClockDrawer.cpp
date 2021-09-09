@@ -12,8 +12,6 @@ namespace ClockDrawer
         this->clockColor = this->lcd->color565(0, 0, 255);
         this->notActiveColor = this->lcd->color565(0, 0, 200);
 
-        this->lcd->fillScreen(this->backColor);
-
         int numSizeX = (width - spaceSize * 4) / 5;
         int numSizeY = numSizeX * 2;
         while (numSizeY % 7 != 0)
@@ -29,6 +27,11 @@ namespace ClockDrawer
         }
 
         this->spaceDiv4 = (this->lcdHeight - this->blockWidth * 2) / 4;
+    }
+
+    void DigitalClockDrawer::Init()
+    {
+        this->lcd->fillScreen(this->backColor);
     }
 
     void DigitalClockDrawer::WeatherChanged()

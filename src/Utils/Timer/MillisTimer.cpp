@@ -2,6 +2,13 @@
 
 namespace MillisTimer
 {
+    Timer::Timer()
+    {
+        this->callback = nullptr;
+        this->interval = -1;
+        this->enabled = false;
+    }
+
     Timer::Timer(Timercallback callback, unsigned long interval)
     {
         this->callback = callback;
@@ -34,6 +41,11 @@ namespace MillisTimer
     void Timer::Stop()
     {
         this->enabled = false;
+    }
+
+    void Timer::SetInterval(unsigned long val)
+    {
+        this->interval = val;
     }
 
 }

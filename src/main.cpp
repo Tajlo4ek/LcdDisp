@@ -3,41 +3,28 @@
 
 #include "Commands.h"
 
+#include "Screens/BaseScreen.h"
+#include "Screens/MainScreen.h"
 #include "Utils/Internet/WifiUtils.h"
-#include "Utils/Timer/MillisTimer.h"
-#include "Utils/Timer/TimerManager.h"
-#include "Utils/Clock/Clock.h"
-#include "Utils/Clock/DigitalClockDrawer.h"
-#include "Utils/Spectrum/SpectrumDrawer.h"
-#include "Utils/Internet/NtpTime.h"
-#include "Utils/Internet/Weather.h"
 #include "Utils/HTTP/HttpServer.h"
 #include "Utils/FileSystem/FileSystem.h"
-
-#include "Utils/Controls/Keyboard.h"
 
 enum Mode
 {
   CLOCK_MODE,
-  SPECTRUM_MODE,
+  //SPECTRUM_MODE,
 };
 
 /* #region  func prototypes */
-void NonBlockDelay(unsigned long delayTime);
+void NotBlockDelay(unsigned long delayTime);
 
-void ClockTick();
-void CheckTimeSync();
-void GetWeather();
+//void SpectrumCheck();
+//String GetSpectrumData();
 
-void SpectrumCheck();
-String GetSpectrumData();
+void SetActiveScreen(BaseScreen::Screen *screen);
 
-void SetModeSpectrum();
-void SetModeClock();
-void ResetMode();
-
-void CheckCommand(String &data);
-void ParseSpectrum(String &data);
+//void CheckCommand(String &data);
+//void ParseSpectrum(String &data);
 
 void InitWiFi();
 /* #endregion */
@@ -48,22 +35,16 @@ TFT_eSPI lcd = TFT_eSPI();
 #define lcdRotate 3
 
 bool isSTA;
-bool isTimeSync;
 
-Clock::Clock myClock;
-ClockDrawer::BaseClockDrawer *clockDrawer;
-MillisTimer::Timer clockTimer([]() { myClock.Tick(); }, 500);                           //clock tick 500 ms
-MillisTimer::Timer timeSynchronizeTimer(CheckTimeSync, 60000);                          //check is need sync time 1 minute
-MillisTimer::Timer resetSynchronizeTimer([]() { isTimeSync = false; }, 60 * 60 * 5000); //need sync time 1 hour
-MillisTimer::Timer weatherTimer(GetWeather, 10 * 60 * 1000);                            //update weather 10 minute
-TimerManager::TimerManager clockTimersManager;
-
-#define SpectrumOffTime 3000
-SpectrumDrawer::SpectrumDrawer *spectrumDrawer;
-MillisTimer::Timer spectrumCheckTimer(SpectrumCheck, SpectrumOffTime); //need of spectrum SpectrumOffTime ms
+//#define SpectrumOffTime 3000
+//SpectrumDrawer::SpectrumDrawer *spectrumDrawer;
+//MillisTimer::Timer spectrumCheckTimer(SpectrumCheck, SpectrumOffTime); //need of spectrum SpectrumOffTime ms
 
 Mode nowMode;
 String serialData = "";
+
+BaseScreen::Screen *activeScreen;
+BaseScreen::Screen *mainScreen;
 
 void setup()
 {
@@ -77,20 +58,18 @@ void setup()
   InitWiFi();
   HttpServer::Init();
 
-  clockDrawer = new ClockDrawer::DigitalClockDrawer(lcd, lcdWidth, lcdHeight, myClock);
-  clockTimersManager.AddTimer(clockTimer);
-  clockTimersManager.AddTimer(timeSynchronizeTimer);
-  clockTimersManager.AddTimer(resetSynchronizeTimer);
-  clockTimersManager.AddTimer(weatherTimer);
+  //spectrumDrawer = new SpectrumDrawer::SpectrumDrawer(lcd, lcdWidth, lcdHeight);
 
-  spectrumDrawer = new SpectrumDrawer::SpectrumDrawer(lcd, lcdWidth, lcdHeight);
+  activeScreen = nullptr;
+  mainScreen = new MainScreen::MainScreen(lcd, lcdWidth, lcdHeight, NotBlockDelay);
+  mainScreen->SetEthernetAvailable(isSTA);
 
-  SetModeClock();
+  SetActiveScreen(mainScreen);
 }
 
 void InitWiFi()
 {
-  auto wifiConfig = FileSystem::GetWiFiData();
+  auto wifiConfig = WifiUtils::LoadWiFiConfig();
 
   auto text = String(F("Try connect: "));
   lcd.drawString(text, 0, 10, 1, lcd.color565(0, 255, 0));
@@ -101,7 +80,8 @@ void InitWiFi()
   text = String(F("Attempts: "));
   lcd.drawString(text, 0, 35, 1, lcd.color565(0, 255, 0));
 
-  WifiUtils::TryConnectCallback callback = [](int tryCount) {
+  WifiUtils::TryConnectCallback callback = [](int tryCount)
+  {
     auto text = String("") + tryCount;
     lcd.fillRect(55, 35, 30, 8, TFT_BLACK);
     lcd.drawString(text, 55, 35, 1, lcd.color565(0, 255, 0));
@@ -110,6 +90,7 @@ void InitWiFi()
   isSTA = true;
   if (!WifiUtils::ConnectWifi(wifiConfig.ssid, wifiConfig.password, 20, callback))
   {
+    lcd.fillScreen(TFT_BLACK);
     lcd.drawString(String(F("can't connect. start ap")), 0, 0, 1, lcd.color565(0, 255, 0));
     lcd.drawString(String(F("HOME 1234567890")), 0, 15, 1, lcd.color565(0, 255, 0));
     isSTA = false;
@@ -118,74 +99,26 @@ void InitWiFi()
   }
 }
 
-/* #region  Set mode */
-
-void ResetMode()
+void SetActiveScreen(BaseScreen::Screen *screen)
 {
-  lcd.fillScreen(TFT_BLACK);
-  clockTimersManager.StopAll();
-  spectrumCheckTimer.Stop();
-}
-
-void SetModeClock()
-{
-  ResetMode();
-
-  nowMode = CLOCK_MODE;
-
-  isTimeSync = false;
-  clockDrawer->SetWeather(1000, F("weather not sync"), F("abort"));
-  clockDrawer->SetMessage(String(F("IP: ")) + WifiUtils::GetIpString());
-  CheckTimeSync();
-  GetWeather();
-  clockTimersManager.StartAll();
-}
-
-void SetModeSpectrum()
-{
-  ResetMode();
-
-  nowMode = SPECTRUM_MODE;
-  spectrumDrawer->Reset();
-  spectrumCheckTimer.Start();
-}
-
-/* #endregion */
-
-void CheckTimeSync()
-{
-  if (!isSTA)
+  if (activeScreen != nullptr)
   {
-    clockDrawer->SetTimeSync(false);
-    return;
+    activeScreen->LeaveFocus();
   }
-
-  if (!isTimeSync)
-  {
-    auto time = NtpTime::Ask_NTP_Time(NonBlockDelay, isTimeSync);
-    if (isTimeSync)
-    {
-      myClock.ParseFromNtp(time);
-    }
-    clockDrawer->SetTimeSync(isTimeSync);
-  }
+  activeScreen = screen;
+  activeScreen->EnterFocus();
 }
 
-void GetWeather()
+/*void SetModeSpectrum()
 {
-  if (!isSTA)
-  {
-    return;
-  }
+  //ResetMode();
 
-  bool isOk = false;
-  auto weather = Weather::GetWether(NonBlockDelay, isOk);
-  if (isOk)
-  {
-    clockDrawer->SetWeather(weather.temp, weather.description, weather.imageName);
-  }
-}
+  //nowMode = SPECTRUM_MODE;
+  //spectrumDrawer->Reset();
+  //spectrumCheckTimer.Start();
+}*/
 
+/*
 void SpectrumCheck()
 {
   if (nowMode == SPECTRUM_MODE)
@@ -207,8 +140,6 @@ String GetSpectrumData()
   data += STOP_CHAR;
   return data;
 }
-
-/* #region  check command */
 
 void CheckCommand(String &data)
 {
@@ -263,7 +194,7 @@ void ParseSpectrum(String &data)
   delete[] spectrumRight;
 }
 
-/* #endregion */
+*/
 
 /* #region Loop */
 
@@ -275,7 +206,7 @@ void MyLoop()
 
     if (ch == STOP_CHAR)
     {
-      CheckCommand(serialData);
+      //CheckCommand(serialData);
       serialData = "";
     }
     else
@@ -284,13 +215,11 @@ void MyLoop()
     }
   }
 
-  clockTimersManager.Tick();
-  spectrumCheckTimer.Tick();
-
+  activeScreen->Loop();
   HttpServer::HandleServer();
 }
 
-void NonBlockDelay(unsigned long delayTime)
+void NotBlockDelay(unsigned long delayTime)
 {
   unsigned long start = millis();
   while (1)

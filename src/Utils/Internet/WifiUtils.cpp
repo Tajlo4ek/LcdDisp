@@ -1,7 +1,15 @@
 #include "WifiUtils.h"
 
+#include "Utils/FileSystem/FileSystem.h"
+#include "Utils/Parsers/JsonParser.h"
+
 namespace WifiUtils
 {
+#define SSID "ssid"
+#define PASSWORD "pass"
+
+#define DEFAULT_SSID "no_data"
+#define DEFAULT_PASSWORD ""
 
     bool ConnectWifi(String ssid, String password, uint connectTries, TryConnectCallback callback = nullptr)
     {
@@ -46,6 +54,45 @@ namespace WifiUtils
         {
             return "error";
         }
+    }
+
+    WiFiConfig LoadWiFiConfig()
+    {
+        WiFiConfig config;
+        config.ssid = DEFAULT_SSID;
+        config.password = DEFAULT_PASSWORD;
+
+        if (FileSystem::FileExists(FileSystem::WifiConfigFileName) == false)
+        {
+            return config;
+        }
+
+        String json = FileSystem::ReadFile(FileSystem::WifiConfigFileName);
+
+        bool isOk = false;
+        auto ssid = JsonParser::GetJsonData(json, SSID, isOk);
+        if (isOk == false)
+        {
+            return config;
+        }
+
+        auto password = JsonParser::GetJsonData(json, PASSWORD, isOk);
+        if (isOk == false)
+        {
+            return config;
+        }
+
+        config.ssid = ssid;
+        config.password = password;
+        return config;
+    }
+
+    void SaveWiFiConfig(WiFiConfig config)
+    {
+        String *names = new String[2]{SSID, PASSWORD};
+        String *data = new String[2]{config.ssid, config.password};
+        String json = JsonParser::BuildJson(names, data, 2);
+        FileSystem::WriteFile(FileSystem::WifiConfigFileName, json);
     }
 
 } // namespace WifiUtils

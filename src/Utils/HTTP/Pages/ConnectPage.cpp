@@ -1,6 +1,7 @@
 
 #include <ESP8266WebServer.h>
 #include "Utils/FileSystem/FileSystem.h"
+#include "Utils/Internet/WifiUtils.h"
 
 namespace ConnectPage
 {
@@ -40,10 +41,10 @@ namespace ConnectPage
         }
         else
         {
-            FileSystem::WiFiConfig config;
+            WifiUtils::WiFiConfig config;
             config.ssid = ssidNew;
             config.password = passNew;
-            FileSystem::SaveWiFiData(config);
+            WifiUtils::SaveWiFiConfig(config);
             _HTTP->send(200, F("text/html"), FileSystem::ReadFile(F("/connectSuccess.htm")));
             delay(3000);
             ESP.restart();
