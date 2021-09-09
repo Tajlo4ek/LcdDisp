@@ -12,7 +12,7 @@
 enum Mode
 {
   CLOCK_MODE,
-  //SPECTRUM_MODE,fasfasfasfsafghjfgjfgj
+  //SPECTRUM_MODE,
   
 };
 
