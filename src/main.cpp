@@ -13,6 +13,7 @@ enum Mode
 {
   CLOCK_MODE,
   //SPECTRUM_MODE,
+  
 };
 
 /* #region  func prototypes */
