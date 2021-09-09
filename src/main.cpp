@@ -12,7 +12,8 @@
 enum Mode
 {
   CLOCK_MODE,
-  //SPECTRUM_MODE,
+  //SPECTRUM_MODE,fasfasfasfsaf
+  
 };
 
 /* #region  func prototypes */
