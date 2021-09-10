@@ -10,11 +10,11 @@ namespace HttpServer
 {
     ESP8266WebServer _HTTP(80);
 
+    Pages::ConnectPage connectPage(_HTTP);
+    Pages::MainPage mainPage(_HTTP);
+
     void Init()
     {
-        ConnectPage::Init(_HTTP);
-        MainPage::Init(_HTTP);
-
         _HTTP.begin();
     }
 

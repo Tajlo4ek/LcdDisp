@@ -1,8 +1,15 @@
 #pragma once
 
-#include <ESP8266WebServer.h>
+#include "BasePage.h"
 
-namespace MainPage
+namespace Pages
 {
-    void Init(ESP8266WebServer &server);
+    class MainPage : public Pages::BasePage
+    {
+    public:
+        MainPage(ESP8266WebServer &server);
+
+    private:
+        void Page() override;
+    };
 }

@@ -1,24 +1,18 @@
+#include "ConnectPage.h"
 
-#include <ESP8266WebServer.h>
 #include "Utils/FileSystem/FileSystem.h"
 #include "Utils/Internet/WifiUtils.h"
 
-namespace ConnectPage
+namespace Pages
 {
-    void Page();
-
-    ESP8266WebServer *_HTTP;
-
-    void Init(ESP8266WebServer &server)
+    ConnectPage::ConnectPage(ESP8266WebServer &server) : Pages::BasePage(server)
     {
-        _HTTP = &server;
-
-        _HTTP->on(F("/connect"), Page);
+        _HTTP->on(String(F("/connect")), std::bind(&ConnectPage::Page, this));
     }
 
-    void Page()
+    void ConnectPage::Page()
     {
-        auto page = FileSystem::ReadFile(F("/connect.htm"));
+        auto page = FileSystem::ReadFile(F("/connect.html"));
         String ssidNew = _HTTP->arg(F("ssid"));
         String passNew = _HTTP->arg(F("pass"));
 
@@ -45,7 +39,8 @@ namespace ConnectPage
             config.ssid = ssidNew;
             config.password = passNew;
             WifiUtils::SaveWiFiConfig(config);
-            _HTTP->send(200, F("text/html"), FileSystem::ReadFile(F("/connectSuccess.htm")));
+            
+            //TODO: send connect ok
             delay(3000);
             ESP.restart();
         }
