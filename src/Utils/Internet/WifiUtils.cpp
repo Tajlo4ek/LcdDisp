@@ -64,6 +64,7 @@ namespace WifiUtils
 
         if (FileSystem::FileExists(FileSystem::WifiConfigFileName) == false)
         {
+            SaveWiFiConfig(config);
             return config;
         }
 
@@ -93,6 +94,9 @@ namespace WifiUtils
         String *data = new String[2]{config.ssid, config.password};
         String json = JsonParser::BuildJson(names, data, 2);
         FileSystem::WriteFile(FileSystem::WifiConfigFileName, json);
+
+        delete[] names;
+        delete[] data;
     }
 
 } // namespace WifiUtils
