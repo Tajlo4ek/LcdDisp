@@ -5,6 +5,7 @@
 
 #include "Pages/ConnectPage.h"
 #include "Pages/MainPage.h"
+#include "Pages/MonitorPage.h"
 
 namespace HttpServer
 {
@@ -12,6 +13,7 @@ namespace HttpServer
 
     Pages::ConnectPage connectPage(_HTTP);
     Pages::MainPage mainPage(_HTTP);
+    Pages::MonitorPage monitorPage(_HTTP);
 
     void Init()
     {

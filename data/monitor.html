@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Esp monitor</title>
+</head>
+
+<body>
+
+    <script>
+
+        window.onload = function () {
+            setInterval(GetStats, 1000);
+        }
+
+        function GetStats() {
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('GET', '/monitor/getStats', false);
+            xhr.send();
+
+            if (xhr.status == 200) {
+                var text = document.getElementById("text");
+                text.textContent = text.textContent + xhr.responseText;
+            }
+        }
+
+    </script>
+
+    <textarea id="text"></textarea>
+
+</body>
+
+</html>
