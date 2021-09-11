@@ -89,13 +89,11 @@ namespace WifiUtils
 
     void SaveWiFiConfig(WiFiConfig config)
     {
-        String *names = new String[2]{SSID, PASSWORD};
-        String *data = new String[2]{config.ssid, config.password};
-        String json = JsonParser::BuildJson(names, data, 2);
+        const int dataCount = 2;
+        String names[dataCount]{SSID, PASSWORD};
+        String data[dataCount]{config.ssid, config.password};
+        String json = JsonParser::BuildJson(names, data, dataCount);
         FileSystem::WriteFile(FileSystem::WifiConfigFileName, json);
-
-        delete[] names;
-        delete[] data;
     }
 
 } // namespace WifiUtils

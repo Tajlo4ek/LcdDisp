@@ -22,20 +22,21 @@ namespace Pages
 
     void MonitorPage::GetStats()
     {
-        String *names = new String[1]{
+        const int dataCount = 2;
+
+        String names[dataCount]{
             "freeHeap",
+            "freeBlock",
         };
 
-        String *data = new String[1]{
+        String data[dataCount]{
             String(ESP.getFreeHeap()),
+            String(ESP.getMaxFreeBlockSize()),
         };
 
-        String json = JsonParser::BuildJson(names, data, 1);
+        String json = JsonParser::BuildJson(names, data, dataCount);
 
         _HTTP->send(200, F("text/json"), json);
-
-        delete[] names;
-        delete[] data;
     }
 
     void MonitorPage::AddWebLog(String data)
