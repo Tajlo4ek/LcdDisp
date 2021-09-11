@@ -14,8 +14,7 @@ namespace Pages
     private:
         void Page() override;
 
-        void GetStats();
-        void GetWebLog();
+        void GetData();
 
         String NotSendData;
     };

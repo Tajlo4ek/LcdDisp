@@ -3,32 +3,87 @@
 
 <head>
     <title>Esp monitor</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 </head>
 
 <body>
-
     <script>
 
         var logArea;
+        var labelMillis;
+
+        const elementCount = 60;
+        var myChart;
 
         window.onload = function () {
-            logArea = document.getElementById("LogArea");
-            setInterval(GetStats, 1000);
+            logArea = document.getElementById("areaLog");
+            labelMillis = document.getElementById("labelMillis");
+
+            let ctx = document.getElementById('chartHeap').getContext('2d');
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [...Array(elementCount + 1).keys()].reverse(),
+                    datasets: [{
+                        label: 'Free heap',
+                        backgroundColor: 'rgb(0, 127, 0)',
+                        borderColor: 'rgb(0, 127, 0)',
+                    }]
+                }
+            });
+            myChart.options.elements.point.radius = 0;
+            myChart.options.animation = false;
+
+            for (let i = 0; i < elementCount + 1; i++) {
+                AddHeapData(0);
+            }
+
+            setInterval(GetData, 1000);
         }
 
-        function GetStats() {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', '/monitor/getLog', false);
-            xhr.send();
+        function GetData() {
+            let request = new XMLHttpRequest();
+            request.open('GET', '/monitor/getData', false);
+            request.send();
 
-            if (xhr.status == 200) {
-                logArea.textContent += xhr.responseText.replace("|", "\n");
+            request.onerror = function () {
+                labelMillis.textContent = "Update error";
             }
+
+            if (request.status != 200) {
+                return;
+            }
+
+            let json = JSON.parse(request.response);
+
+            AddHeapData(json["freeHeap"]);
+            AddLog(json["log"]);
+            labelMillis.textContent = "Now millis: " + json["millis"];
+        }
+
+        function AddLog(newLog) {
+            logArea.textContent += newLog.replaceAll("|", "\n");
+        }
+
+        function AddHeapData(nextValue) {
+            let nowData = myChart.config.data.datasets[0].data;
+            if (nowData.length > elementCount) {
+                nowData.shift();
+            }
+            nowData.push(nextValue);
+            myChart.update();
         }
 
     </script>
 
-    <textarea id="LogArea" rows="10" cols="45" readonly></textarea>
+    <label id="labelMillis"></label>
+
+    <div style="width: 500px; height: 300px;">
+        <canvas id="chartHeap"></canvas>
+    </div>
+
+    <textarea id="areaLog" readonly style="width: 500px; height: 300px;"></textarea>
 
 </body>
 

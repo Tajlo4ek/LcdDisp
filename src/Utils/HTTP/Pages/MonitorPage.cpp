@@ -9,8 +9,7 @@ namespace Pages
     MonitorPage::MonitorPage(ESP8266WebServer &server) : BasePage::BasePage(server)
     {
         _HTTP->on("/monitor", std::bind(&MonitorPage::Page, this));
-        _HTTP->on("/monitor/getStats", std::bind(&MonitorPage::GetStats, this));
-        _HTTP->on("/monitor/getLog", std::bind(&MonitorPage::GetWebLog, this));
+        _HTTP->on("/monitor/getData", std::bind(&MonitorPage::GetData, this));
 
         this->NotSendData = "";
     }
@@ -20,18 +19,20 @@ namespace Pages
         _HTTP->send(200, F("text/html"), FileSystem::ReadFile(F("/monitor.html")));
     }
 
-    void MonitorPage::GetStats()
+    void MonitorPage::GetData()
     {
-        const int dataCount = 2;
+        const int dataCount = 3;
 
         String names[dataCount]{
+            "millis",
             "freeHeap",
-            "freeBlock",
+            "log",
         };
 
         String data[dataCount]{
+            String(millis()),
             String(ESP.getFreeHeap()),
-            String(ESP.getMaxFreeBlockSize()),
+            NotSendData,
         };
 
         String json = JsonParser::BuildJson(names, data, dataCount);
@@ -42,12 +43,6 @@ namespace Pages
     void MonitorPage::AddWebLog(String data)
     {
         NotSendData += data;
-    }
-
-    void MonitorPage::GetWebLog()
-    {
-        _HTTP->send(200, F("text/json"), NotSendData);
-        NotSendData = "";
     }
 
 }
