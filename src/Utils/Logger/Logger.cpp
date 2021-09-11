@@ -11,12 +11,6 @@ namespace Logger
 
     void SerialLog(String data)
     {
-        if (isSerialInit == false)
-        {
-            Serial.begin(SERIAL_SPEED);
-            isSerialInit = true;
-        }
-
         Serial.print(BuildData(data));
     }
 

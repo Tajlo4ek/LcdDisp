@@ -46,6 +46,7 @@ BaseScreen::Screen *visualizerScreen;
 
 void setup()
 {
+  Serial.begin(115200);
   FileSystem::Init();
   lcd.init();
 
