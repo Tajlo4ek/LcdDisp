@@ -1,11 +1,14 @@
 #pragma once
 
+#include "Arduino.h"
+
 namespace Commands
 {
-    const auto stopChar = '|';
-    const auto splitChar = ';';
-    const auto setModeSpectrum = "startSpectrum";
-    const auto setLineCount = "line";
-    const auto sendSpectrumData = "sendSpectrum";
-    const auto setMaxData = "maxData";
+    const char stopChar = '|';
+    const char splitChar = ';';
+    const String setModeSpectrum = "startSpectrum";
+    const String setLineCount = "line";
+    const String sendSpectrumData = "sendSpectrum";
+    const String setMaxData = "maxData";
+    const String logToken = "[LOG] ";
 }

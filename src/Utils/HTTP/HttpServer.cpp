@@ -25,4 +25,9 @@ namespace HttpServer
         _HTTP.handleClient();
     }
 
+    void AddWebLog(String data)
+    {
+        monitorPage.AddWebLog(data);
+    }
+
 }

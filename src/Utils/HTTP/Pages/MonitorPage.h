@@ -9,9 +9,14 @@ namespace Pages
     public:
         MonitorPage(ESP8266WebServer &server);
 
+        void AddWebLog(String data);
+
     private:
         void Page() override;
 
         void GetStats();
+        void GetWebLog();
+
+        String NotSendData;
     };
 }

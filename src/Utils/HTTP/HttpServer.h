@@ -8,4 +8,6 @@ namespace HttpServer
     void Init();
 
     void HandleServer();
+
+    void AddWebLog(String data);
 }

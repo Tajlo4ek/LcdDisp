@@ -9,25 +9,26 @@
 
     <script>
 
+        var logArea;
+
         window.onload = function () {
+            logArea = document.getElementById("LogArea");
             setInterval(GetStats, 1000);
         }
 
         function GetStats() {
             var xhr = new XMLHttpRequest();
-
-            xhr.open('GET', '/monitor/getStats', false);
+            xhr.open('GET', '/monitor/getLog', false);
             xhr.send();
 
             if (xhr.status == 200) {
-                var text = document.getElementById("text");
-                text.textContent = text.textContent + xhr.responseText;
+                logArea.textContent += xhr.responseText.replace("|", "\n");
             }
         }
 
     </script>
 
-    <textarea id="text"></textarea>
+    <textarea id="LogArea" rows="10" cols="45" readonly></textarea>
 
 </body>
 

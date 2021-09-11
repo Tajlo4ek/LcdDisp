@@ -9,6 +9,7 @@
 #include "Utils/Internet/WifiUtils.h"
 #include "Utils/HTTP/HttpServer.h"
 #include "Utils/FileSystem/FileSystem.h"
+#include "Utils/Logger/Logger.h"
 
 enum Mode
 {
@@ -47,7 +48,6 @@ void setup()
 {
   FileSystem::Init();
   lcd.init();
-  Serial.begin(115200);
 
   lcd.setRotation(lcdRotate);
   lcd.fillScreen(TFT_BLACK);
@@ -130,6 +130,8 @@ void CheckCommand(String &data)
 }
 
 /* #region Loop */
+
+auto asd = millis();
 
 void MyLoop()
 {

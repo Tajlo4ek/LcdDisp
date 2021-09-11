@@ -2,6 +2,7 @@
 
 #include "Utils/FileSystem/FileSystem.h"
 #include "Utils/Parsers/JsonParser.h"
+#include "Utils/Logger/Logger.h"
 
 namespace WifiUtils
 {
@@ -21,10 +22,8 @@ namespace WifiUtils
             {
                 callback(connectTries);
             }
-            Serial.println(connectTries);
             delay(1000);
         }
-        Serial.println(GetIpString());
         return WiFi.status() == WL_CONNECTED;
     }
 
