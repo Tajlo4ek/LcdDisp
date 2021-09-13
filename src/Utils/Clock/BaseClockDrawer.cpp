@@ -7,7 +7,7 @@ namespace ClockDrawer
         this->myClock = &clock;
 
         this->message = new TrackedVal::TrackedValue<String>(String(""), std::bind(&BaseClockDrawer::MessageChanged, this));
-        this->weatherData = new TrackedVal::TrackedValue<WeatherData>(WeatherData(), std::bind(&BaseClockDrawer::WeatherChanged, this));
+        this->weatherData = new TrackedVal::TrackedValue<Weather::WeatherData>(Weather::WeatherData(), std::bind(&BaseClockDrawer::WeatherChanged, this));
         this->isTimeSync = new TrackedVal::TrackedValue<bool>(false, std::bind(&BaseClockDrawer::TimeSyncChanged, this));
 
         this->myClock->SetTimeChangeCallback(std::bind(&BaseClockDrawer::TimeChanged, this));
@@ -19,33 +19,24 @@ namespace ClockDrawer
         this->message->SetValue(message);
     }
 
-    void BaseClockDrawer::SetWeather(int temp, String description, String imageName)
+    void BaseClockDrawer::SetWeather(Weather::WeatherData weatherData, bool isError)
     {
-        auto buf = String(temp) + "C";
+        Weather::WeatherData data;
 
-        if (temp == 0)
+        if (isError)
         {
-            buf = '-' + buf;
+            data.temp = this->weatherData->GetPrevievValue().temp;
+            data.imageName = "abort";
         }
-        else if (temp > 0)
+        else
         {
-            if (temp >= 1000)
-            {
-                buf = "";
-            }
-            else
-            {
-                buf = '+' + buf;
-            }
+            data.temp = weatherData.temp;
+            data.imageName = weatherData.imageName;
         }
 
-        WeatherData data;
-        data.temp = buf;
-        data.description = description;
-        data.imageName = imageName;
+        data.description = weatherData.description;
 
         this->weatherData->SetValue(data);
-        this->isWeatherOk = true;
     }
 
     void BaseClockDrawer::SetTimeSync(bool isSync)

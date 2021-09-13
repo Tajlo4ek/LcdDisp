@@ -1,6 +1,7 @@
 #include "Weather.h"
 
 #include "Utils/Parsers/JsonParser.h"
+#include "Utils/Logger/Logger.h"
 
 namespace Weather
 {
@@ -63,23 +64,19 @@ namespace Weather
 
     void ParseWeather(String &json, WeatherData &weather, bool &isOk)
     {
-        auto description = JsonParser::GetJsonData(json, F("description"), isOk);
-        if (!isOk)
+        auto cod = JsonParser::GetJsonData(json, F("cod")).toInt();
+        if (cod != 200)
         {
+            weather.imageName = "abort";
+            weather.description = String(F("not sync. error: ")) + String(cod);
+            isOk = false;
+            Logger::Log(json);
             return;
         }
 
-        auto icon = JsonParser::GetJsonData(json, F("icon"), isOk);
-        if (!isOk)
-        {
-            return;
-        }
-
-        auto temp = JsonParser::GetJsonData(json, F("temp"), isOk);
-        if (!isOk)
-        {
-            return;
-        }
+        auto description = JsonParser::GetJsonData(json, F("description"));
+        auto icon = JsonParser::GetJsonData(json, F("icon"));
+        auto tempString = JsonParser::GetJsonData(json, F("temp"));
 
         auto firstChar = description[0];
         if (firstChar >= 'a' && firstChar <= 'z')
@@ -87,10 +84,21 @@ namespace Weather
             description.setCharAt(0, firstChar - 32);
         }
 
-        weather.temp = temp.toInt() - 273;
+        auto temp = tempString.toInt() - 273;
+        auto bufTemp = String(temp) + "C";
+
+        if (temp == 0)
+        {
+            bufTemp = '-' + bufTemp;
+        }
+        else if (temp > 0)
+        {
+            bufTemp = '+' + bufTemp;
+        }
+
+        weather.temp = bufTemp;
         weather.imageName = icon;
         weather.description = description;
-
         isOk = true;
     }
 

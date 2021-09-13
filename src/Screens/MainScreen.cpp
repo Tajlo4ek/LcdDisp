@@ -64,7 +64,13 @@ namespace MainScreen
     void MainScreen::EnterFocus()
     {
         clockDrawer->Init();
-        clockDrawer->SetWeather(1000, F("weather not sync"), F("abort"));
+
+        Weather::WeatherData defaultWeaterData;
+        defaultWeaterData.temp = String('+') + String(666) + 'C';
+        defaultWeaterData.description = String(F("weather not sync"));
+        defaultWeaterData.imageName = String(F("abort"));
+        clockDrawer->SetWeather(defaultWeaterData, false);
+
         clockDrawer->SetMessage(String(F("IP: ")) + WifiUtils::GetIpString());
         this->isTimeSync = false;
         this->CheckTimeSync();
@@ -110,10 +116,7 @@ namespace MainScreen
 
         bool isOk = false;
         auto weather = Weather::GetWether(this->notBlockDelay, isOk, this->weatherCity, this->weatherApiKey);
-        if (isOk)
-        {
-            clockDrawer->SetWeather(weather.temp, weather.description, weather.imageName);
-        }
+        clockDrawer->SetWeather(weather, !isOk);
     }
 
     MainScreen::~MainScreen()
