@@ -19,6 +19,12 @@ namespace Logger
         HttpServer::AddWebLog(BuildData(data));
     }
 
+    void Log(String data)
+    {
+        //SerialLog(data);
+        WebLog(data);
+    }
+
     String BuildData(String &data)
     {
         return Commands::logToken + String(millis()) + String(F(": ")) + data + Commands::stopChar;

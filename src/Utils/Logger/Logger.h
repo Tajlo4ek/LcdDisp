@@ -7,4 +7,6 @@ namespace Logger
     void SerialLog(String data);
 
     void WebLog(String data);
+
+    void Log(String data);
 }
