@@ -18,6 +18,6 @@ namespace FileSystem
     File OpenFile(String path, const char *mode);
     Dir OpenDir(String path);
 
-    bool Remove(String path);
+    bool DeleteFile(String path);
 
 }

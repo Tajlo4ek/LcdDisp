@@ -58,7 +58,7 @@ namespace FileSystem
         return LittleFS.openDir(path);
     }
 
-    bool Remove(String path)
+    bool DeleteFile(String path)
     {
         CheckInit();
         return LittleFS.remove(path);
