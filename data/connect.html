@@ -6,17 +6,66 @@
 </head>
 
 <body>
-    <form method="GET" style="display: inline-block;">
-        <fieldset>
-            <legend>WiFi connect</legend>
-            <label>
-                <pre>ssid:      <select name="ssid">|past wifi items|</select></pre>
-            </label>
-            <label>
-                <pre>password:  <input type="password" name="pass"></pre>
-            </label>
-        </fieldset>
-    </form>
+
+    <script>
+        window.onload = function() {
+            GetSSIDs();
+        }
+
+        function GetSSIDs() {
+
+            let request = new XMLHttpRequest();
+            request.open("GET", "/connect/getSSID", false);
+            request.send();
+
+            if (request.status != 200) {
+                return;
+            }
+
+            let json = JSON.parse(request.response);
+
+            let selectSSID = document.getElementById("selectSSID");
+            json.SSIDs.forEach(ssid => {
+                let opt = document.createElement("option");
+                opt.value = ssid;
+                opt.innerText = ssid;
+                selectSSID.appendChild(opt);
+            });
+        }
+
+        function SaveWiFiData() {
+            let ssidElem = document.getElementById("selectSSID");
+            let passElem = document.getElementById("passwordWiFi");
+
+            let formData = new FormData();
+            formData.append("ssid", ssidElem.options[ssidElem.selectedIndex].value);
+            formData.append("pass", passElem.value);
+
+            console.log(formData);
+
+            let request = new XMLHttpRequest();
+            request.open("POST", "/connect/setWiFi", false);
+            request.send(formData);
+
+            if (request.status != 200) {
+                return;
+            }
+
+            alert(request.response);
+        }
+    </script>
+
+    <fieldset style="display: inline-block;">
+        <legend>WiFi connect</legend>
+        <label>
+            <pre>ssid:      <select style="width: 208px;" id="selectSSID"></select></pre>
+        </label>
+        <label>
+            <pre>password:  <input type="password" style="width: 200px;" id="passwordWiFi"></pre>
+        </label>
+        <button style="float: right;" onclick="SaveWiFiData()">Connect</button>
+    </fieldset>
+
 </body>
 
 </html>

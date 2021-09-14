@@ -11,5 +11,8 @@ namespace Pages
 
     private:
         void Page() override;
+
+        void GetSSID();
+        void SetWiFi();
     };
 }
