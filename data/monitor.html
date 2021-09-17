@@ -4,24 +4,35 @@
 <head>
     <title>Esp monitor</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+
+    <style type="text/css">
+        html,
+        body {
+            background-color: rgb(37, 37, 37);
+            height: 100%;
+        }
+        
+        canvas {
+            background-color: rgb(60, 60, 60);
+        }
+    </style>
 </head>
 
 <body>
     <script>
-
         var logArea;
         var labelMillis;
 
         const elementCount = 60;
-        var myChart;
+        var heapChart;
 
-        window.onload = function () {
+        window.onload = function() {
             logArea = document.getElementById("areaLog");
             labelMillis = document.getElementById("labelMillis");
 
             let ctx = document.getElementById('chartHeap').getContext('2d');
 
-            myChart = new Chart(ctx, {
+            heapChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: [...Array(elementCount + 1).keys()].reverse(),
@@ -32,8 +43,9 @@
                     }]
                 }
             });
-            myChart.options.elements.point.radius = 0;
-            myChart.options.animation = false;
+            heapChart.options.elements.point.radius = 0;
+            heapChart.options.elements.line.borderWidth = 1;
+            heapChart.options.animation = false;
 
             for (let i = 0; i < elementCount + 1; i++) {
                 AddHeapData(0);
@@ -47,7 +59,7 @@
             request.open('GET', '/monitor/getData', false);
             request.send();
 
-            request.onerror = function () {
+            request.onerror = function() {
                 labelMillis.textContent = "Update error";
             }
 
@@ -59,7 +71,16 @@
 
             AddHeapData(json["freeHeap"]);
             AddLog(json["log"]);
-            labelMillis.textContent = "Now millis: " + json["millis"];
+
+            let uptime = parseInt(json["millis"]);
+            let ms = uptime % 1000;
+            uptime = parseInt(uptime / 1000);
+            let sec = uptime % 60;
+            uptime = parseInt(uptime / 60);
+            let min = uptime % 60;
+            uptime = parseInt(uptime / 60);
+
+            labelMillis.textContent = "Uptime: " + uptime + "h " + min + "m " + sec + "s " + ms + "ms";
         }
 
         function AddLog(newLog) {
@@ -67,24 +88,26 @@
         }
 
         function AddHeapData(nextValue) {
-            let nowData = myChart.config.data.datasets[0].data;
+            let nowData = heapChart.config.data.datasets[0].data;
             if (nowData.length > elementCount) {
                 nowData.shift();
             }
             nowData.push(nextValue);
-            myChart.update();
+            heapChart.update();
         }
-
     </script>
 
-    <label id="labelMillis"></label>
 
-    <div style="width: 500px; height: 300px;">
-        <canvas id="chartHeap"></canvas>
+    <div style="width: 20%; height: 100%; float: left;">
+        <label id="labelMillis" style="width: 100%; display: block; color: rgb(153, 153, 153); text-align: center;">up time</label>
+        <div style="width: 100%; height: 30%;">
+            <canvas id="chartHeap"></canvas>
+        </div>
     </div>
 
-    <textarea id="areaLog" readonly style="width: 500px; height: 300px;"></textarea>
-
+    <div style="float: right; width: 79%; height: 100%;">
+        <textarea id="areaLog" readonly style="resize: none;width: 100%; height: 95%; background-color: rgb(30, 30, 30); color: rgb(182,182,182); "></textarea>
+    </div>
 </body>
 
 </html>

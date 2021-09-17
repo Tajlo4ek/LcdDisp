@@ -28,6 +28,11 @@
         body {
             background-color: RGB(37, 37, 37);
         }
+        
+        button {
+            color: rgb(153, 153, 153);
+            background-color: RGB(49, 51, 53);
+        }
     </style>
 
 </head>
@@ -81,7 +86,7 @@
         }
 
         function CreateUL(parent, data, dirName) {
-            data.files.forEach(function(name, _1, _2) {
+            data.files.forEach(name => {
                 let li = document.createElement("li");
                 li.textContent = name;
                 li.className = "file";
@@ -90,7 +95,7 @@
                 parent.append(li);
             });
 
-            data.dirs.forEach(function(dir, _1, _2) {
+            data.dirs.forEach(dir => {
                 let li = document.createElement("li");
                 li.className = "dir";
                 li.textContent = dir.name + "/";
@@ -197,10 +202,10 @@
 
     <div style="float: left; width:80%;">
         <div style="margin-bottom:10px">
-            <button style="color: rgb(153, 153, 153); background-color: RGB(49, 51, 53);" onclick="SaveFile()">Save</button>
-            <button style="color: rgb(153, 153, 153); background-color: RGB(49, 51, 53);" onclick="CloseFileView()">Close</button>
-            <button style="color: rgb(153, 153, 153); background-color: RGB(49, 51, 53);" onclick="CreateFile()">Create</button>
-            <button style="color: rgb(153, 153, 153); background-color: RGB(49, 51, 53);" onclick="DeleteFile()">Delete</button>
+            <button onclick="SaveFile()">Save</button>
+            <button onclick="CloseFileView()">Close</button>
+            <button onclick="CreateFile()">Create</button>
+            <button onclick="DeleteFile()">Delete</button>
             <label style="color: rgb(153, 153, 153);" id="labelFileName">open file: none</label>
         </div>
         <textarea id="code"></textarea>
