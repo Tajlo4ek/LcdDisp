@@ -1,5 +1,7 @@
 #include "DigitalClockDrawer.h"
 #include "Utils/WeatherImages.h"
+#include "FileNames.h"
+#include "Utils/FileSystem/FileSystem.h"
 
 namespace ClockDrawer
 {
@@ -8,9 +10,8 @@ namespace ClockDrawer
     DigitalClockDrawer::DigitalClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock)
         : BaseClockDrawer::BaseClockDrawer(lcd, width, height, clock)
     {
-        this->backColor = this->lcd->color565(0, 0, 0);
-        this->clockColor = this->lcd->color565(0, 0, 255);
-        this->notActiveColor = this->lcd->color565(0, 0, 200);
+
+        this->ReloadConfig();
 
         int numSizeX = (width - spaceSize * 4) / 5;
         int numSizeY = numSizeX * 2;
@@ -27,6 +28,25 @@ namespace ClockDrawer
         }
 
         this->spaceDiv4 = (this->lcdHeight - this->blockWidth * 2) / 4;
+    }
+
+    void DigitalClockDrawer::ReloadConfig()
+    {
+        auto json = FileSystem::ReadFile(FileNames::DigitalClockConfigPath);
+        if (json.isEmpty())
+        {
+            this->LoadDefaultConfig();
+            return;
+        }
+
+        //TODO:
+    }
+
+    void DigitalClockDrawer::LoadDefaultConfig()
+    {
+        this->backColor = this->lcd->color565(0, 0, 0);
+        this->clockColor = this->lcd->color565(0, 0, 255);
+        this->notActiveColor = this->lcd->color565(0, 0, 200);
     }
 
     void DigitalClockDrawer::Init()

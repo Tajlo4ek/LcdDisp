@@ -95,9 +95,4 @@ namespace VisualizerScreen
     {
         this->spectrumCheckTimer.Tick();
     }
-
-    VisualizerScreen::~VisualizerScreen()
-    {
-        delete this->spectrumDrawer;
-    }
 }

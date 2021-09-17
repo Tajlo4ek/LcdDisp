@@ -1,5 +1,7 @@
 #include "WifiUtils.h"
 
+#include "FileNames.h"
+
 #include "Utils/FileSystem/FileSystem.h"
 #include "Utils/Parsers/JsonParser.h"
 #include "Utils/Logger/Logger.h"
@@ -62,13 +64,13 @@ namespace WifiUtils
         config.ssid = DEFAULT_SSID;
         config.password = DEFAULT_PASSWORD;
 
-        if (FileSystem::FileExists(FileSystem::WifiConfigFileName) == false)
+        if (FileSystem::FileExists(FileNames::WiFiConfigPath) == false)
         {
             SaveWiFiConfig(config);
             return config;
         }
 
-        String json = FileSystem::ReadFile(FileSystem::WifiConfigFileName);
+        String json = FileSystem::ReadFile(FileNames::WiFiConfigPath);
 
         bool isOk = false;
         auto ssid = JsonParser::GetJsonData(json, SSID, isOk);
@@ -94,7 +96,7 @@ namespace WifiUtils
         String names[dataCount]{SSID, PASSWORD};
         String data[dataCount]{config.ssid, config.password};
         String json = JsonParser::BuildJson(names, data, dataCount);
-        FileSystem::WriteFile(FileSystem::WifiConfigFileName, json);
+        FileSystem::WriteFile(FileNames::WiFiConfigPath, json);
     }
 
 } // namespace WifiUtils

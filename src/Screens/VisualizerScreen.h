@@ -23,6 +23,5 @@ namespace VisualizerScreen
         String ParseMessage(const String &message) override;
 
         VisualizerScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, int offTime);
-        ~VisualizerScreen();
     };
 }

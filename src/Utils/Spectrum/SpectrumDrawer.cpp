@@ -10,6 +10,8 @@ namespace SpectrumDrawer
 
     SpectrumDrawer::SpectrumDrawer(TFT_eSPI &lcd, int width, int height) : ScreenDrawer(lcd, width, height)
     {
+        this->ReloadConfig();
+
         this->spectrumLineCount = width / (LINE_SIZE + LINE_SPACE);
         this->spectrumMaxSize = height * SPECTRUM_MAX_PROC / 100;
         while (this->spectrumMaxSize % 3 != 0)
@@ -17,12 +19,6 @@ namespace SpectrumDrawer
             this->spectrumMaxSize++;
         }
         this->spectrumMaxSizeDiv3 = this->spectrumMaxSize / 3;
-
-        this->backColor = this->lcd->color565(0, 0, 0);
-        this->lowColor = this->lcd->color565(0, 255, 0);
-        this->mediumColor = this->lcd->color565(255, 255, 0);
-        this->highColor = this->lcd->color565(255, 0, 0);
-        this->maxColor = this->lcd->color565(0, 255, 255);
 
         this->nowLeftSpectrum = new byte[this->spectrumLineCount];
         this->maxLeftSpectrumData = new byte[this->spectrumLineCount];
@@ -201,6 +197,20 @@ namespace SpectrumDrawer
     const int SpectrumDrawer::GetMaxLineLength() const
     {
         return this->spectrumMaxSize;
+    }
+
+    void SpectrumDrawer::ReloadConfig()
+    {
+        this->LoadDefaultConfig();
+    }
+
+    void SpectrumDrawer::LoadDefaultConfig()
+    {
+        this->backColor = this->lcd->color565(0, 0, 0);
+        this->lowColor = this->lcd->color565(0, 255, 0);
+        this->mediumColor = this->lcd->color565(255, 255, 0);
+        this->highColor = this->lcd->color565(255, 0, 0);
+        this->maxColor = this->lcd->color565(0, 255, 255);
     }
 
     void SpectrumDrawer::Reset()

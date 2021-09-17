@@ -5,10 +5,6 @@
 
 namespace FileSystem
 {
-    //TODO:
-    const String WifiConfigFileName = String("/WifiConfig.json");
-    const String WeatherConfigFileName = String("/WeatherConfig.json");
-
     void Init();
 
     String ReadFile(const String &fileName);

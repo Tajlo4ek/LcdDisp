@@ -1,5 +1,7 @@
 #include "MainScreen.h"
 
+#include "FileNames.h"
+
 #include "Utils/Internet/NtpTime.h"
 #include "Utils/Internet/Weather.h"
 #include "Utils/Internet/WifiUtils.h"
@@ -51,7 +53,7 @@ namespace MainScreen
 
         clockTimersManager.StopAll();
 
-        String json = FileSystem::ReadFile(FileSystem::WeatherConfigFileName);
+        String json = FileSystem::ReadFile(FileNames::WeatherConfigPath);
         this->weatherCity = JsonParser::GetJsonData(json, WEATHER_CONFIG_CITY);
         this->weatherApiKey = JsonParser::GetJsonData(json, WEATHER_CONFIG_APIKEY);
     }
