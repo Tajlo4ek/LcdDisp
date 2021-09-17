@@ -14,5 +14,5 @@ namespace Weather
 
     typedef std::function<void(unsigned int)> NotBlockDelay;
 
-    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, String city, String apiKey);
+    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, const String &city, const String &apiKey);
 }

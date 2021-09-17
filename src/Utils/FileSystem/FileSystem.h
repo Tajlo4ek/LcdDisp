@@ -5,19 +5,20 @@
 
 namespace FileSystem
 {
-    const auto WifiConfigFileName = "/WifiConfig.json";
-    const auto WeatherConfigFileName = "/WeatherConfig.json";
+    //TODO:
+    const String WifiConfigFileName = String("/WifiConfig.json");
+    const String WeatherConfigFileName = String("/WeatherConfig.json");
 
     void Init();
 
-    String ReadFile(String fileName);
-    void WriteFile(String fileName, String data);
+    String ReadFile(const String &fileName);
+    void WriteFile(const String &fileName, const String &data);
 
-    bool FileExists(String fileName);
+    bool FileExists(const String &fileName);
 
-    File OpenFile(String path, const char *mode);
-    Dir OpenDir(String path);
+    File OpenFile(const String &path, const char *mode);
+    Dir OpenDir(const String &path);
 
-    bool DeleteFile(String path);
+    bool DeleteFile(const String &path);
 
 }

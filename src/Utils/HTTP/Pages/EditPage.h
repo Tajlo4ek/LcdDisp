@@ -17,6 +17,6 @@ namespace Pages
         void DeleteFile();
 
         void GetDirList();
-        String GetDirJson(String path);
+        String GetDirJson(const String &path);
     };
 }

@@ -6,7 +6,7 @@ namespace ClockDrawer
     {
         this->myClock = &clock;
 
-        this->message = new TrackedVal::TrackedValue<String>(String(""), std::bind(&BaseClockDrawer::MessageChanged, this));
+        this->message = new TrackedVal::TrackedValue<String>(String(), std::bind(&BaseClockDrawer::MessageChanged, this));
         this->weatherData = new TrackedVal::TrackedValue<Weather::WeatherData>(Weather::WeatherData(), std::bind(&BaseClockDrawer::WeatherChanged, this));
         this->isTimeSync = new TrackedVal::TrackedValue<bool>(false, std::bind(&BaseClockDrawer::TimeSyncChanged, this));
 
@@ -14,7 +14,7 @@ namespace ClockDrawer
         this->myClock->SetDateChangeCallback(std::bind(&BaseClockDrawer::DateChanged, this));
     }
 
-    void BaseClockDrawer::SetMessage(String message)
+    void BaseClockDrawer::SetMessage(const String &message)
     {
         this->message->SetValue(message);
     }
@@ -26,7 +26,7 @@ namespace ClockDrawer
         if (isError)
         {
             data.temp = this->weatherData->GetPrevievValue().temp;
-            data.imageName = "abort";
+            data.imageName = String(F("abort"));
         }
         else
         {

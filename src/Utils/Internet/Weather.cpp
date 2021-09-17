@@ -5,10 +5,10 @@
 
 namespace Weather
 {
-    void ParseWeather(String &json, WeatherData &weather, bool &isOk);
-    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, String city, String apiKey);
+    void ParseWeather(const String &json, WeatherData &weather, bool &isOk);
+    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, const String &city, const String &apiKey);
 
-    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, String city, String apiKey)
+    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, const String &city, const String &apiKey)
     {
         auto host = F("api.openweathermap.org");
 
@@ -23,9 +23,9 @@ namespace Weather
         }
 
         client.print(String(F("GET ")));
-        client.print("/data/2.5/weather?q=");
+        client.print(F("/data/2.5/weather?q="));
         client.print(city);
-        client.print("&appid=");
+        client.print(F("&appid="));
         client.print(apiKey);
         client.println(String(F(" HTTP/1.1")));
 
@@ -37,7 +37,7 @@ namespace Weather
         //TODO: mb client.flush()
         delay(1000);
 
-        String json;
+        String json = String();
         int count = 0;
         while (client.available())
         {
@@ -62,12 +62,12 @@ namespace Weather
         return weatherData;
     }
 
-    void ParseWeather(String &json, WeatherData &weather, bool &isOk)
+    void ParseWeather(const String &json, WeatherData &weather, bool &isOk)
     {
         auto cod = JsonParser::GetJsonData(json, F("cod")).toInt();
         if (cod != 200)
         {
-            weather.imageName = "abort";
+            weather.imageName = F("abort");
             weather.description = String(F("not sync. error: ")) + String(cod);
             isOk = false;
             Logger::Log(json);
@@ -85,7 +85,7 @@ namespace Weather
         }
 
         auto temp = tempString.toInt() - 273;
-        auto bufTemp = String(temp) + "C";
+        auto bufTemp = String(temp) + 'C';
 
         if (temp == 0)
         {

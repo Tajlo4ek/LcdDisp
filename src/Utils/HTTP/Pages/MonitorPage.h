@@ -9,13 +9,13 @@ namespace Pages
     public:
         MonitorPage(ESP8266WebServer &server);
 
-        void AddWebLog(String data);
+        void AddWebLog(const String &data);
 
     private:
         void Page() override;
 
         void GetData();
 
-        String NotSendData;
+        String notSendData;
     };
 }

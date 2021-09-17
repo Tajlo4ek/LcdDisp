@@ -5,8 +5,7 @@
 
 namespace NtpTime
 {
-
-#define ntpServerName "2.ru.pool.ntp.org"
+#define ntpServerName String(F("2.ru.pool.ntp.org"))
 #define udpPort 2390
 #define NTP_PACKET_SIZE 48
 

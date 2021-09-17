@@ -14,13 +14,13 @@ namespace VisualizerScreen
         MillisTimer::Timer spectrumCheckTimer;
 
         String GetSpectrumData();
-        void ParseSpectrum(String &data);
+        void ParseSpectrum(const String &data);
 
     public:
         void EnterFocus() override;
         void LeaveFocus() override;
         void Loop() override;
-        String ParseMessage(String message) override;
+        String ParseMessage(const String &message) override;
 
         VisualizerScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, int offTime);
         ~VisualizerScreen();

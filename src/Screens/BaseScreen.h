@@ -18,7 +18,7 @@ namespace BaseScreen
         virtual void EnterFocus() = 0;
         virtual void LeaveFocus() = 0;
         virtual void Loop() = 0;
-        virtual String ParseMessage(String message) = 0;
+        virtual String ParseMessage(const String &message) = 0;
 
         void SetEthernetAvailable(bool val)
         {

@@ -6,13 +6,14 @@
 
 namespace WifiUtils
 {
-#define SSID "ssid"
-#define PASSWORD "pass"
 
-#define DEFAULT_SSID "no_data"
-#define DEFAULT_PASSWORD ""
+#define SSID String(F("ssid"))
+#define PASSWORD String(F("pass"))
 
-    bool ConnectWifi(String ssid, String password, uint connectTries, TryConnectCallback callback = nullptr)
+#define DEFAULT_SSID String(F("no_data"))
+#define DEFAULT_PASSWORD String(F(""))
+
+    bool ConnectWifi(const String &ssid, const String &password, uint connectTries, TryConnectCallback callback = nullptr)
     {
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid.c_str(), password.c_str());
@@ -27,7 +28,7 @@ namespace WifiUtils
         return WiFi.status() == WL_CONNECTED;
     }
 
-    void StartAP(String ssid, String password)
+    void StartAP(const String &ssid, const String &password)
     {
         WiFi.disconnect();
         WiFi.mode(WIFI_AP);
@@ -51,7 +52,7 @@ namespace WifiUtils
         }
         else
         {
-            return "error";
+            return F("error");
         }
     }
 

@@ -16,7 +16,7 @@ namespace NtpTime
             notBlockDelay(0);
         }
         IPAddress timeServerIP;
-        WiFi.hostByName(ntpServerName, timeServerIP);
+        WiFi.hostByName(ntpServerName.c_str(), timeServerIP);
         sendNTPpacket(udp, timeServerIP);
 
         unsigned long beginWait = millis();

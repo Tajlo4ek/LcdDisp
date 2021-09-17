@@ -71,7 +71,7 @@ namespace ClockDrawer
 
         String words[6];
         int nowInd = 0;
-        String buf = "";
+        String buf = String();
         for (uint i = 0; i < text.length(); i++)
         {
             auto ch = text[i];
@@ -79,7 +79,7 @@ namespace ClockDrawer
             if (ch == ' ')
             {
                 words[nowInd] = buf;
-                buf = "";
+                buf = String();
                 nowInd++;
             }
             else
@@ -94,17 +94,17 @@ namespace ClockDrawer
             nowInd++;
         }
 
-        buf = words[0] + " ";
+        buf = words[0] + F(" ");
         for (int i = 1; i < nowInd; i++)
         {
             if (buf.length() + words[i].length() >= maxStringSize)
             {
                 this->DrawString(buf, WeatherImages::ImageSize + offsetX * 2, offsetY, this->clockColor, 1);
                 offsetY += 8;
-                buf = "";
+                buf = String();
             }
 
-            buf += words[i] + " ";
+            buf += words[i] + F(" ");
         }
 
         if (buf.length() != 0)
@@ -112,10 +112,9 @@ namespace ClockDrawer
             this->DrawString(buf, WeatherImages::ImageSize + offsetX * 2, offsetY, this->clockColor, 1);
         }
 
-        text = weatherNow.temp;
         this->lcd->setTextSize(2);
-        auto textWidth = this->lcd->textWidth(text);
-        this->DrawString(text, this->lcdWidth - textWidth, this->spaceDiv4 * 5 / 2 + this->blockWidth * 2, this->clockColor, 2);
+        auto textWidth = this->lcd->textWidth(weatherNow.temp);
+        this->DrawString(weatherNow.temp, this->lcdWidth - textWidth, this->spaceDiv4 * 5 / 2 + this->blockWidth * 2, this->clockColor, 2);
     }
 
     void DigitalClockDrawer::MessageChanged()
@@ -160,23 +159,19 @@ namespace ClockDrawer
     {
         auto textY = this->spaceDiv4 + this->blockWidth * 1.5f;
 
-        auto text = String("not");
-        DrawCentralText(text, textY - 7, this->backColor, 1);
+        DrawCentralText(String(F("not")), textY - 7, this->backColor, 1);
 
-        text = String("sync");
-        DrawCentralText(text, textY + 1, this->backColor, 1);
+        DrawCentralText(String(F("sync")), textY + 1, this->backColor, 1);
 
         if (this->isTimeSync->GetCurrentValue() == false)
         {
-            auto text = String("not");
-            DrawCentralText(text, textY - 7, TFT_RED, 1);
+            DrawCentralText(String(F("not")), textY - 7, TFT_RED, 1);
 
-            text = String("sync");
-            DrawCentralText(text, textY + 1, TFT_RED, 1);
+            DrawCentralText(String(F("sync")), textY + 1, TFT_RED, 1);
         }
     }
 
-    void DigitalClockDrawer::DrawCentralText(String &text, int y, uint16_t color, int textSize) const
+    void DigitalClockDrawer::DrawCentralText(const String &text, int y, uint16_t color, int textSize) const
     {
         this->lcd->setTextSize(textSize);
         int textWidth = this->lcd->textWidth(text);
@@ -184,7 +179,7 @@ namespace ClockDrawer
         this->DrawString(text, (this->lcdWidth - textWidth) / 2, y, color, textSize);
     }
 
-    void DigitalClockDrawer::DrawString(String &text, int x, int y, uint16_t color, int textSize) const
+    void DigitalClockDrawer::DrawString(const String &text, int x, int y, uint16_t color, int textSize) const
     {
         this->lcd->setTextSize(textSize);
         this->lcd->setTextColor(color);

@@ -20,12 +20,12 @@ namespace Pages
 
     void ConnectPage::GetSSID()
     {
-        String json = "{\"SSIDs\":[";
+        String json = String(F("{\"SSIDs\":["));
 
         int wifiCount = WiFi.scanNetworks();
         for (int i = 0; i < wifiCount; i++)
         {
-            json += "\"" + WiFi.SSID(i) + "\",";
+            json += String(F("\"")) + WiFi.SSID(i) + String(F("\","));
         }
 
         if (json[json.length() - 1] == ',')
@@ -54,12 +54,12 @@ namespace Pages
             config.password = passNew;
             WifiUtils::SaveWiFiConfig(config);
 
-            _HTTP->send(200, F("text/html"), "Data save. ESP reset.");
+            _HTTP->send(200, F("text/html"), F("Data save. ESP reset."));
             delay(2000);
             ESP.restart();
         }
 
-        _HTTP->send(200, F("text/html"), "bad data");
+        _HTTP->send(200, F("text/html"), F("bad data"));
     }
 
 }

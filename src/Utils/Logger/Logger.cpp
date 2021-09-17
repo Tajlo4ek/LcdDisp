@@ -5,27 +5,27 @@
 
 namespace Logger
 {
-    String BuildData(String &data);
+    String BuildData(const String &data);
 
     bool isSerialInit = false;
 
-    void SerialLog(String data)
+    void SerialLog(const String &data)
     {
         Serial.print(BuildData(data));
     }
 
-    void WebLog(String data)
+    void WebLog(const String &data)
     {
         HttpServer::AddWebLog(BuildData(data));
     }
 
-    void Log(String data)
+    void Log(const String &data)
     {
         //SerialLog(data);
         WebLog(data);
     }
 
-    String BuildData(String &data)
+    String BuildData(const String &data)
     {
         return Commands::logToken + String(millis()) + String(F(": ")) + data + Commands::stopChar;
     }

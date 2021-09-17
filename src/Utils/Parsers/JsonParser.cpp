@@ -2,25 +2,29 @@
 
 namespace JsonParser
 {
-    String GetJsonData(String &json, String name, bool &isOk)
+    String GetJsonData(const String &json, const String &name, bool &isOk)
     {
-        name = String("\"") + name + String("\"");
+        String findName = name;
+        if (findName[0] != '"')
+        {
+            findName = String(F("\"")) + name + String(F("\""));
+        }
 
-        auto dataStart = json.indexOf(name);
+        auto dataStart = json.indexOf(findName);
         if (dataStart == -1)
         {
             isOk = false;
-            return "";
+            return String();
         }
 
         int startInd = json.indexOf(':', dataStart);
         if (startInd == -1)
         {
             isOk = false;
-            return "";
+            return String();
         }
 
-        String res = "";
+        String res = String();
         int openBracket = 0;
         int countQuote = 0;
         for (uint i = startInd + 1; i < json.length(); i++)
@@ -50,22 +54,22 @@ namespace JsonParser
         res.trim();
         if (countQuote == 2)
         {
-            res.replace("\"", "");
+            res.replace(F("\""), F(""));
         }
 
         isOk = true;
         return res;
     }
 
-    String GetJsonData(String &json, String name)
+    String GetJsonData(const String &json, const String &name)
     {
         bool isOk = false;
         return GetJsonData(json, name, isOk);
     }
 
-    String BuildJson(String *names, String *data, int dataCount)
+    String BuildJson(const String *names, const String *data, int dataCount)
     {
-        String json = "{";
+        String json = String(F("{"));
 
         for (int dataInd = 0; dataInd < dataCount; dataInd++)
         {
@@ -85,6 +89,6 @@ namespace JsonParser
             }
         }
 
-        return json + "}";
+        return json + String("}");
     }
 }

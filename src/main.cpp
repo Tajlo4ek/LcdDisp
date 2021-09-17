@@ -25,7 +25,7 @@ void NotBlockDelay(unsigned long delayTime);
 void OnScreenWorkEnd();
 void SetActiveScreen(BaseScreen::Screen *screen, Mode nextMode);
 
-void CheckCommand(String &data);
+void CheckCommand(const String &data);
 
 void InitWiFi();
 /* #endregion */
@@ -36,7 +36,7 @@ TFT_eSPI lcd = TFT_eSPI();
 #define lcdRotate 3
 
 bool isSTA;
-String serialData = "";
+String serialData = String();
 
 Mode nowMode;
 BaseScreen::Screen *activeScreen;
@@ -69,20 +69,16 @@ void InitWiFi()
 {
   auto wifiConfig = WifiUtils::LoadWiFiConfig();
 
-  auto text = String(F("Try connect: "));
-  lcd.drawString(text, 0, 10, 1, lcd.color565(0, 255, 0));
+  lcd.drawString(String(F("Try connect: ")), 0, 10, 1, lcd.color565(0, 255, 0));
 
-  text = wifiConfig.ssid;
-  lcd.drawString(text, 0, 20, 1, lcd.color565(0, 255, 0));
+  lcd.drawString(wifiConfig.ssid, 0, 20, 1, lcd.color565(0, 255, 0));
 
-  text = String(F("Attempts: "));
-  lcd.drawString(text, 0, 35, 1, lcd.color565(0, 255, 0));
+  lcd.drawString(String(F("Attempts: ")), 0, 35, 1, lcd.color565(0, 255, 0));
 
   WifiUtils::TryConnectCallback callback = [](int tryCount)
   {
-    auto text = String("") + tryCount;
     lcd.fillRect(55, 35, 30, 8, TFT_BLACK);
-    lcd.drawString(text, 55, 35, 1, lcd.color565(0, 255, 0));
+    lcd.drawString(String(tryCount), 55, 35, 1, lcd.color565(0, 255, 0));
   };
 
   isSTA = true;
@@ -113,7 +109,7 @@ void SetActiveScreen(BaseScreen::Screen *screen, Mode nextMode)
   activeScreen->EnterFocus();
 }
 
-void CheckCommand(String &data)
+void CheckCommand(const String &data)
 {
   if (data.startsWith(Commands::setModeSpectrum))
   {
@@ -143,7 +139,7 @@ void MyLoop()
     if (ch == Commands::stopChar)
     {
       CheckCommand(serialData);
-      serialData = "";
+      serialData = String();
     }
     else
     {

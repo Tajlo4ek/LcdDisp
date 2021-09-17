@@ -22,8 +22,8 @@ namespace ClockDrawer
         void DrawHorBlock(int x, int y, uint16_t color) const;
         void DrawSpecLine(int x, int y, int x1, int y1, uint16_t mainColor, uint16_t secondColor) const;
 
-        void DrawCentralText(String &text, int y, uint16_t color, int textSize) const;
-        void DrawString(String &text, int x, int y, uint16_t color, int textSize) const;
+        void DrawCentralText(const String &text, int y, uint16_t color, int textSize) const;
+        void DrawString(const String &text, int x, int y, uint16_t color, int textSize) const;
 
         void WeatherChanged() override;
         void MessageChanged() override;

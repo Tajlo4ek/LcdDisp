@@ -56,7 +56,7 @@ namespace MainScreen
         this->weatherApiKey = JsonParser::GetJsonData(json, WEATHER_CONFIG_APIKEY);
     }
 
-    String MainScreen::ParseMessage(String message)
+    String MainScreen::ParseMessage(const String &message)
     {
         return String();
     }

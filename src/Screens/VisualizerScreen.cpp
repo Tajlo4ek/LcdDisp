@@ -18,7 +18,7 @@ namespace VisualizerScreen
         this->spectrumDrawer = new SpectrumDrawer::SpectrumDrawer(lcd, lcdWidth, lcdHeight);
     }
 
-    String VisualizerScreen::ParseMessage(String message)
+    String VisualizerScreen::ParseMessage(const String &message)
     {
         if (message.startsWith(Commands::setModeSpectrum))
         {
@@ -28,7 +28,7 @@ namespace VisualizerScreen
         {
             ParseSpectrum(message);
         }
-        return "";
+        return String();
     }
 
     String VisualizerScreen::GetSpectrumData()
@@ -42,7 +42,7 @@ namespace VisualizerScreen
         return data;
     }
 
-    void VisualizerScreen::ParseSpectrum(String &data)
+    void VisualizerScreen::ParseSpectrum(const String &data)
     {
         this->spectrumCheckTimer.Reset();
 
@@ -53,7 +53,7 @@ namespace VisualizerScreen
 
         byte next = 0;
         int spNum = 0;
-        for (int pos = String(Commands::sendSpectrumData).length(); pos < dateLen; pos++)
+        for (int pos = Commands::sendSpectrumData.length(); pos < dateLen; pos++)
         {
             char ch = data[pos];
             if (ch != Commands::splitChar)

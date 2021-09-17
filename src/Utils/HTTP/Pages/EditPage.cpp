@@ -22,14 +22,14 @@ namespace Pages
 
     void EditPage::GetDirList()
     {
-        String json = GetDirJson("/");
-        _HTTP->send(200, "text/json", json);
+        String json = GetDirJson(F("/"));
+        _HTTP->send(200, F("text/json"), json);
     }
 
-    String EditPage::GetDirJson(String path)
+    String EditPage::GetDirJson(const String &path)
     {
-        String files = "[";
-        String dirs = "[";
+        String files = String(F("["));
+        String dirs = String(F("["));
 
         auto dir = FileSystem::OpenDir(path);
 
@@ -37,11 +37,17 @@ namespace Pages
         {
             if (dir.isDirectory())
             {
-                dirs += "{\"name\":\"" + dir.fileName() + "\",\"data\":" + GetDirJson(path + dir.fileName() + "/") + "},";
+                dirs += String(F("{\"name\":\""));
+                dirs += dir.fileName();
+                dirs += String(F("\",\"data\":"));
+                dirs += GetDirJson(path + dir.fileName() + String(F("/")));
+                dirs += String(F("},"));
             }
             else
             {
-                files += '"' + dir.fileName() + "\",";
+                files += '"';
+                files += dir.fileName();
+                files += String(F("\","));
             }
         }
 
@@ -63,47 +69,53 @@ namespace Pages
             dirs += ']';
         }
 
-        return "{\"files\":" + files + ",\"dirs\":" + dirs + "}";
+        String res = String(F("{\"files\":"));
+        res += files;
+        res += String(F(",\"dirs\":"));
+        res += dirs;
+        res += '}';
+
+        return res;
     }
 
     void EditPage::GetFileData()
     {
-        String fileName = _HTTP->arg("name");
-        _HTTP->send(200, "text/html", FileSystem::ReadFile(fileName));
+        String fileName = _HTTP->arg(F("name"));
+        _HTTP->send(200, F("text/html"), FileSystem::ReadFile(fileName));
     }
 
     void EditPage::SaveFileData()
     {
-        String fileName = _HTTP->arg("name");
-        String fileData = _HTTP->arg("data");
+        String fileName = _HTTP->arg(F("name"));
+        String fileData = _HTTP->arg(F("data"));
 
         fileName.trim();
 
         if (fileName.isEmpty() == false && fileData.isEmpty() == false)
         {
-            if (fileName.startsWith("/") && fileName.length() > 2)
+            if (fileName.startsWith(F("/")) && fileName.length() > 2)
             {
                 FileSystem::WriteFile(fileName, fileData);
             }
         }
 
-        _HTTP->send(200, "text/html", "Ok");
+        _HTTP->send(200, F("text/html"), F("Ok"));
     }
 
     void EditPage::DeleteFile()
     {
-        String fileName = _HTTP->arg("name");
+        String fileName = _HTTP->arg(F("name"));
         fileName.trim();
 
         if (fileName.isEmpty() == false)
         {
-            if (fileName.startsWith("/") && fileName.length() > 2)
+            if (fileName.startsWith(F("/")) && fileName.length() > 2)
             {
                 FileSystem::DeleteFile(fileName);
             }
         }
 
-        _HTTP->send(200, "text/html", "Ok");
+        _HTTP->send(200, F("text/html"), F("Ok"));
     }
 
 }
