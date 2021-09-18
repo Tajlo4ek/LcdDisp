@@ -17,7 +17,7 @@ enum Mode
   SPECTRUM_MODE,
 };
 
-#define SpectrumOffTime 3000
+#define SPECTRUM_OFF_TIME 3000
 
 /* #region func prototypes */
 void NotBlockDelay(unsigned long delayTime);
@@ -31,9 +31,9 @@ void InitWiFi();
 /* #endregion */
 
 TFT_eSPI lcd = TFT_eSPI();
-#define lcdWidth 160
-#define lcdHeight 128
-#define lcdRotate 3
+#define LCD_WIDTH 160
+#define LCD_HEIGHT 128
+#define LCD_ROTATE 3
 
 bool isSTA;
 String serialData = String();
@@ -50,17 +50,17 @@ void setup()
   FileSystem::Init();
   lcd.init();
 
-  lcd.setRotation(lcdRotate);
+  lcd.setRotation(LCD_ROTATE);
   lcd.fillScreen(TFT_BLACK);
 
   InitWiFi();
   HttpServer::Init();
 
   activeScreen = nullptr;
-  mainScreen = new MainScreen::MainScreen(lcd, lcdWidth, lcdHeight, OnScreenWorkEnd, NotBlockDelay);
+  mainScreen = new MainScreen::MainScreen(lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, NotBlockDelay);
   mainScreen->SetEthernetAvailable(isSTA);
 
-  visualizerScreen = new VisualizerScreen::VisualizerScreen(lcd, lcdWidth, lcdHeight, OnScreenWorkEnd, SpectrumOffTime);
+  visualizerScreen = new VisualizerScreen::VisualizerScreen(lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, SPECTRUM_OFF_TIME);
 
   SetActiveScreen(mainScreen, MAIN_MODE);
 }
@@ -88,7 +88,7 @@ void InitWiFi()
     lcd.drawString(String(F("can't connect. start ap")), 0, 0, 1, lcd.color565(0, 255, 0));
     lcd.drawString(String(F("HOME 1234567890")), 0, 15, 1, lcd.color565(0, 255, 0));
     isSTA = false;
-    delay(500);
+    delay(2000);
     WifiUtils::StartAP(F("HOME"), F("1234567890"));
   }
 }

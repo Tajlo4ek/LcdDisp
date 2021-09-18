@@ -10,8 +10,8 @@
 
 namespace MainScreen
 {
-#define WEATHER_CONFIG_CITY "city"
-#define WEATHER_CONFIG_APIKEY "apiKey"
+#define WEATHER_CONFIG_CITY F("city")
+#define WEATHER_CONFIG_APIKEY F("apiKey")
 
     MainScreen::MainScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, NotBlockDelay notBlockDelay)
         : BaseScreen::Screen(onWorkEnd)
@@ -53,7 +53,7 @@ namespace MainScreen
 
         clockTimersManager.StopAll();
 
-        String json = FileSystem::ReadFile(FileNames::WeatherConfigPath);
+        String json = FileSystem::ReadFile(WEATHER_CONFIG_PATH);
         this->weatherCity = JsonParser::GetJsonData(json, WEATHER_CONFIG_CITY);
         this->weatherApiKey = JsonParser::GetJsonData(json, WEATHER_CONFIG_APIKEY);
     }

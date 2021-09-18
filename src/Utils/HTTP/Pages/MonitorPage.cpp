@@ -2,6 +2,7 @@
 
 #include "Utils/FileSystem/FileSystem.h"
 #include "Utils/Parsers/JsonParser.h"
+#include "FileNames.h"
 
 namespace Pages
 {
@@ -16,7 +17,7 @@ namespace Pages
 
     void MonitorPage::Page()
     {
-        _HTTP->send(200, F("text/html"), FileSystem::ReadFile(F("/monitor.html")));
+        _HTTP->send(200, F("text/html"), FileSystem::ReadFile(MONITOR_PAGE_PATH));
     }
 
     void MonitorPage::GetData()

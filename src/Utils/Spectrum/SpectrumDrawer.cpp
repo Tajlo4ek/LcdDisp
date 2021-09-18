@@ -14,11 +14,11 @@ namespace SpectrumDrawer
 #define LINE_SPACE 1
 #define RECT_SIZE 1
 
-#define CONFIG_BACK_COLOR String(F("backColor"))
-#define CONFIG_LOW_COLOR String(F("lowColor"))
-#define CONFIG_MEDIUM_COLOR String(F("mediumColor"))
-#define CONFIG_HIGH_COLOR String(F("highColor"))
-#define CONFIG_MAX_COLOR String(F("maxColor"))
+#define CONFIG_BACK_COLOR F("backColor")
+#define CONFIG_LOW_COLOR F("lowColor")
+#define CONFIG_MEDIUM_COLOR F("mediumColor")
+#define CONFIG_HIGH_COLOR F("highColor")
+#define CONFIG_MAX_COLOR F("maxColor")
 
     SpectrumDrawer::SpectrumDrawer(TFT_eSPI &lcd, int width, int height) : ScreenDrawer(lcd, width, height)
     {
@@ -213,7 +213,7 @@ namespace SpectrumDrawer
 
     void SpectrumDrawer::ReloadConfig()
     {
-        auto json = FileSystem::ReadFile(FileNames::SpectrumConfigPath);
+        auto json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
         if (json.isEmpty())
         {
             this->CreateDefaultConfig();
@@ -265,7 +265,7 @@ namespace SpectrumDrawer
         };
 
         FileSystem::WriteFile(
-            FileNames::SpectrumConfigPath,
+            SPECTRUM_CONFIG_PATH,
             JsonParser::BuildJson(configNames, datas, configCount));
     }
 

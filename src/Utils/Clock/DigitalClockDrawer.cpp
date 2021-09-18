@@ -10,9 +10,9 @@
 namespace ClockDrawer
 {
 #define SPACE_SIZE 3
-#define CONFIG_BACK_COLOR String(F("backColor"))
-#define CONFIG_CLOCK_MAIN_COLOR String(F("clockMainColor"))
-#define CONFIG_CLOCK_SECOND_COLOR String(F("clockSecondColor"))
+#define CONFIG_BACK_COLOR F("backColor")
+#define CONFIG_CLOCK_MAIN_COLOR F("clockMainColor")
+#define CONFIG_CLOCK_SECOND_COLOR F("clockSecondColor")
 
     DigitalClockDrawer::DigitalClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock)
         : BaseClockDrawer::BaseClockDrawer(lcd, width, height, clock)
@@ -37,7 +37,7 @@ namespace ClockDrawer
 
     void DigitalClockDrawer::ReloadConfig()
     {
-        auto json = FileSystem::ReadFile(FileNames::DigitalClockConfigPath);
+        auto json = FileSystem::ReadFile(DIGITAL_CLOCK_CONFIG_PATH);
         if (json.isEmpty())
         {
             this->CreateDefaultConfig();
@@ -81,7 +81,7 @@ namespace ClockDrawer
         };
 
         FileSystem::WriteFile(
-            FileNames::DigitalClockConfigPath,
+            DIGITAL_CLOCK_CONFIG_PATH,
             JsonParser::BuildJson(configNames, datas, configCount));
     }
 

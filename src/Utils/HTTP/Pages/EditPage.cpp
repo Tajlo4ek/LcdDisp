@@ -3,6 +3,7 @@
 #include "Utils/FileSystem/FileSystem.h"
 #include "Utils/Internet/WifiUtils.h"
 #include "Utils/Logger/Logger.h"
+#include "FileNames.h"
 
 namespace Pages
 {
@@ -17,7 +18,7 @@ namespace Pages
 
     void EditPage::Page()
     {
-        _HTTP->send(200, "text/html", FileSystem::ReadFile(F("edit.html")));
+        _HTTP->send(200, "text/html", FileSystem::ReadFile(EDIT_PAGE_PATH));
     }
 
     void EditPage::GetDirList()
@@ -93,7 +94,8 @@ namespace Pages
 
         if (fileName.isEmpty() == false && fileData.isEmpty() == false)
         {
-            if (fileName.startsWith(F("/")) && fileName.length() > 2)
+            auto nameLen = fileName.length();
+            if (fileName.startsWith(F("/")) && nameLen > 2 && nameLen < 32)
             {
                 FileSystem::WriteFile(fileName, fileData);
             }
@@ -109,7 +111,8 @@ namespace Pages
 
         if (fileName.isEmpty() == false)
         {
-            if (fileName.startsWith(F("/")) && fileName.length() > 2)
+            auto nameLen = fileName.length();
+            if (fileName.startsWith(F("/")) && nameLen > 2 && nameLen < 32)
             {
                 FileSystem::DeleteFile(fileName);
             }

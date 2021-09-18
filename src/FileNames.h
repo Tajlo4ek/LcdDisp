@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Arduino.h"
+#define WEATHER_CONFIG_PATH F("/cnfg/Weather.json")
+#define WIFI_CONFIG_PATH F("/cnfg/Wifi.json")
+#define DIGITAL_CLOCK_CONFIG_PATH F("/cnfg/DigitalClock.json")
+#define SPECTRUM_CONFIG_PATH F("/cnfg/Spectrum.json")
 
-namespace FileNames
-{
-    const String WeatherConfigPath = "/cnfg/WeatherConfig.json";
-    const String WiFiConfigPath = "/cnfg/WifiConfig.json";
-    const String DigitalClockConfigPath = "/cnfg/DigitalClockConfig.json";
-    const String SpectrumConfigPath = "/cnfg/SpectrumConfig.json";
-}
+#define INDEX_PAGE_PATH F("/pages/index.html")
+#define CONNECT_PAGE_PATH F("/pages/connect.html")
+#define EDIT_PAGE_PATH F("/pages/edit.html")
+#define MONITOR_PAGE_PATH F("/pages/monitor.html")

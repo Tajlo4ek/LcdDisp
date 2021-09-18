@@ -6,7 +6,7 @@
 namespace WifiUtils
 {
 
-#define BaseIp String(F("192.168.0.43"))
+#define BASE_IP_STRING F("192.168.0.43")
 
     typedef void (*TryConnectCallback)(int);
 

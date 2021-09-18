@@ -1,6 +1,7 @@
 #include "MainPage.h"
 
 #include "Utils/FileSystem/FileSystem.h"
+#include "FileNames.h"
 
 namespace Pages
 {
@@ -11,7 +12,7 @@ namespace Pages
 
     void MainPage::Page()
     {
-        _HTTP->send(200, F("text/html"), FileSystem::ReadFile(F("/index.html")));
+        _HTTP->send(200, F("text/html"), FileSystem::ReadFile(INDEX_PAGE_PATH));
     }
 
 }

@@ -3,6 +3,8 @@
 #include "Utils/FileSystem/FileSystem.h"
 #include "Utils/Internet/WifiUtils.h"
 
+#include "FileNames.h"
+
 namespace Pages
 {
     ConnectPage::ConnectPage(ESP8266WebServer &server) : Pages::BasePage(server)
@@ -14,7 +16,7 @@ namespace Pages
 
     void ConnectPage::Page()
     {
-        auto page = FileSystem::ReadFile(F("/connect.html"));
+        auto page = FileSystem::ReadFile(CONNECT_PAGE_PATH);
         _HTTP->send(200, F("text/html"), page);
     }
 

@@ -9,11 +9,11 @@
 namespace WifiUtils
 {
 
-#define SSID String(F("ssid"))
-#define PASSWORD String(F("pass"))
+#define SSID F("ssid")
+#define PASSWORD F("pass")
 
-#define DEFAULT_SSID String(F("no_data"))
-#define DEFAULT_PASSWORD String(F(""))
+#define DEFAULT_SSID F("no_data")
+#define DEFAULT_PASSWORD F("")
 
     bool ConnectWifi(const String &ssid, const String &password, uint connectTries, TryConnectCallback callback = nullptr)
     {
@@ -35,7 +35,7 @@ namespace WifiUtils
         WiFi.disconnect();
         WiFi.mode(WIFI_AP);
         IPAddress apIP;
-        apIP.fromString(BaseIp);
+        apIP.fromString(BASE_IP_STRING);
         WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
         WiFi.softAP(ssid, password);
     }
@@ -50,7 +50,7 @@ namespace WifiUtils
         }
         else if (wifiMode == WIFI_AP)
         {
-            return BaseIp;
+            return BASE_IP_STRING;
         }
         else
         {
@@ -64,13 +64,13 @@ namespace WifiUtils
         config.ssid = DEFAULT_SSID;
         config.password = DEFAULT_PASSWORD;
 
-        if (FileSystem::FileExists(FileNames::WiFiConfigPath) == false)
+        if (FileSystem::FileExists(WIFI_CONFIG_PATH) == false)
         {
             SaveWiFiConfig(config);
             return config;
         }
 
-        String json = FileSystem::ReadFile(FileNames::WiFiConfigPath);
+        String json = FileSystem::ReadFile(WIFI_CONFIG_PATH);
 
         bool isOk = false;
         auto ssid = JsonParser::GetJsonData(json, SSID, isOk);
@@ -96,7 +96,7 @@ namespace WifiUtils
         String names[dataCount]{SSID, PASSWORD};
         String data[dataCount]{config.ssid, config.password};
         String json = JsonParser::BuildJson(names, data, dataCount);
-        FileSystem::WriteFile(FileNames::WiFiConfigPath, json);
+        FileSystem::WriteFile(WIFI_CONFIG_PATH, json);
     }
 
 } // namespace WifiUtils
