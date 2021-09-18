@@ -4,7 +4,8 @@
 
 namespace FileNames
 {
-    const String WeatherConfigPath = "/WeatherConfig.json";
-    const String WiFiConfigPath = "/WifiConfig.json";
-    const String DigitalClockConfigPath = "/DigitalClockConfig.json";
+    const String WeatherConfigPath = "/cnfg/WeatherConfig.json";
+    const String WiFiConfigPath = "/cnfg/WifiConfig.json";
+    const String DigitalClockConfigPath = "/cnfg/DigitalClockConfig.json";
+    const String SpectrumConfigPath = "/cnfg/SpectrumConfig.json";
 }

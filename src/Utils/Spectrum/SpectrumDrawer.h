@@ -35,6 +35,6 @@ namespace SpectrumDrawer
         uint16_t highColor;
         uint16_t maxColor;
 
-        void LoadDefaultConfig() override;
+        void CreateDefaultConfig() override;
     };
 }

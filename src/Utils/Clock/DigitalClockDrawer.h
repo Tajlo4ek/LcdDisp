@@ -9,8 +9,8 @@ namespace ClockDrawer
 
     private:
         uint16_t backColor;
-        uint16_t clockColor;
-        uint16_t notActiveColor;
+        uint16_t clockMainColor;
+        uint16_t clockSecondColor;
 
         int blockWidth;
         int blockHeight;
@@ -31,7 +31,7 @@ namespace ClockDrawer
         void DateChanged() override;
         void TimeSyncChanged() override;
 
-        void LoadDefaultConfig() override;
+        void CreateDefaultConfig() override;
 
     public:
         DigitalClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock);

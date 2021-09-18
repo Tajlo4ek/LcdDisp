@@ -1,5 +1,11 @@
 #include "SpectrumDrawer.h"
 
+#include "FileNames.h"
+
+#include "Utils/FileSystem/FileSystem.h"
+#include "Utils/DrawUtils/Color.h"
+#include "Utils/Parsers/JsonParser.h"
+
 namespace SpectrumDrawer
 {
 
@@ -7,6 +13,12 @@ namespace SpectrumDrawer
 #define LINE_SIZE 3
 #define LINE_SPACE 1
 #define RECT_SIZE 1
+
+#define CONFIG_BACK_COLOR String(F("backColor"))
+#define CONFIG_LOW_COLOR String(F("lowColor"))
+#define CONFIG_MEDIUM_COLOR String(F("mediumColor"))
+#define CONFIG_HIGH_COLOR String(F("highColor"))
+#define CONFIG_MAX_COLOR String(F("maxColor"))
 
     SpectrumDrawer::SpectrumDrawer(TFT_eSPI &lcd, int width, int height) : ScreenDrawer(lcd, width, height)
     {
@@ -201,16 +213,60 @@ namespace SpectrumDrawer
 
     void SpectrumDrawer::ReloadConfig()
     {
-        this->LoadDefaultConfig();
+        auto json = FileSystem::ReadFile(FileNames::SpectrumConfigPath);
+        if (json.isEmpty())
+        {
+            this->CreateDefaultConfig();
+        }
+
+        const uint colorCount = 5;
+        String colorNames[colorCount]{
+            CONFIG_BACK_COLOR,
+            CONFIG_LOW_COLOR,
+            CONFIG_MEDIUM_COLOR,
+            CONFIG_HIGH_COLOR,
+            CONFIG_MAX_COLOR,
+        };
+
+        uint16_t *colors[colorCount]{
+            &this->backColor,
+            &this->lowColor,
+            &this->mediumColor,
+            &this->highColor,
+            &this->maxColor,
+        };
+
+        bool loadRes = DrawUtils::LoadColorsFromJson(json, colorNames, colors, colorCount);
+
+        if (loadRes == false)
+        {
+            this->CreateDefaultConfig();
+            this->ReloadConfig();
+        }
     }
 
-    void SpectrumDrawer::LoadDefaultConfig()
+    void SpectrumDrawer::CreateDefaultConfig()
     {
-        this->backColor = this->lcd->color565(0, 0, 0);
-        this->lowColor = this->lcd->color565(0, 255, 0);
-        this->mediumColor = this->lcd->color565(255, 255, 0);
-        this->highColor = this->lcd->color565(255, 0, 0);
-        this->maxColor = this->lcd->color565(0, 255, 255);
+        const uint configCount = 5;
+        String configNames[configCount]{
+            CONFIG_BACK_COLOR,
+            CONFIG_LOW_COLOR,
+            CONFIG_MEDIUM_COLOR,
+            CONFIG_HIGH_COLOR,
+            CONFIG_MAX_COLOR,
+        };
+
+        String datas[configCount]{
+            DrawUtils::GetJsonColor(0, 0, 0),
+            DrawUtils::GetJsonColor(0, 255, 0),
+            DrawUtils::GetJsonColor(255, 255, 0),
+            DrawUtils::GetJsonColor(255, 0, 0),
+            DrawUtils::GetJsonColor(0, 255, 255),
+        };
+
+        FileSystem::WriteFile(
+            FileNames::SpectrumConfigPath,
+            JsonParser::BuildJson(configNames, datas, configCount));
     }
 
     void SpectrumDrawer::Reset()
