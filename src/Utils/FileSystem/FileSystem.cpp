@@ -40,7 +40,7 @@ namespace FileSystem
         file.close();
     }
 
-    bool FileExists(const String &fileName)
+    const bool FileExists(const String &fileName)
     {
         CheckInit();
         return LittleFS.exists(fileName);
@@ -58,7 +58,7 @@ namespace FileSystem
         return LittleFS.openDir(path);
     }
 
-    bool DeleteFile(const String &path)
+    const bool DeleteFile(const String &path)
     {
         CheckInit();
         return LittleFS.remove(path);
