@@ -79,9 +79,18 @@ namespace JsonParser
 
             json += ':';
 
-            json += '"';
+            auto startChar = data[dataInd][0];
+            if (startChar != '{' && startChar != '[')
+            {
+                json += '"';
+            }
+
             json += data[dataInd];
-            json += '"';
+
+            if (startChar != '{' && startChar != '[')
+            {
+                json += '"';
+            }
 
             if (dataInd + 1 != dataCount)
             {

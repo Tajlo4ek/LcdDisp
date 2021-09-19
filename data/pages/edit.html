@@ -63,26 +63,24 @@
 
         function GetFilesystemList() {
 
-            let request = new XMLHttpRequest();
-            request.open("GET", "/edit/getFiles", false);
-            request.send();
+            SendRequest(null, "/edit/getFiles", function() {
+                if (this.status != 200) {
+                    return;
+                }
 
-            if (request.status != 200) {
-                return;
-            }
+                let json = JSON.parse(this.response);
 
-            let json = JSON.parse(request.response);
+                let fileList = document.getElementById("fileList");
+                if (fileList != null) {
+                    fileList.remove();
+                }
 
-            let fileList = document.getElementById("fileList");
-            if (fileList != null) {
-                fileList.remove();
-            }
-
-            let fileListDiv = document.getElementById("fileListDiv");
-            fileList = document.createElement("ul");
-            fileList.id = "fileList";
-            fileListDiv.append(fileList);
-            CreateUL(fileList, json, "");
+                let fileListDiv = document.getElementById("fileListDiv");
+                fileList = document.createElement("ul");
+                fileList.id = "fileList";
+                fileListDiv.append(fileList);
+                CreateUL(fileList, json, "");
+            });
         }
 
         function CreateUL(parent, data, dirName) {
@@ -107,18 +105,17 @@
         }
 
         function GetFileData() {
-            let request = new XMLHttpRequest();
-            request.open("POST", "/edit/getFileData", false);
 
-            var formData = new FormData();
-            formData.append("name", this.title + this.textContent)
-            request.send(formData);
+            let fileName = this.title + this.textContent;
 
-            if (request.status != 200) {
-                return;
-            }
+            let formData = new FormData();
+            formData.append("name", fileName);
 
-            SetFileView(this.title + this.textContent, request.responseText);
+            SendRequest(formData,
+                "/edit/getFileData",
+                function() {
+                    SetFileView(fileName, this.responseText);
+                });
         }
 
         function CloseFileView() {
@@ -130,13 +127,11 @@
                 return;
             }
 
-            let request = new XMLHttpRequest();
-            request.open("POST", "/edit/saveFileData", false);
-
-            var formData = new FormData();
+            let formData = new FormData();
             formData.append("name", openFileName);
             formData.append("data", codeEditor.getValue());
-            request.send(formData);
+
+            SendRequest(formData, "/edit/saveFileData", null);
         }
 
         function CreateFile() {
@@ -174,25 +169,27 @@
                 return;
             }
 
-            let request = new XMLHttpRequest();
-            request.open("POST", "/edit/deleteFile", false);
-
-            var formData = new FormData();
-            formData.append("name", openFileName)
-            request.send(formData);
-
-            if (request.status != 200) {
-                return;
-            }
-
-            SetFileView("none", "");
-            GetFilesystemList();
+            let formData = new FormData();
+            formData.append("name", openFileName);
+            SendRequest(formData,
+                "/edit/deleteFile",
+                function() {
+                    SetFileView("none", "");
+                    GetFilesystemList();
+                });
         }
 
         function SetFileView(name, data) {
             openFileName = name;
             labelFileName.textContent = "open file: " + openFileName;
             codeEditor.setValue(data);
+        }
+
+        function SendRequest(formData, url, onload) {
+            let request = new XMLHttpRequest();
+            request.open("POST", url, false);
+            request.onloadend = onload;
+            request.send(formData);
         }
     </script>
 

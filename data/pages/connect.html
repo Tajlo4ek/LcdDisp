@@ -32,16 +32,12 @@
 
         function GetSSIDs() {
 
-            let request = new XMLHttpRequest();
-            request.open("GET", "/connect/getSSID", true);
-            request.send();
-
-            request.onloadend = function() {
-                if (request.status != 200) {
+            SendRequest(null, "/connect/getSSID", function() {
+                if (this.status != 200) {
                     return;
                 }
 
-                let json = JSON.parse(request.response);
+                let json = JSON.parse(this.response);
 
                 let selectSSID = document.getElementById("selectSSID");
                 json.SSIDs.forEach(ssid => {
@@ -50,7 +46,7 @@
                     opt.innerText = ssid;
                     selectSSID.appendChild(opt);
                 });
-            }
+            });
         }
 
         function SaveWiFiData() {
@@ -61,17 +57,20 @@
             formData.append("ssid", ssidElem.options[ssidElem.selectedIndex].value);
             formData.append("pass", passElem.value);
 
-            console.log(formData);
+            SendRequest(formData, "/connect/setWiFi", function() {
+                if (this.status != 200) {
+                    return;
+                }
 
+                alert(this.response);
+            });
+        }
+
+        function SendRequest(formData, url, onload) {
             let request = new XMLHttpRequest();
-            request.open("POST", "/connect/setWiFi", false);
+            request.open("POST", url, false);
+            request.onloadend = onload;
             request.send(formData);
-
-            if (request.status != 200) {
-                return;
-            }
-
-            alert(request.response);
         }
     </script>
 

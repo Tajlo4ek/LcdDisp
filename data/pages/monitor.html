@@ -70,32 +70,27 @@
         }
 
         function GetData() {
-            let request = new XMLHttpRequest();
-            request.open('GET', '/monitor/getData', false);
-            request.send();
 
-            request.onerror = function() {
-                labelMillis.textContent = "Update error";
-            }
+            SendRequest(null, "/monitor/getData", function() {
+                if (this.status != 200) {
+                    return;
+                }
 
-            if (request.status != 200) {
-                return;
-            }
+                let json = JSON.parse(this.response);
 
-            let json = JSON.parse(request.response);
+                AddHeapData(json["freeHeap"]);
+                AddLog(json["log"]);
 
-            AddHeapData(json["freeHeap"]);
-            AddLog(json["log"]);
+                let uptime = parseInt(json["millis"]);
+                let ms = uptime % 1000;
+                uptime = parseInt(uptime / 1000);
+                let sec = uptime % 60;
+                uptime = parseInt(uptime / 60);
+                let min = uptime % 60;
+                uptime = parseInt(uptime / 60);
 
-            let uptime = parseInt(json["millis"]);
-            let ms = uptime % 1000;
-            uptime = parseInt(uptime / 1000);
-            let sec = uptime % 60;
-            uptime = parseInt(uptime / 60);
-            let min = uptime % 60;
-            uptime = parseInt(uptime / 60);
-
-            labelMillis.textContent = "Uptime: " + uptime + "h " + min + "m " + sec + "s " + ms + "ms";
+                labelMillis.textContent = "Uptime: " + uptime + "h " + min + "m " + sec + "s " + ms + "ms";
+            });
         }
 
         function AddLog(newLog) {
@@ -109,6 +104,13 @@
             }
             nowData.push(nextValue);
             heapChart.update();
+        }
+
+        function SendRequest(formData, url, onload) {
+            let request = new XMLHttpRequest();
+            request.open("POST", url, false);
+            request.onloadend = onload;
+            request.send(formData);
         }
     </script>
 
