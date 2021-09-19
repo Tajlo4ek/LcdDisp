@@ -7,6 +7,7 @@
 #include "Pages/MainPage.h"
 #include "Pages/MonitorPage.h"
 #include "Pages/EditPage.h"
+#include "Pages/ConfigPage.h"
 
 namespace HttpServer
 {
@@ -16,6 +17,8 @@ namespace HttpServer
     Pages::MainPage mainPage(_HTTP);
     Pages::MonitorPage monitorPage(_HTTP);
     Pages::EditPage editPage(_HTTP);
+    Pages::ConfigPage configPage(_HTTP);
+
 
     void Init()
     {
