@@ -9,9 +9,9 @@ namespace Pages
 {
     ConnectPage::ConnectPage(ESP8266WebServer &server) : Pages::BasePage(server)
     {
-        _HTTP->on(String(F("/connect")), std::bind(&ConnectPage::Page, this));
-        _HTTP->on(String(F("/connect/getSSID")), std::bind(&ConnectPage::GetSSID, this));
-        _HTTP->on(String(F("/connect/setWiFi")), std::bind(&ConnectPage::SetWiFi, this));
+        _HTTP->on(F("/connect"), std::bind(&ConnectPage::Page, this));
+        _HTTP->on(F("/connect/getSSID"), std::bind(&ConnectPage::GetSSID, this));
+        _HTTP->on(F("/connect/setWiFi"), std::bind(&ConnectPage::SetWiFi, this));
     }
 
     void ConnectPage::Page()
@@ -22,12 +22,15 @@ namespace Pages
 
     void ConnectPage::GetSSID()
     {
-        String json = String(F("{\"SSIDs\":["));
+        String json = F("{\"SSIDs\":[");
 
         int wifiCount = WiFi.scanNetworks();
         for (int i = 0; i < wifiCount; i++)
         {
-            json += String(F("\"")) + WiFi.SSID(i) + String(F("\","));
+            json += '"';
+            json += WiFi.SSID(i);
+            json += '"';
+            json += ',';
         }
 
         if (json[json.length() - 1] == ',')

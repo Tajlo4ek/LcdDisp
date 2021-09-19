@@ -22,38 +22,26 @@ namespace Weather
             return weatherData;
         }
 
-        client.print(String(F("GET ")));
+        client.print(F("GET "));
         client.print(F("/data/2.5/weather?q="));
         client.print(city);
         client.print(F("&appid="));
         client.print(apiKey);
-        client.println(String(F(" HTTP/1.1")));
+        client.println(F(" HTTP/1.1"));
 
-        client.print(String(F("Host: ")));
+        client.print(F("Host: "));
         client.println(host);
         client.println(F("Connection: close"));
         client.println();
 
-        //TODO: mb client.flush()
+        //TODO: mb remove delay
         delay(1000);
 
-        String json = String();
-        int count = 0;
+        String json;
         while (client.available())
         {
             char next = (char)client.read();
-            if (next == '{')
-            {
-                count++;
-            }
-            else if (next == '}')
-            {
-                count--;
-            }
-            if (count)
-            {
-                json += next;
-            }
+            json += next;
         }
         json += '}';
 
@@ -68,37 +56,36 @@ namespace Weather
         if (cod != 200)
         {
             weather.imageName = F("abort");
-            weather.description = String(F("not sync. error: ")) + String(cod);
+            weather.description = F("not sync. error: ");
+            weather.description += cod;
             isOk = false;
             Logger::Log(json);
             return;
         }
 
-        auto description = JsonParser::GetJsonData(json, F("description"));
-        auto icon = JsonParser::GetJsonData(json, F("icon"));
-        auto tempString = JsonParser::GetJsonData(json, F("temp"));
+        weather.description = JsonParser::GetJsonData(json, F("description"));
+        weather.imageName = JsonParser::GetJsonData(json, F("icon"));
+        String tempString = JsonParser::GetJsonData(json, F("temp"));
 
-        auto firstChar = description[0];
+        auto firstChar = weather.description[0];
+        //TODO:
         if (firstChar >= 'a' && firstChar <= 'z')
         {
-            description.setCharAt(0, firstChar - 32);
+            weather.description.setCharAt(0, firstChar - 32);
         }
 
         auto temp = tempString.toInt() - 273;
-        auto bufTemp = String(temp) + 'C';
 
-        if (temp == 0)
+        if (temp <= 0)
         {
-            bufTemp = '-' + bufTemp;
+            weather.temp += '-';
         }
-        else if (temp > 0)
+        else
         {
-            bufTemp = '+' + bufTemp;
+            weather.temp += '+';
         }
-
-        weather.temp = bufTemp;
-        weather.imageName = icon;
-        weather.description = description;
+        weather.temp += temp;
+        weather.temp += 'C';
         isOk = true;
     }
 

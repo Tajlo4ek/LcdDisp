@@ -13,7 +13,7 @@ namespace WifiUtils
 #define PASSWORD F("pass")
 
 #define DEFAULT_SSID F("no_data")
-#define DEFAULT_PASSWORD F("")
+#define DEFAULT_PASSWORD F("password")
 
     bool ConnectWifi(const String &ssid, const String &password, uint connectTries, TryConnectCallback callback = nullptr)
     {

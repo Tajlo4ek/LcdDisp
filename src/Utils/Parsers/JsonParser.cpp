@@ -7,7 +7,9 @@ namespace JsonParser
         String findName = name;
         if (findName[0] != '"')
         {
-            findName = String(F("\"")) + name + String(F("\""));
+            findName = '"';
+            findName += name;
+            findName += '"';
         }
 
         auto dataStart = json.indexOf(findName);
@@ -24,7 +26,7 @@ namespace JsonParser
             return String();
         }
 
-        String res = String();
+        String res;
         int openBracket = 0;
         int countQuote = 0;
         for (uint i = startInd + 1; i < json.length(); i++)
@@ -54,7 +56,7 @@ namespace JsonParser
         res.trim();
         if (countQuote == 2)
         {
-            res.replace(F("\""), F(""));
+            res.replace(String('"'), String());
         }
 
         isOk = true;
@@ -69,7 +71,7 @@ namespace JsonParser
 
     String BuildJson(const String *names, const String *data, int dataCount)
     {
-        String json = String(F("{"));
+        String json = String('{');
 
         for (int dataInd = 0; dataInd < dataCount; dataInd++)
         {
@@ -98,6 +100,8 @@ namespace JsonParser
             }
         }
 
-        return json + String("}");
+        json += '}';
+
+        return json;
     }
 }

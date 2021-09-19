@@ -23,14 +23,14 @@ namespace Pages
 
     void EditPage::GetDirList()
     {
-        String json = GetDirJson(F("/"));
+        String json = GetDirJson(String('/'));
         _HTTP->send(200, F("text/json"), json);
     }
 
     String EditPage::GetDirJson(const String &path)
     {
-        String files = String(F("["));
-        String dirs = String(F("["));
+        String files = String('[');
+        String dirs = String('[');
 
         auto dir = FileSystem::OpenDir(path);
 
@@ -38,17 +38,23 @@ namespace Pages
         {
             if (dir.isDirectory())
             {
-                dirs += String(F("{\"name\":\""));
+                String nextDirPath = path;
+                nextDirPath += dir.fileName();
+                nextDirPath += '/';
+
+                dirs += F("{\"name\":\"");
                 dirs += dir.fileName();
-                dirs += String(F("\",\"data\":"));
-                dirs += GetDirJson(path + dir.fileName() + String(F("/")));
-                dirs += String(F("},"));
+                dirs += F("\",\"data\":");
+                dirs += GetDirJson(nextDirPath);
+                dirs += '}';
+                dirs += ',';
             }
             else
             {
                 files += '"';
                 files += dir.fileName();
-                files += String(F("\","));
+                files += '"';
+                files += ',';
             }
         }
 
@@ -70,9 +76,9 @@ namespace Pages
             dirs += ']';
         }
 
-        String res = String(F("{\"files\":"));
+        String res = F("{\"files\":");
         res += files;
-        res += String(F(",\"dirs\":"));
+        res += F(",\"dirs\":");
         res += dirs;
         res += '}';
 
@@ -95,7 +101,7 @@ namespace Pages
         if (fileName.isEmpty() == false && fileData.isEmpty() == false)
         {
             auto nameLen = fileName.length();
-            if (fileName.startsWith(F("/")) && nameLen > 2 && nameLen < 32)
+            if (fileName[0] == '/' && nameLen > 2 && nameLen < 32)
             {
                 FileSystem::WriteFile(fileName, fileData);
             }
@@ -112,7 +118,7 @@ namespace Pages
         if (fileName.isEmpty() == false)
         {
             auto nameLen = fileName.length();
-            if (fileName.startsWith(F("/")) && nameLen > 2 && nameLen < 32)
+            if (fileName[0] == '/' && nameLen > 2 && nameLen < 32)
             {
                 FileSystem::DeleteFile(fileName);
             }

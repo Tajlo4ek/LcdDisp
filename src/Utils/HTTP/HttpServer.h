@@ -4,7 +4,9 @@
 
 namespace HttpServer
 {
-    void Init();
+    typedef std::function<void(const String &)> GetCommandCallback;
+
+    void Init(GetCommandCallback callback);
 
     void HandleServer();
 

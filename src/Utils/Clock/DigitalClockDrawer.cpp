@@ -128,7 +128,7 @@ namespace ClockDrawer
 
         String words[6];
         int nowInd = 0;
-        String buf = String();
+        String buf;
         for (uint i = 0; i < text.length(); i++)
         {
             auto ch = text[i];
@@ -136,7 +136,7 @@ namespace ClockDrawer
             if (ch == ' ')
             {
                 words[nowInd] = buf;
-                buf = String();
+                buf.clear();
                 nowInd++;
             }
             else
@@ -151,17 +151,17 @@ namespace ClockDrawer
             nowInd++;
         }
 
-        buf = words[0] + F(" ");
+        buf = words[0] + ' ';
         for (int i = 1; i < nowInd; i++)
         {
             if (buf.length() + words[i].length() >= maxStringSize)
             {
                 this->DrawString(buf, WeatherImages::ImageSize + offsetX * 2, offsetY, this->clockMainColor, 1);
                 offsetY += 8;
-                buf = String();
+                buf.clear();
             }
 
-            buf += words[i] + F(" ");
+            buf += words[i] + ' ';
         }
 
         if (buf.length() != 0)
@@ -216,15 +216,15 @@ namespace ClockDrawer
     {
         auto textY = this->spaceDiv4 + this->blockWidth * 1.5f;
 
-        DrawCentralText(String(F("not")), textY - 7, this->backColor, 1);
+        DrawCentralText(F("not"), textY - 7, this->backColor, 1);
 
-        DrawCentralText(String(F("sync")), textY + 1, this->backColor, 1);
+        DrawCentralText(F("sync"), textY + 1, this->backColor, 1);
 
         if (this->isTimeSync->GetCurrentValue() == false)
         {
-            DrawCentralText(String(F("not")), textY - 7, TFT_RED, 1);
+            DrawCentralText(F("not"), textY - 7, TFT_RED, 1);
 
-            DrawCentralText(String(F("sync")), textY + 1, TFT_RED, 1);
+            DrawCentralText(F("sync"), textY + 1, TFT_RED, 1);
         }
     }
 

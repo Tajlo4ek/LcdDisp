@@ -19,10 +19,12 @@ namespace HttpServer
     Pages::EditPage editPage(_HTTP);
     Pages::ConfigPage configPage(_HTTP);
 
+    GetCommandCallback getCommandCallback;
 
-    void Init()
+    void Init(GetCommandCallback callback)
     {
         _HTTP.begin();
+        getCommandCallback = callback;
     }
 
     void HandleServer()

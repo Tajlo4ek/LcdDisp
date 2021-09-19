@@ -36,7 +36,7 @@ TFT_eSPI lcd = TFT_eSPI();
 #define LCD_ROTATE 3
 
 bool isSTA;
-String serialData = String();
+String serialData;
 
 Mode nowMode;
 BaseScreen::Screen *activeScreen;
@@ -54,7 +54,7 @@ void setup()
   lcd.fillScreen(TFT_BLACK);
 
   InitWiFi();
-  HttpServer::Init();
+  HttpServer::Init(CheckCommand);
 
   activeScreen = nullptr;
   mainScreen = new MainScreen::MainScreen(lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, NotBlockDelay);
@@ -69,11 +69,11 @@ void InitWiFi()
 {
   auto wifiConfig = WifiUtils::LoadWiFiConfig();
 
-  lcd.drawString(String(F("Try connect: ")), 0, 10, 1, lcd.color565(0, 255, 0));
+  lcd.drawString(F("Try connect: "), 0, 10, 1, lcd.color565(0, 255, 0));
 
   lcd.drawString(wifiConfig.ssid, 0, 20, 1, lcd.color565(0, 255, 0));
 
-  lcd.drawString(String(F("Attempts: ")), 0, 35, 1, lcd.color565(0, 255, 0));
+  lcd.drawString(F("Attempts: "), 0, 35, 1, lcd.color565(0, 255, 0));
 
   WifiUtils::TryConnectCallback callback = [](int tryCount)
   {
@@ -85,8 +85,8 @@ void InitWiFi()
   if (WifiUtils::ConnectWifi(wifiConfig.ssid, wifiConfig.password, 20, callback) == false)
   {
     lcd.fillScreen(TFT_BLACK);
-    lcd.drawString(String(F("can't connect. start ap")), 0, 0, 1, lcd.color565(0, 255, 0));
-    lcd.drawString(String(F("HOME 1234567890")), 0, 15, 1, lcd.color565(0, 255, 0));
+    lcd.drawString(F("can't connect. start ap"), 0, 0, 1, lcd.color565(0, 255, 0));
+    lcd.drawString(F("HOME 1234567890"), 0, 15, 1, lcd.color565(0, 255, 0));
     isSTA = false;
     delay(2000);
     WifiUtils::StartAP(F("HOME"), F("1234567890"));
@@ -111,6 +111,11 @@ void SetActiveScreen(BaseScreen::Screen *screen, Mode nextMode)
 
 void CheckCommand(const String &data)
 {
+  if (data[data.length() - 1] != COMMAND_STOP_CHAR)
+  {
+    return;
+  }
+
   if (data.startsWith(COMMAND_SET_MODE_SPECTRUM))
   {
     SetActiveScreen(visualizerScreen, Mode::SPECTRUM_MODE);
@@ -135,15 +140,12 @@ void MyLoop()
   while (Serial.available())
   {
     char ch = (char)Serial.read();
+    serialData += ch;
 
     if (ch == COMMAND_STOP_CHAR)
     {
       CheckCommand(serialData);
-      serialData = String();
-    }
-    else
-    {
-      serialData += ch;
+      serialData.clear();
     }
   }
 

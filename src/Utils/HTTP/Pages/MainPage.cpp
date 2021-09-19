@@ -7,7 +7,7 @@ namespace Pages
 {
     MainPage::MainPage(ESP8266WebServer &server) : BasePage::BasePage(server)
     {
-        _HTTP->on(F("/"), std::bind(&MainPage::Page, this));
+        _HTTP->on(String('/'), std::bind(&MainPage::Page, this));
     }
 
     void MainPage::Page()

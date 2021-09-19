@@ -29,7 +29,8 @@ namespace Logger
     {
         String bData = LOG_TOKEN;
         bData += millis();
-        bData += F(": ");
+        bData += ':';
+        bData += ' ';
         bData += data;
         bData += COMMAND_STOP_CHAR;
 

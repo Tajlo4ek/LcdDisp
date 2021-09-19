@@ -12,7 +12,7 @@ namespace Pages
         _HTTP->on(F("/monitor"), std::bind(&MonitorPage::Page, this));
         _HTTP->on(F("/monitor/getData"), std::bind(&MonitorPage::GetData, this));
 
-        this->notSendData = String();
+        this->notSendData.clear();
     }
 
     void MonitorPage::Page()
@@ -30,7 +30,7 @@ namespace Pages
             F("log"),
         };
 
-        this->notSendData.replace(F("\""), F("\\\""));
+        this->notSendData.replace(String('"'), F("\\\""));
 
         String data[dataCount]{
             String(millis()),
@@ -39,7 +39,7 @@ namespace Pages
         };
 
         String json = JsonParser::BuildJson(names, data, dataCount);
-        this->notSendData = String();
+        this->notSendData.clear();
         _HTTP->send(200, F("text/json"), json);
     }
 

@@ -68,12 +68,16 @@ namespace MainScreen
         clockDrawer->Init();
 
         Weather::WeatherData defaultWeaterData;
-        defaultWeaterData.temp = String('+') + String(666) + 'C';
-        defaultWeaterData.description = String(F("weather not sync"));
-        defaultWeaterData.imageName = String(F("abort"));
+        defaultWeaterData.temp = String('+');
+        defaultWeaterData.temp += 666;
+        defaultWeaterData.temp += 'C';
+        defaultWeaterData.description = F("weather not sync");
+        defaultWeaterData.imageName = F("abort");
         clockDrawer->SetWeather(defaultWeaterData, false);
 
-        clockDrawer->SetMessage(String(F("IP: ")) + WifiUtils::GetIpString());
+        String message = F("IP: ");
+        message += WifiUtils::GetIpString();
+        clockDrawer->SetMessage(message);
         this->isTimeSync = false;
         this->CheckTimeSync();
         this->GetWeather();
