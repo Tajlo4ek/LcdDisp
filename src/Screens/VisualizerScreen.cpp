@@ -20,11 +20,11 @@ namespace VisualizerScreen
 
     String VisualizerScreen::ParseMessage(const String &message)
     {
-        if (message.startsWith(Commands::setModeSpectrum))
+        if (message.startsWith(COMMAND_SET_MODE_SPECTRUM))
         {
             return GetSpectrumData();
         }
-        else if (message.startsWith(Commands::sendSpectrumData))
+        else if (message.startsWith(COMMAND_SEND_SPECTRUM_DATA))
         {
             ParseSpectrum(message);
         }
@@ -33,12 +33,12 @@ namespace VisualizerScreen
 
     String VisualizerScreen::GetSpectrumData()
     {
-        String data = Commands::setLineCount;
+        String data = COMMAND_SEND_LINE_COUNT;
         data += spectrumDrawer->GetLineCount();
-        data += Commands::stopChar;
-        data += Commands::setMaxData;
+        data += COMMAND_STOP_CHAR;
+        data += COMMAND_SET_MAX_SPECTRUM_DATA;
         data += spectrumDrawer->GetMaxLineLength();
-        data += Commands::stopChar;
+        data += COMMAND_STOP_CHAR;
         return data;
     }
 
@@ -53,10 +53,10 @@ namespace VisualizerScreen
 
         byte next = 0;
         int spNum = 0;
-        for (int pos = Commands::sendSpectrumData.length(); pos < dateLen; pos++)
+        for (int pos = String(COMMAND_SEND_SPECTRUM_DATA).length(); pos < dateLen; pos++)
         {
             char ch = data[pos];
-            if (ch != Commands::splitChar)
+            if (ch != COMMAND_SPLIT_CHAR)
             {
                 next *= 10;
                 next += ch - '0';

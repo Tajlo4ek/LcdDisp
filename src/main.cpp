@@ -111,11 +111,11 @@ void SetActiveScreen(BaseScreen::Screen *screen, Mode nextMode)
 
 void CheckCommand(const String &data)
 {
-  if (data.startsWith(Commands::setModeSpectrum))
+  if (data.startsWith(COMMAND_SET_MODE_SPECTRUM))
   {
     SetActiveScreen(visualizerScreen, Mode::SPECTRUM_MODE);
   }
-  else if (data.startsWith(Commands::sendSpectrumData))
+  else if (data.startsWith(COMMAND_SEND_SPECTRUM_DATA))
   {
     if (nowMode != SPECTRUM_MODE)
     {
@@ -136,7 +136,7 @@ void MyLoop()
   {
     char ch = (char)Serial.read();
 
-    if (ch == Commands::stopChar)
+    if (ch == COMMAND_STOP_CHAR)
     {
       CheckCommand(serialData);
       serialData = String();

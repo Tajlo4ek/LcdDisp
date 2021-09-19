@@ -27,7 +27,13 @@ namespace Logger
 
     String BuildData(const String &data)
     {
-        return Commands::logToken + String(millis()) + String(F(": ")) + data + Commands::stopChar;
+        String bData = LOG_TOKEN;
+        bData += millis();
+        bData += F(": ");
+        bData += data;
+        bData += COMMAND_STOP_CHAR;
+
+        return bData;
     }
 
 }
