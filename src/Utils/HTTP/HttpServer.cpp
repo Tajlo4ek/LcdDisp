@@ -30,6 +30,12 @@ namespace HttpServer
     void HandleServer()
     {
         _HTTP.handleClient();
+        String command = monitorPage.GetCommand();
+
+        if (command.isEmpty() == false)
+        {
+            getCommandCallback(command);
+        }
     }
 
     void AddWebLog(const String &data)

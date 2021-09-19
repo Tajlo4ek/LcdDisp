@@ -17,5 +17,11 @@ namespace Pages
         {
             _HTTP = &server;
         }
+
+        virtual const String GetCommand()
+        {
+            return String();
+        }
+        
     };
 }

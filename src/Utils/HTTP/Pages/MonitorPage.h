@@ -11,11 +11,15 @@ namespace Pages
 
         void AddWebLog(const String &data);
 
+        const String GetCommand() override;
+
     private:
         void Page() override;
 
         void GetData();
+        void ParseCommand();
 
         String notSendData;
+        String requestCommands;
     };
 }

@@ -6,4 +6,4 @@
 #define COMMAND_SEND_LINE_COUNT F("line")
 #define COMMAND_SEND_SPECTRUM_DATA F("sendSpectrum")
 #define COMMAND_SET_MAX_SPECTRUM_DATA F("maxData")
-#define LOG_TOKEN F("[LOG] ")
+#define LOG_TOKEN F(" [LOG] ")
