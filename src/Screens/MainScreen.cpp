@@ -98,7 +98,7 @@ namespace MainScreen
             return;
         }
 
-        if (!isTimeSync)
+        if (isTimeSync == false)
         {
             auto time = NtpTime::Ask_NTP_Time(this->notBlockDelay, isTimeSync);
             if (isTimeSync)

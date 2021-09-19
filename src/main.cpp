@@ -82,7 +82,7 @@ void InitWiFi()
   };
 
   isSTA = true;
-  if (!WifiUtils::ConnectWifi(wifiConfig.ssid, wifiConfig.password, 20, callback))
+  if (WifiUtils::ConnectWifi(wifiConfig.ssid, wifiConfig.password, 20, callback) == false)
   {
     lcd.fillScreen(TFT_BLACK);
     lcd.drawString(String(F("can't connect. start ap")), 0, 0, 1, lcd.color565(0, 255, 0));

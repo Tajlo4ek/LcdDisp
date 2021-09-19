@@ -16,7 +16,7 @@ namespace Weather
         WiFiClient client;
         const int httpPort = 80;
 
-        if (!client.connect(host, httpPort))
+        if (client.connect(host, httpPort) == 0)
         {
             isOk = false;
             return weatherData;
