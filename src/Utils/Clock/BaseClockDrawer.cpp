@@ -26,7 +26,7 @@ namespace ClockDrawer
         if (isError)
         {
             data.temp = this->weatherData->GetPrevievValue().temp;
-            data.imageName = F("abort");
+            data.imageName = this->weatherData->GetPrevievValue().imageName;
         }
         else
         {

@@ -14,10 +14,10 @@ namespace Weather
 
         WeatherData weatherData;
         WiFiClient client;
-        const int httpPort = 80;
 
-        if (client.connect(host, httpPort) == 0)
+        if (client.connect(host, 80) == 0)
         {
+            ParseWeather(F("{\"cod\":404}"), weatherData, isOk);
             isOk = false;
             return weatherData;
         }
@@ -59,7 +59,10 @@ namespace Weather
             weather.description = F("not sync. error: ");
             weather.description += cod;
             isOk = false;
-            Logger::Log(json);
+
+            String log = F("weather error. code:");
+            log += cod;
+            Logger::Log(log);
             return;
         }
 
