@@ -127,6 +127,12 @@ void CheckCommand(const String &data)
       return;
     }
   }
+  else if (data.startsWith(COMMAND_RELOAD_SCREEN))
+  {
+    activeScreen->LeaveFocus();
+    activeScreen->EnterFocus();
+    return;
+  }
 
   Serial.print(activeScreen->ParseMessage(data));
 }

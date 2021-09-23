@@ -2,6 +2,7 @@
 
 #include "Utils/FileSystem/FileSystem.h"
 #include "FileNames.h"
+#include "Commands.h"
 
 namespace Pages
 {
@@ -16,6 +17,7 @@ namespace Pages
 
         page.replace(F("{clock_config}"), DIGITAL_CLOCK_CONFIG_PATH);
         page.replace(F("{spectrum_config}"), SPECTRUM_CONFIG_PATH);
+        page.replace(F("{reload-command}"), COMMAND_RELOAD_SCREEN);
 
         _HTTP->send(200, F("text/html"), page);
     }

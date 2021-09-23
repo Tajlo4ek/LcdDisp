@@ -15,8 +15,7 @@ namespace SpectrumDrawer
         const int GetMaxLineLength() const;
 
         const unsigned long GetLastUpdateTime() const;
-        void Reset();
-        void ReloadConfig() override;
+        void Reset();        
 
     private:
         int spectrumLineCount;
@@ -36,5 +35,6 @@ namespace SpectrumDrawer
         uint16_t maxColor;
 
         void CreateDefaultConfig() override;
+        void LoadConfig() override;
     };
 }

@@ -32,11 +32,12 @@ namespace ClockDrawer
         void TimeSyncChanged() override;
 
         void CreateDefaultConfig() override;
+        void LoadConfig() override;
 
     public:
         DigitalClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock);
         void Init() override;
-        void ReloadConfig() override;
+        
     };
 
 }

@@ -106,6 +106,14 @@
             heapChart.update();
         }
 
+        function SendCommand() {
+            let cInput = document.getElementById('inputCommand');
+            let formData = new FormData();
+            formData.append("command", cInput.value);
+            SendRequest(formData, "/monitor/sendCommand", null);
+            cInput.value = "";
+        }
+
         function SendRequest(formData, url, onload) {
             let request = new XMLHttpRequest();
             request.open("POST", url, false);
@@ -123,6 +131,8 @@
     </div>
 
     <div style="float: right; width: 79%; height: 95%;">
+        <input type="text" style="width: 70%; margin-bottom: 10px;" id="inputCommand">
+        <button style="width: 100px;" onclick="SendCommand()">Send</button>
         <textarea id="areaLog" readonly></textarea>
     </div>
 </body>

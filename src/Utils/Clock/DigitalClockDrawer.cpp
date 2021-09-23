@@ -35,7 +35,7 @@ namespace ClockDrawer
         this->spaceDiv4 = (this->lcdHeight - this->blockWidth * 2) / 4;
     }
 
-    void DigitalClockDrawer::ReloadConfig()
+    void DigitalClockDrawer::LoadConfig()
     {
         auto json = FileSystem::ReadFile(DIGITAL_CLOCK_CONFIG_PATH);
         if (json.isEmpty())
@@ -61,7 +61,7 @@ namespace ClockDrawer
         if (loadRes == false)
         {
             this->CreateDefaultConfig();
-            this->ReloadConfig();
+            this->LoadConfig();
         }
     }
 
@@ -87,7 +87,7 @@ namespace ClockDrawer
 
     void DigitalClockDrawer::Init()
     {
-        this->ReloadConfig();
+        this->LoadConfig();
         this->lcd->fillScreen(this->backColor);
     }
 
