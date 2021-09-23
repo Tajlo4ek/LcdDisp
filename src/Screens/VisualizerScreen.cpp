@@ -18,8 +18,14 @@ namespace VisualizerScreen
         this->spectrumDrawer = new SpectrumDrawer::SpectrumDrawer(lcd, lcdWidth, lcdHeight);
     }
 
+    void VisualizerScreen::ReloadConfig()
+    {
+        spectrumDrawer->ReloadConfig();
+    }
+
     String VisualizerScreen::ParseMessage(const String &message)
     {
+        //TODO: smt crash 
         if (message.startsWith(COMMAND_SET_MODE_SPECTRUM))
         {
             return GetSpectrumData();
