@@ -9,8 +9,8 @@ namespace ClockDrawer
 
     private:
         uint16_t backColor;
-        uint16_t clockColor;
-        uint16_t notActiveColor;
+        uint16_t clockMainColor;
+        uint16_t clockSecondColor;
 
         int blockWidth;
         int blockHeight;
@@ -22,8 +22,8 @@ namespace ClockDrawer
         void DrawHorBlock(int x, int y, uint16_t color) const;
         void DrawSpecLine(int x, int y, int x1, int y1, uint16_t mainColor, uint16_t secondColor) const;
 
-        void DrawCentralText(String &text, int y, uint16_t color, int textSize) const;
-        void DrawString(String &text, int x, int y, uint16_t color, int textSize) const;
+        void DrawCentralText(const String &text, int y, uint16_t color, int textSize) const;
+        void DrawString(const String &text, int x, int y, uint16_t color, int textSize) const;
 
         void WeatherChanged() override;
         void MessageChanged() override;
@@ -31,9 +31,12 @@ namespace ClockDrawer
         void DateChanged() override;
         void TimeSyncChanged() override;
 
+        void CreateDefaultConfig() override;
+
     public:
         DigitalClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock);
         void Init() override;
+        void ReloadConfig() override;
     };
 
 }

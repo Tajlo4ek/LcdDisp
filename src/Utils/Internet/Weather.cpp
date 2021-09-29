@@ -1,58 +1,47 @@
 #include "Weather.h"
 
 #include "Utils/Parsers/JsonParser.h"
+#include "Utils/Logger/Logger.h"
 
 namespace Weather
 {
-    void ParseWeather(String &json, WeatherData &weather, bool &isOk);
-    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, String city, String apiKey);
+    void ParseWeather(const String &json, WeatherData &weather, bool &isOk);
+    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, const String &city, const String &apiKey);
 
-    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, String city, String apiKey)
+    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, const String &city, const String &apiKey)
     {
         auto host = F("api.openweathermap.org");
 
         WeatherData weatherData;
         WiFiClient client;
-        const int httpPort = 80;
 
-        if (!client.connect(host, httpPort))
+        if (client.connect(host, 80) == 0)
         {
+            ParseWeather(F("{\"cod\":404}"), weatherData, isOk);
             isOk = false;
             return weatherData;
         }
 
-        client.print(String(F("GET ")));
-        client.print("/data/2.5/weather?q=");
+        client.print(F("GET "));
+        client.print(F("/data/2.5/weather?q="));
         client.print(city);
-        client.print("&appid=");
+        client.print(F("&appid="));
         client.print(apiKey);
-        client.println(String(F(" HTTP/1.1")));
+        client.println(F(" HTTP/1.1"));
 
-        client.print(String(F("Host: ")));
+        client.print(F("Host: "));
         client.println(host);
         client.println(F("Connection: close"));
         client.println();
 
-        //TODO: mb client.flush()
+        //TODO: mb remove delay
         delay(1000);
 
         String json;
-        int count = 0;
         while (client.available())
         {
             char next = (char)client.read();
-            if (next == '{')
-            {
-                count++;
-            }
-            else if (next == '}')
-            {
-                count--;
-            }
-            if (count)
-            {
-                json += next;
-            }
+            json += next;
         }
         json += '}';
 
@@ -61,36 +50,49 @@ namespace Weather
         return weatherData;
     }
 
-    void ParseWeather(String &json, WeatherData &weather, bool &isOk)
+    void ParseWeather(const String &json, WeatherData &weather, bool &isOk)
     {
-        auto description = JsonParser::GetJsonData(json, F("description"), isOk);
-        if (!isOk)
+
+        //TODO: code 0 ?
+        auto cod = JsonParser::GetJsonData(json, F("cod")).toInt();
+        if (cod != 200)
         {
+            weather.imageName = F("abort");
+            weather.description = F("not sync. error: ");
+            weather.description += cod;
+            isOk = false;
+
+            String log = F("weather error. code:");
+            log += cod;
+            log += F("json: ");
+            log += json;
+            Logger::Log(log);
             return;
         }
 
-        auto icon = JsonParser::GetJsonData(json, F("icon"), isOk);
-        if (!isOk)
-        {
-            return;
-        }
+        weather.description = JsonParser::GetJsonData(json, F("description"));
+        weather.imageName = JsonParser::GetJsonData(json, F("icon"));
+        String tempString = JsonParser::GetJsonData(json, F("temp"));
 
-        auto temp = JsonParser::GetJsonData(json, F("temp"), isOk);
-        if (!isOk)
-        {
-            return;
-        }
-
-        auto firstChar = description[0];
+        auto firstChar = weather.description[0];
+        //TODO:
         if (firstChar >= 'a' && firstChar <= 'z')
         {
-            description.setCharAt(0, firstChar - 32);
+            weather.description.setCharAt(0, firstChar - 32);
         }
 
-        weather.temp = temp.toInt() - 273;
-        weather.imageName = icon;
-        weather.description = description;
+        auto temp = tempString.toInt() - 273;
 
+        if (temp <= 0)
+        {
+            weather.temp += '-';
+        }
+        else
+        {
+            weather.temp += '+';
+        }
+        weather.temp += temp;
+        weather.temp += 'C';
         isOk = true;
     }
 

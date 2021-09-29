@@ -4,8 +4,8 @@
 
 namespace JsonParser
 {
-    String GetJsonData(String &json, String name, bool &isOk);
-    String GetJsonData(String &json, String name);
+    String GetJsonData(const String &json, const String &name, bool &isOk);
+    String GetJsonData(const String &json, const String &name);
 
-    String BuildJson(String *names, String *data, int dataCount);
+    String BuildJson(const String *names, const String *data, int dataCount);
 }

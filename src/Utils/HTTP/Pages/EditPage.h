@@ -1,8 +1,22 @@
 #pragma once
 
-#include <ESP8266WebServer.h>
+#include "BasePage.h"
 
-namespace EditPage
+namespace Pages
 {
-    void Init(ESP8266WebServer &server);
+    class EditPage : public Pages::BasePage
+    {
+    public:
+        EditPage(ESP8266WebServer &server);
+
+    private:
+        void Page() override;
+
+        void GetFileData();
+        void SaveFileData();
+        void DeleteFile();
+
+        void GetDirList();
+        String GetDirJson(const String &path);
+    };
 }

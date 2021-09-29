@@ -1,8 +1,18 @@
 #pragma once
 
-#include <ESP8266WebServer.h>
+#include "BasePage.h"
 
-namespace ConnectPage
+namespace Pages
 {
-    void Init(ESP8266WebServer &server);
+    class ConnectPage : public Pages::BasePage
+    {
+    public:
+        ConnectPage(ESP8266WebServer &server);
+
+    private:
+        void Page() override;
+
+        void GetSSID();
+        void SetWiFi();
+    };
 }

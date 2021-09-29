@@ -1,5 +1,8 @@
 #include "MainScreen.h"
 
+#include "FileNames.h"
+#include "Commands.h"
+
 #include "Utils/Internet/NtpTime.h"
 #include "Utils/Internet/Weather.h"
 #include "Utils/Internet/WifiUtils.h"
@@ -8,10 +11,11 @@
 
 namespace MainScreen
 {
-#define WEATHER_CONFIG_CITY "city"
-#define WEATHER_CONFIG_APIKEY "apiKey"
+#define WEATHER_CONFIG_CITY F("city")
+#define WEATHER_CONFIG_APIKEY F("apiKey")
 
-    MainScreen::MainScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, NotBlockDelay notBlockDelay)
+    MainScreen::MainScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, NotBlockDelay notBlockDelay)
+        : BaseScreen::Screen(onWorkEnd)
     {
         this->clockDrawer = new ClockDrawer::DigitalClockDrawer(lcd, lcdWidth, lcdHeight, this->myClock);
 
@@ -50,16 +54,36 @@ namespace MainScreen
 
         clockTimersManager.StopAll();
 
-        String json = FileSystem::ReadFile(FileSystem::WeatherConfigFileName);
+        String json = FileSystem::ReadFile(WEATHER_CONFIG_PATH);
         this->weatherCity = JsonParser::GetJsonData(json, WEATHER_CONFIG_CITY);
         this->weatherApiKey = JsonParser::GetJsonData(json, WEATHER_CONFIG_APIKEY);
+    }
+
+    String MainScreen::ParseMessage(const String &message)
+    {
+        return String();
+    }
+
+    void MainScreen::ReloadConfig()
+    {
+        clockDrawer->ReloadConfig();
     }
 
     void MainScreen::EnterFocus()
     {
         clockDrawer->Init();
-        clockDrawer->SetWeather(1000, F("weather not sync"), F("abort"));
-        clockDrawer->SetMessage(String(F("IP: ")) + WifiUtils::GetIpString());
+
+        Weather::WeatherData defaultWeaterData;
+        defaultWeaterData.temp = String('+');
+        defaultWeaterData.temp += 666;
+        defaultWeaterData.temp += 'C';
+        defaultWeaterData.description = F("weather not sync");
+        defaultWeaterData.imageName = F("abort");
+        clockDrawer->SetWeather(defaultWeaterData, false);
+
+        String message = F("IP: ");
+        message += WifiUtils::GetIpString();
+        clockDrawer->SetMessage(message);
         this->isTimeSync = false;
         this->CheckTimeSync();
         this->GetWeather();
@@ -84,7 +108,7 @@ namespace MainScreen
             return;
         }
 
-        if (!isTimeSync)
+        if (isTimeSync == false)
         {
             auto time = NtpTime::Ask_NTP_Time(this->notBlockDelay, isTimeSync);
             if (isTimeSync)
@@ -104,15 +128,7 @@ namespace MainScreen
 
         bool isOk = false;
         auto weather = Weather::GetWether(this->notBlockDelay, isOk, this->weatherCity, this->weatherApiKey);
-        if (isOk)
-        {
-            clockDrawer->SetWeather(weather.temp, weather.description, weather.imageName);
-        }
-    }
-
-    void MainScreen::SetEthernetAvailable(bool val)
-    {
-        this->hasEthernet = val;
+        clockDrawer->SetWeather(weather, !isOk);
     }
 
     MainScreen::~MainScreen()

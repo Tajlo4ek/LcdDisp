@@ -1,23 +1,18 @@
+#include "MainPage.h"
 
-#include <ESP8266WebServer.h>
 #include "Utils/FileSystem/FileSystem.h"
+#include "FileNames.h"
 
-namespace MainPage
+namespace Pages
 {
-    void Page();
-
-    ESP8266WebServer *_HTTP;
-
-    void Init(ESP8266WebServer &server)
+    MainPage::MainPage(ESP8266WebServer &server) : BasePage::BasePage(server)
     {
-        _HTTP = &server;
-
-        _HTTP->on("/", Page);
+        _HTTP->on(String('/'), std::bind(&MainPage::Page, this));
     }
 
-    void Page()
+    void MainPage::Page()
     {
-        _HTTP->send(200, F("text/html"), FileSystem::ReadFile(F("/index.htm")));
+        _HTTP->send(200, F("text/html"), FileSystem::ReadFile(INDEX_PAGE_PATH));
     }
 
 }

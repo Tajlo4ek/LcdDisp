@@ -5,6 +5,7 @@
 #include "Clock.h"
 #include "Utils/TrackedVal.h"
 #include "Utils/ScreenDrawer.h"
+#include "Utils/Internet/Weather.h"
 
 namespace ClockDrawer
 {
@@ -13,18 +14,9 @@ namespace ClockDrawer
     protected:
         Clock::Clock *myClock;
 
-        struct WeatherData
-        {
-            String temp;
-            String description;
-            String imageName;
-        };
-
         TrackedVal::TrackedValue<String> *message;
-        TrackedVal::TrackedValue<WeatherData> *weatherData;
+        TrackedVal::TrackedValue<Weather::WeatherData> *weatherData;
         TrackedVal::TrackedValue<bool> *isTimeSync;
-
-        bool isWeatherOk;
 
     private:
         virtual void WeatherChanged() = 0;
@@ -37,8 +29,8 @@ namespace ClockDrawer
         BaseClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock);
         virtual void Init() = 0;
 
-        void SetMessage(String message);
-        void SetWeather(int temp, String type, String imageName);
+        void SetMessage(const String &message);
+        void SetWeather(Weather::WeatherData weatherData, bool isError);
         void SetTimeSync(bool isSync);
 
         ~BaseClockDrawer();
