@@ -15,6 +15,7 @@ namespace MillisTimer
 
         void Start();
         void Stop();
+        void Reset();
 
         Timercallback callback;
         void SetInterval(unsigned long);

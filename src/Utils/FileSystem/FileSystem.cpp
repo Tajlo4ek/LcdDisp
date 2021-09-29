@@ -18,7 +18,7 @@ namespace FileSystem
         }
     }
 
-    String ReadFile(String fileName)
+    String ReadFile(const String &fileName)
     {
         CheckInit();
 
@@ -30,35 +30,35 @@ namespace FileSystem
             return data;
         }
 
-        return "";
+        return String();
     }
 
-    void WriteFile(String fileName, String data)
+    void WriteFile(const String &fileName, const String &data)
     {
         File file = LittleFS.open(fileName, "w");
         file.write(data.c_str());
         file.close();
     }
 
-    bool FileExists(String fileName)
+    const bool FileExists(const String &fileName)
     {
         CheckInit();
         return LittleFS.exists(fileName);
     }
 
-    File OpenFile(String path, const char *mode)
+    File OpenFile(const String &path, const char *mode)
     {
         CheckInit();
         return LittleFS.open(path, mode);
     }
 
-    Dir OpenDir(String path)
+    Dir OpenDir(const String &path)
     {
         CheckInit();
         return LittleFS.openDir(path);
     }
 
-    bool Remove(String path)
+    const bool DeleteFile(const String &path)
     {
         CheckInit();
         return LittleFS.remove(path);

@@ -12,6 +12,9 @@ namespace ScreenDrawer
         int lcdWidth;
         int lcdHeight;
 
+        virtual void CreateDefaultConfig() = 0;
+        virtual void LoadConfig() = 0;
+
     public:
         ScreenDrawer(TFT_eSPI &lcd, int lcdWidth, int lcdHeight)
         {
@@ -19,5 +22,7 @@ namespace ScreenDrawer
             this->lcdWidth = lcdWidth;
             this->lcdHeight = lcdHeight;
         }
+
+        
     };
 }

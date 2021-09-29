@@ -7,12 +7,12 @@ namespace Weather
 {
     struct WeatherData
     {
-        int temp;
+        String temp;
         String description;
         String imageName;
     };
 
     typedef std::function<void(unsigned int)> NotBlockDelay;
 
-    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, String city, String apiKey);
+    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, const String &city, const String &apiKey);
 }

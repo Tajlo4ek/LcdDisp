@@ -193,57 +193,57 @@ namespace WeatherImages
       0xfe, 0xff, 0xff, 0x7f, 0xfe, 0xff, 0xff, 0x7f, 0x00, 0x00, 0x00, 0x00,
       0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
-  static char *GetImage(String name)
+  static char *GetImage(const String &name)
   {
-    if (name == "01d")
+    if (name == F("01d"))
     {
       return sun;
     }
-    else if (name == "01n")
+    else if (name == F("01n"))
     {
       return moon;
     }
-    else if (name == "02d")
+    else if (name == F("02d"))
     {
       return cloud_sun;
     }
-    else if (name == "02n")
+    else if (name == F("02n"))
     {
       return cloud_moon;
     }
-    else if (name == "03d" || name == "03n")
+    else if (name == F("03d") || name == F("03n"))
     {
       return cloud;
     }
-    else if (name == "04d" || name == "04n")
+    else if (name == F("04d") || name == F("04n"))
     {
       return clouds;
     }
-    else if (name == "09d" || name == "09n")
+    else if (name == F("09d") || name == F("09n"))
     {
       return shower_rain;
     }
-    else if (name == "10d")
+    else if (name == F("10d"))
     {
       return rain_sun;
     }
-    else if (name == "10n")
+    else if (name == F("10n"))
     {
       return rain_moon;
     }
-    else if (name == "11d" || name == "11n")
+    else if (name == F("11d") || name == F("11n"))
     {
       return lightning;
     }
-    else if (name == "13d")
+    else if (name == F("13d"))
     {
       return snow_sun;
     }
-    else if (name == "13n")
+    else if (name == F("13n"))
     {
       return snow_moon;
     }
-    else if (name == "50d" || name == "50n")
+    else if (name == F("50d") || name == F("50n"))
     {
       return mist;
     }

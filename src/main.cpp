@@ -5,214 +5,153 @@
 
 #include "Screens/BaseScreen.h"
 #include "Screens/MainScreen.h"
+#include "Screens/VisualizerScreen.h"
 #include "Utils/Internet/WifiUtils.h"
 #include "Utils/HTTP/HttpServer.h"
 #include "Utils/FileSystem/FileSystem.h"
+#include "Utils/Logger/Logger.h"
 
 enum Mode
 {
-  CLOCK_MODE,
-  //SPECTRUM_MODE,fasfasfasfsaf
-  
+  MAIN_MODE,
+  SPECTRUM_MODE,
 };
 
-/* #region  func prototypes */
+#define SPECTRUM_OFF_TIME 3000
+
+/* #region func prototypes */
 void NotBlockDelay(unsigned long delayTime);
 
-//void SpectrumCheck();
-//String GetSpectrumData();
+void OnScreenWorkEnd();
+void SetActiveScreen(BaseScreen::Screen *screen, Mode nextMode);
 
-void SetActiveScreen(BaseScreen::Screen *screen);
-
-//void CheckCommand(String &data);
-//void ParseSpectrum(String &data);
+void CheckCommand(const String &data);
 
 void InitWiFi();
 /* #endregion */
 
 TFT_eSPI lcd = TFT_eSPI();
-#define lcdWidth 160
-#define lcdHeight 128
-#define lcdRotate 3
+#define LCD_WIDTH 160
+#define LCD_HEIGHT 128
+#define LCD_ROTATE 3
 
 bool isSTA;
-
-//#define SpectrumOffTime 3000
-//SpectrumDrawer::SpectrumDrawer *spectrumDrawer;
-//MillisTimer::Timer spectrumCheckTimer(SpectrumCheck, SpectrumOffTime); //need of spectrum SpectrumOffTime ms
+String serialData;
 
 Mode nowMode;
-String serialData = "";
-
 BaseScreen::Screen *activeScreen;
+
 BaseScreen::Screen *mainScreen;
+BaseScreen::Screen *visualizerScreen;
 
 void setup()
 {
+  Serial.begin(115200);
   FileSystem::Init();
   lcd.init();
-  Serial.begin(115200);
 
-  lcd.setRotation(lcdRotate);
+  lcd.setRotation(LCD_ROTATE);
   lcd.fillScreen(TFT_BLACK);
 
   InitWiFi();
-  HttpServer::Init();
-
-  //spectrumDrawer = new SpectrumDrawer::SpectrumDrawer(lcd, lcdWidth, lcdHeight);
+  HttpServer::Init(CheckCommand);
 
   activeScreen = nullptr;
-  mainScreen = new MainScreen::MainScreen(lcd, lcdWidth, lcdHeight, NotBlockDelay);
+  mainScreen = new MainScreen::MainScreen(lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, NotBlockDelay);
   mainScreen->SetEthernetAvailable(isSTA);
 
-  SetActiveScreen(mainScreen);
+  visualizerScreen = new VisualizerScreen::VisualizerScreen(lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, SPECTRUM_OFF_TIME);
+
+  SetActiveScreen(mainScreen, MAIN_MODE);
 }
 
 void InitWiFi()
 {
   auto wifiConfig = WifiUtils::LoadWiFiConfig();
 
-  auto text = String(F("Try connect: "));
-  lcd.drawString(text, 0, 10, 1, lcd.color565(0, 255, 0));
+  lcd.drawString(F("Try connect: "), 0, 10, 1, lcd.color565(0, 255, 0));
 
-  text = wifiConfig.ssid;
-  lcd.drawString(text, 0, 20, 1, lcd.color565(0, 255, 0));
+  lcd.drawString(wifiConfig.ssid, 0, 20, 1, lcd.color565(0, 255, 0));
 
-  text = String(F("Attempts: "));
-  lcd.drawString(text, 0, 35, 1, lcd.color565(0, 255, 0));
+  lcd.drawString(F("Attempts: "), 0, 35, 1, lcd.color565(0, 255, 0));
 
   WifiUtils::TryConnectCallback callback = [](int tryCount)
   {
-    auto text = String("") + tryCount;
     lcd.fillRect(55, 35, 30, 8, TFT_BLACK);
-    lcd.drawString(text, 55, 35, 1, lcd.color565(0, 255, 0));
+    lcd.drawString(String(tryCount), 55, 35, 1, lcd.color565(0, 255, 0));
   };
 
   isSTA = true;
-  if (!WifiUtils::ConnectWifi(wifiConfig.ssid, wifiConfig.password, 20, callback))
+  if (WifiUtils::ConnectWifi(wifiConfig.ssid, wifiConfig.password, 20, callback) == false)
   {
     lcd.fillScreen(TFT_BLACK);
-    lcd.drawString(String(F("can't connect. start ap")), 0, 0, 1, lcd.color565(0, 255, 0));
-    lcd.drawString(String(F("HOME 1234567890")), 0, 15, 1, lcd.color565(0, 255, 0));
+    lcd.drawString(F("can't connect. start ap"), 0, 0, 1, lcd.color565(0, 255, 0));
+    lcd.drawString(F("HOME 1234567890"), 0, 15, 1, lcd.color565(0, 255, 0));
     isSTA = false;
-    delay(500);
+    delay(2000);
     WifiUtils::StartAP(F("HOME"), F("1234567890"));
   }
 }
 
-void SetActiveScreen(BaseScreen::Screen *screen)
+void OnScreenWorkEnd()
+{
+  SetActiveScreen(mainScreen, Mode::MAIN_MODE);
+}
+
+void SetActiveScreen(BaseScreen::Screen *screen, Mode nextMode)
 {
   if (activeScreen != nullptr)
   {
     activeScreen->LeaveFocus();
   }
   activeScreen = screen;
+  nowMode = nextMode;
   activeScreen->EnterFocus();
 }
 
-/*void SetModeSpectrum()
+void CheckCommand(const String &data)
 {
-  //ResetMode();
-
-  //nowMode = SPECTRUM_MODE;
-  //spectrumDrawer->Reset();
-  //spectrumCheckTimer.Start();
-}*/
-
-/*
-void SpectrumCheck()
-{
-  if (nowMode == SPECTRUM_MODE)
+  if (data[data.length() - 1] != COMMAND_STOP_CHAR)
   {
-    if (millis() - spectrumDrawer->GetLastUpdateTime() > SpectrumOffTime)
-    {
-      SetModeClock();
-    }
+    return;
   }
-}
 
-String GetSpectrumData()
-{
-  String data = SET_LINE_COUNT;
-  data += spectrumDrawer->GetLineCount();
-  data += STOP_CHAR;
-  data += SET_MAX_DATA;
-  data += spectrumDrawer->GetMaxLineLength();
-  data += STOP_CHAR;
-  return data;
-}
-
-void CheckCommand(String &data)
-{
-  if (data.startsWith(SET_MODE_SPECTRUM))
+  if (data.startsWith(COMMAND_SET_MODE_SPECTRUM))
   {
-    SetModeSpectrum();
-    Serial.print(GetSpectrumData());
+    SetActiveScreen(visualizerScreen, Mode::SPECTRUM_MODE);
   }
-  else if (data.startsWith(SEND_SPECTRUM_DATA))
+  else if (data.startsWith(COMMAND_SEND_SPECTRUM_DATA))
   {
     if (nowMode != SPECTRUM_MODE)
     {
       return;
     }
-    ParseSpectrum(data);
   }
-}
-
-void ParseSpectrum(String &data)
-{
-  auto spectrumLen = spectrumDrawer->GetLineCount();
-  auto spectrumLeft = new byte[spectrumLen];
-  auto spectrumRight = new byte[spectrumLen];
-  int dateLen = data.length();
-
-  byte next = 0;
-  int spNum = 0;
-  for (int pos = String(SEND_SPECTRUM_DATA).length(); pos < dateLen; pos++)
+  else if (data.startsWith(COMMAND_RELOAD_SCREEN))
   {
-    char ch = data[pos];
-    if (ch != SPLIT_CHAR)
-    {
-      next *= 10;
-      next += ch - '0';
-    }
-    else
-    {
-      if (spNum < spectrumLen)
-      {
-        spectrumLeft[spNum] = next;
-      }
-      else
-      {
-        spectrumRight[spNum - spectrumLen] = next;
-      }
-      next = 0;
-      spNum++;
-    }
+    activeScreen->LeaveFocus();
+    activeScreen->EnterFocus();
+    return;
   }
-  spectrumDrawer->DrawSpectrum(spectrumLeft, spectrumRight);
-  delete[] spectrumLeft;
-  delete[] spectrumRight;
-}
 
-*/
+  Serial.print(activeScreen->ParseMessage(data));
+}
 
 /* #region Loop */
+
+auto asd = millis();
 
 void MyLoop()
 {
   while (Serial.available())
   {
     char ch = (char)Serial.read();
+    serialData += ch;
 
-    if (ch == STOP_CHAR)
+    if (ch == COMMAND_STOP_CHAR)
     {
-      //CheckCommand(serialData);
-      serialData = "";
-    }
-    else
-    {
-      serialData += ch;
+      CheckCommand(serialData);
+      serialData.clear();
     }
   }
 

@@ -1,5 +1,11 @@
 #include "SpectrumDrawer.h"
 
+#include "FileNames.h"
+
+#include "Utils/FileSystem/FileSystem.h"
+#include "Utils/DrawUtils/Color.h"
+#include "Utils/Parsers/JsonParser.h"
+
 namespace SpectrumDrawer
 {
 
@@ -8,8 +14,16 @@ namespace SpectrumDrawer
 #define LINE_SPACE 1
 #define RECT_SIZE 1
 
+#define CONFIG_BACK_COLOR F("backColor")
+#define CONFIG_LOW_COLOR F("lowColor")
+#define CONFIG_MEDIUM_COLOR F("mediumColor")
+#define CONFIG_HIGH_COLOR F("highColor")
+#define CONFIG_MAX_COLOR F("maxColor")
+
     SpectrumDrawer::SpectrumDrawer(TFT_eSPI &lcd, int width, int height) : ScreenDrawer(lcd, width, height)
     {
+        this->LoadConfig();
+
         this->spectrumLineCount = width / (LINE_SIZE + LINE_SPACE);
         this->spectrumMaxSize = height * SPECTRUM_MAX_PROC / 100;
         while (this->spectrumMaxSize % 3 != 0)
@@ -18,27 +32,15 @@ namespace SpectrumDrawer
         }
         this->spectrumMaxSizeDiv3 = this->spectrumMaxSize / 3;
 
-        this->backColor = this->lcd->color565(0, 0, 0);
-        this->lowColor = this->lcd->color565(0, 255, 0);
-        this->mediumColor = this->lcd->color565(255, 255, 0);
-        this->highColor = this->lcd->color565(255, 0, 0);
-        this->maxColor = this->lcd->color565(0, 255, 255);
-
         this->nowLeftSpectrum = new byte[this->spectrumLineCount];
         this->maxLeftSpectrumData = new byte[this->spectrumLineCount];
 
         this->nowRightSpectrum = new byte[this->spectrumLineCount];
         this->maxRightSpectrumData = new byte[this->spectrumLineCount];
-
-        this->Reset();
-
-        this->lcd->drawString("wait data", 0, 0, 1, TFT_BLUE);
     }
 
     void SpectrumDrawer::DrawSpectrum(byte *spectrumLeft, byte *spectrumRight)
     {
-        this->lastUpdateTime = millis();
-
         int leftOffsetY = this->spectrumMaxSize + 1;
         int rightOffsetY = this->lcdHeight - this->spectrumMaxSize - 1;
 
@@ -209,19 +211,70 @@ namespace SpectrumDrawer
         return this->spectrumMaxSize;
     }
 
-    const unsigned long SpectrumDrawer::GetLastUpdateTime() const
+    void SpectrumDrawer::LoadConfig()
     {
-        return this->lastUpdateTime;
+        auto json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
+        if (json.isEmpty())
+        {
+            this->CreateDefaultConfig();
+        }
+
+        const uint colorCount = 5;
+        String colorNames[colorCount]{
+            CONFIG_BACK_COLOR,
+            CONFIG_LOW_COLOR,
+            CONFIG_MEDIUM_COLOR,
+            CONFIG_HIGH_COLOR,
+            CONFIG_MAX_COLOR,
+        };
+
+        uint16_t *colors[colorCount]{
+            &this->backColor,
+            &this->lowColor,
+            &this->mediumColor,
+            &this->highColor,
+            &this->maxColor,
+        };
+
+        bool loadRes = DrawUtils::LoadColorsFromJson(json, colorNames, colors, colorCount);
+
+        if (loadRes == false)
+        {
+            this->CreateDefaultConfig();
+            this->LoadConfig();
+        }
+    }
+
+    void SpectrumDrawer::CreateDefaultConfig()
+    {
+        const uint configCount = 5;
+        String configNames[configCount]{
+            CONFIG_BACK_COLOR,
+            CONFIG_LOW_COLOR,
+            CONFIG_MEDIUM_COLOR,
+            CONFIG_HIGH_COLOR,
+            CONFIG_MAX_COLOR,
+        };
+
+        String datas[configCount]{
+            DrawUtils::GetJsonColor(0, 0, 0),
+            DrawUtils::GetJsonColor(0, 255, 0),
+            DrawUtils::GetJsonColor(255, 255, 0),
+            DrawUtils::GetJsonColor(255, 0, 0),
+            DrawUtils::GetJsonColor(0, 255, 255),
+        };
+
+        FileSystem::WriteFile(
+            SPECTRUM_CONFIG_PATH,
+            JsonParser::BuildJson(configNames, datas, configCount));
     }
 
     void SpectrumDrawer::Reset()
     {
-        this->lastUpdateTime = millis();
         memset(this->nowLeftSpectrum, 0, this->spectrumLineCount);
         memset(this->maxLeftSpectrumData, 0, this->spectrumLineCount);
         memset(this->nowRightSpectrum, 0, this->spectrumLineCount);
         memset(this->maxRightSpectrumData, 0, this->spectrumLineCount);
-
         this->lcd->fillScreen(this->backColor);
     }
 

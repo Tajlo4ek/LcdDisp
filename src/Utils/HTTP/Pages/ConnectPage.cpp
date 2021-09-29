@@ -1,55 +1,70 @@
+#include "ConnectPage.h"
 
-#include <ESP8266WebServer.h>
 #include "Utils/FileSystem/FileSystem.h"
 #include "Utils/Internet/WifiUtils.h"
 
-namespace ConnectPage
+#include "FileNames.h"
+
+namespace Pages
 {
-    void Page();
-
-    ESP8266WebServer *_HTTP;
-
-    void Init(ESP8266WebServer &server)
+    ConnectPage::ConnectPage(ESP8266WebServer &server) : Pages::BasePage(server)
     {
-        _HTTP = &server;
-
-        _HTTP->on(F("/connect"), Page);
+        _HTTP->on(F("/connect"), std::bind(&ConnectPage::Page, this));
+        _HTTP->on(F("/connect/getSSID"), std::bind(&ConnectPage::GetSSID, this));
+        _HTTP->on(F("/connect/setWiFi"), std::bind(&ConnectPage::SetWiFi, this));
     }
 
-    void Page()
+    void ConnectPage::Page()
     {
-        auto page = FileSystem::ReadFile(F("/connect.htm"));
+        auto page = FileSystem::ReadFile(CONNECT_PAGE_PATH);
+        _HTTP->send(200, F("text/html"), page);
+    }
+
+    void ConnectPage::GetSSID()
+    {
+        String json = F("{\"SSIDs\":[");
+
+        int wifiCount = WiFi.scanNetworks();
+        for (int i = 0; i < wifiCount; i++)
+        {
+            json += '"';
+            json += WiFi.SSID(i);
+            json += '"';
+            json += ',';
+        }
+
+        if (json[json.length() - 1] == ',')
+        {
+            json.setCharAt(json.length() - 1, ']');
+        }
+        else
+        {
+            json += ']';
+        }
+
+        json += '}';
+
+        _HTTP->send(200, F("text/json"), json);
+    }
+
+    void ConnectPage::SetWiFi()
+    {
         String ssidNew = _HTTP->arg(F("ssid"));
         String passNew = _HTTP->arg(F("pass"));
 
-        if (ssidNew == "" || passNew == "")
-        {
-            String buf = "";
-            int wifiCount = WiFi.scanNetworks();
-            for (int i = 0; i < wifiCount; i++)
-            {
-                buf += F("<option>");
-                buf += WiFi.SSID(i);
-                buf += F("</option>");
-            }
-            if (wifiCount == 0)
-            {
-                buf = F("<option>no WiFi network</option>");
-            }
-            page.replace(F("|past wifi items|"), buf);
-            buf = "";
-        }
-        else
+        if (ssidNew.isEmpty() == false && passNew.isEmpty() == false)
         {
             WifiUtils::WiFiConfig config;
             config.ssid = ssidNew;
             config.password = passNew;
             WifiUtils::SaveWiFiConfig(config);
-            _HTTP->send(200, F("text/html"), FileSystem::ReadFile(F("/connectSuccess.htm")));
-            delay(3000);
+
+            _HTTP->send(200, F("text/html"), F("Data save. ESP reset."));
+            delay(2000);
             ESP.restart();
         }
 
-        _HTTP->send(200, F("text/html"), page);
+        _HTTP->send(200, F("text/html"), F("bad data"));
     }
+
 }

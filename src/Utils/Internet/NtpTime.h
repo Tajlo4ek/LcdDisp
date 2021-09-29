@@ -5,9 +5,8 @@
 
 namespace NtpTime
 {
-
-#define ntpServerName "2.ru.pool.ntp.org"
-#define udpPort 2390
+#define NTP_SERVER_NAME F("2.ru.pool.ntp.org")
+#define UDP_PORT 2390
 #define NTP_PACKET_SIZE 48
 
     typedef std::function<void(unsigned int)> NotBlockDelay;

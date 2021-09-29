@@ -17,7 +17,7 @@ namespace MainScreen
         void GetWeather();
         void CheckTimeSync();
 
-        bool isTimeSync;        
+        bool isTimeSync;
 
         Clock::Clock myClock;
         ClockDrawer::BaseClockDrawer *clockDrawer;
@@ -36,10 +36,9 @@ namespace MainScreen
         void EnterFocus() override;
         void LeaveFocus() override;
         void Loop() override;
+        String ParseMessage(const String &message) override;
 
-        void SetEthernetAvailable(bool val) override;
-
-        MainScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, NotBlockDelay notBlockDelay);
+        MainScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, NotBlockDelay notBlockDelay);
         ~MainScreen();
     };
 }

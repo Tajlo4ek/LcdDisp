@@ -6,18 +6,18 @@
 namespace WifiUtils
 {
 
-#define BaseIp "192.168.0.43"
+#define BASE_IP_STRING F("192.168.0.43")
 
     typedef void (*TryConnectCallback)(int);
-    
+
     struct WiFiConfig
     {
         String ssid;
         String password;
     };
 
-    bool ConnectWifi(String ssid, String password, uint connectTries, TryConnectCallback callback);
-    void StartAP(String ssid, String password);
+    bool ConnectWifi(const String &ssid, const String &password, uint connectTries, TryConnectCallback callback);
+    void StartAP(const String &ssid, const String &password);
 
     WiFiConfig LoadWiFiConfig();
     void SaveWiFiConfig(WiFiConfig config);

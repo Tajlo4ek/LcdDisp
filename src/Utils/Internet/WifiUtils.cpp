@@ -1,17 +1,21 @@
 #include "WifiUtils.h"
 
+#include "FileNames.h"
+
 #include "Utils/FileSystem/FileSystem.h"
 #include "Utils/Parsers/JsonParser.h"
+#include "Utils/Logger/Logger.h"
 
 namespace WifiUtils
 {
-#define SSID "ssid"
-#define PASSWORD "pass"
 
-#define DEFAULT_SSID "no_data"
-#define DEFAULT_PASSWORD ""
+#define SSID F("ssid")
+#define PASSWORD F("pass")
 
-    bool ConnectWifi(String ssid, String password, uint connectTries, TryConnectCallback callback = nullptr)
+#define DEFAULT_SSID F("no_data")
+#define DEFAULT_PASSWORD F("password")
+
+    bool ConnectWifi(const String &ssid, const String &password, uint connectTries, TryConnectCallback callback = nullptr)
     {
         WiFi.mode(WIFI_STA);
         WiFi.begin(ssid.c_str(), password.c_str());
@@ -21,19 +25,17 @@ namespace WifiUtils
             {
                 callback(connectTries);
             }
-            Serial.println(connectTries);
             delay(1000);
         }
-        Serial.println(GetIpString());
         return WiFi.status() == WL_CONNECTED;
     }
 
-    void StartAP(String ssid, String password)
+    void StartAP(const String &ssid, const String &password)
     {
         WiFi.disconnect();
         WiFi.mode(WIFI_AP);
         IPAddress apIP;
-        apIP.fromString(BaseIp);
+        apIP.fromString(BASE_IP_STRING);
         WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
         WiFi.softAP(ssid, password);
     }
@@ -48,11 +50,11 @@ namespace WifiUtils
         }
         else if (wifiMode == WIFI_AP)
         {
-            return BaseIp;
+            return BASE_IP_STRING;
         }
         else
         {
-            return "error";
+            return F("error");
         }
     }
 
@@ -62,12 +64,13 @@ namespace WifiUtils
         config.ssid = DEFAULT_SSID;
         config.password = DEFAULT_PASSWORD;
 
-        if (FileSystem::FileExists(FileSystem::WifiConfigFileName) == false)
+        if (FileSystem::FileExists(WIFI_CONFIG_PATH) == false)
         {
+            SaveWiFiConfig(config);
             return config;
         }
 
-        String json = FileSystem::ReadFile(FileSystem::WifiConfigFileName);
+        String json = FileSystem::ReadFile(WIFI_CONFIG_PATH);
 
         bool isOk = false;
         auto ssid = JsonParser::GetJsonData(json, SSID, isOk);
@@ -89,10 +92,11 @@ namespace WifiUtils
 
     void SaveWiFiConfig(WiFiConfig config)
     {
-        String *names = new String[2]{SSID, PASSWORD};
-        String *data = new String[2]{config.ssid, config.password};
-        String json = JsonParser::BuildJson(names, data, 2);
-        FileSystem::WriteFile(FileSystem::WifiConfigFileName, json);
+        const int dataCount = 2;
+        String names[dataCount]{SSID, PASSWORD};
+        String data[dataCount]{config.ssid, config.password};
+        String json = JsonParser::BuildJson(names, data, dataCount);
+        FileSystem::WriteFile(WIFI_CONFIG_PATH, json);
     }
 
 } // namespace WifiUtils
