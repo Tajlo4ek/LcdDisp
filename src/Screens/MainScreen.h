@@ -37,6 +37,7 @@ namespace MainScreen
         void LeaveFocus() override;
         void Loop() override;
         String ParseMessage(const String &message) override;
+        void ReloadConfig() override;
 
         MainScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, NotBlockDelay notBlockDelay);
         ~MainScreen();

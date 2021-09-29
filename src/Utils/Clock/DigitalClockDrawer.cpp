@@ -35,7 +35,7 @@ namespace ClockDrawer
         this->spaceDiv4 = (this->lcdHeight - this->blockWidth * 2) / 4;
     }
 
-    void DigitalClockDrawer::LoadConfig()
+    void DigitalClockDrawer::ReloadConfig()
     {
         auto json = FileSystem::ReadFile(DIGITAL_CLOCK_CONFIG_PATH);
         if (json.isEmpty())
@@ -61,7 +61,15 @@ namespace ClockDrawer
         if (loadRes == false)
         {
             this->CreateDefaultConfig();
-            this->LoadConfig();
+            this->ReloadConfig();
+        }
+        else
+        {
+            this->lcd->fillScreen(this->backColor);
+            DateChanged();
+            TimeChanged();
+            WeatherChanged();
+            MessageChanged();
         }
     }
 
@@ -87,13 +95,12 @@ namespace ClockDrawer
 
     void DigitalClockDrawer::Init()
     {
-        this->LoadConfig();
+        this->ReloadConfig();
         this->lcd->fillScreen(this->backColor);
     }
 
     void DigitalClockDrawer::WeatherChanged()
     {
-
         auto weatherNow = this->weatherData->GetCurrentValue();
 
         auto weatherImage = WeatherImages::GetImage(weatherNow.imageName);

@@ -1,6 +1,7 @@
 #include "MainScreen.h"
 
 #include "FileNames.h"
+#include "Commands.h"
 
 #include "Utils/Internet/NtpTime.h"
 #include "Utils/Internet/Weather.h"
@@ -61,6 +62,11 @@ namespace MainScreen
     String MainScreen::ParseMessage(const String &message)
     {
         return String();
+    }
+
+    void MainScreen::ReloadConfig()
+    {
+        clockDrawer->ReloadConfig();
     }
 
     void MainScreen::EnterFocus()

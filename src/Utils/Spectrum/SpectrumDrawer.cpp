@@ -22,7 +22,7 @@ namespace SpectrumDrawer
 
     SpectrumDrawer::SpectrumDrawer(TFT_eSPI &lcd, int width, int height) : ScreenDrawer(lcd, width, height)
     {
-        this->LoadConfig();
+        this->ReloadConfig();
 
         this->spectrumLineCount = width / (LINE_SIZE + LINE_SPACE);
         this->spectrumMaxSize = height * SPECTRUM_MAX_PROC / 100;
@@ -211,7 +211,7 @@ namespace SpectrumDrawer
         return this->spectrumMaxSize;
     }
 
-    void SpectrumDrawer::LoadConfig()
+    void SpectrumDrawer::ReloadConfig()
     {
         auto json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
         if (json.isEmpty())
@@ -241,7 +241,7 @@ namespace SpectrumDrawer
         if (loadRes == false)
         {
             this->CreateDefaultConfig();
-            this->LoadConfig();
+            this->ReloadConfig();
         }
     }
 

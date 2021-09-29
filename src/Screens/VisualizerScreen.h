@@ -21,6 +21,7 @@ namespace VisualizerScreen
         void LeaveFocus() override;
         void Loop() override;
         String ParseMessage(const String &message) override;
+        void ReloadConfig() override;
 
         VisualizerScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, int offTime);
     };

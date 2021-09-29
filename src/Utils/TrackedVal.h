@@ -46,6 +46,7 @@ namespace TrackedVal
             return this->currentVal;
         }
 
+        //TODO: remove
         T GetPrevievValue()
         {
             return this->prevVal;

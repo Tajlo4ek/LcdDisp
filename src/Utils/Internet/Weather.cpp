@@ -52,6 +52,8 @@ namespace Weather
 
     void ParseWeather(const String &json, WeatherData &weather, bool &isOk)
     {
+
+        //TODO: code 0 ?
         auto cod = JsonParser::GetJsonData(json, F("cod")).toInt();
         if (cod != 200)
         {
@@ -62,6 +64,8 @@ namespace Weather
 
             String log = F("weather error. code:");
             log += cod;
+            log += F("json: ");
+            log += json;
             Logger::Log(log);
             return;
         }
