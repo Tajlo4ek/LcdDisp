@@ -271,10 +271,13 @@ namespace Drawers
 
     void SpectrumDrawer::Reset()
     {
-        memset(this->nowLeftSpectrum, 0, this->spectrumLineCount);
-        memset(this->maxLeftSpectrumData, 0, this->spectrumLineCount);
-        memset(this->nowRightSpectrum, 0, this->spectrumLineCount);
-        memset(this->maxRightSpectrumData, 0, this->spectrumLineCount);
+        for (int i = 0; i < this->spectrumLineCount; i++)
+        {
+            this->nowLeftSpectrum[i] =0;
+            this->maxLeftSpectrumData[i] =0;
+            this->nowRightSpectrum[i] =0;
+            this->maxRightSpectrumData[i] =0;
+        }
         this->ReDraw();
     }
 
