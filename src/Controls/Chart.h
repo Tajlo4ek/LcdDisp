@@ -18,6 +18,7 @@ namespace Controls
 
         int valueCount;
         int *values;
+        float scaleVal;
 
         void DrawChart();
 

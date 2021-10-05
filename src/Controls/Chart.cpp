@@ -19,6 +19,8 @@ namespace Controls
         this->valueCount = rect.width / STEP_SIZE + 1;
         this->values = new int[valueCount + 1];
 
+        scaleVal = rect.height / 100.0F;
+
         ResetValues();
     }
 
@@ -28,11 +30,19 @@ namespace Controls
         DrawChart();
     }
 
-    void Chart::AddValue(const float value)
+    void Chart::AddValue(float value)
     {
         DrawChart();
 
-        this->values[this->valueCount] = value > 100 ? 100 : (int)value;
+        if (value > 100)
+        {
+            value = 100;
+        }
+        else if (value < 0)
+        {
+            value = 0;
+        }
+        this->values[this->valueCount] = (int)(value * scaleVal);
 
         for (int i = 0; i < this->valueCount; i++)
         {
