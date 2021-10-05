@@ -10,15 +10,22 @@ namespace BaseScreen
     class Screen
     {
 
+    private:
+        OnScreenWorkEnd onScreenWorkEnd = nullptr;
+
     protected:
         bool hasEthernet;
         TFT_eSPI *lcd;
 
-        OnScreenWorkEnd onScreenWorkEnd = nullptr;
-
     public:
         virtual void EnterFocus() = 0;
-        virtual void LeaveFocus() = 0;
+        virtual void LeaveFocus()
+        {
+            if (onScreenWorkEnd != nullptr)
+            {
+                onScreenWorkEnd();
+            }
+        };
         virtual void Loop() = 0;
         virtual String ParseMessage(const String &message) = 0;
         virtual void ReloadConfig() = 0;

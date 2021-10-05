@@ -10,7 +10,7 @@ namespace VisualizerScreen
     {
         this->spectrumCheckTimer.callback = [this]()
         {
-            this->onScreenWorkEnd();
+            this->LeaveFocus();
         };
         this->spectrumCheckTimer.SetInterval(offTime);
         this->spectrumCheckTimer.Stop();
@@ -95,6 +95,7 @@ namespace VisualizerScreen
     void VisualizerScreen::LeaveFocus()
     {
         this->spectrumCheckTimer.Stop();
+        Screen::LeaveFocus();
     }
 
     void VisualizerScreen::Loop()
