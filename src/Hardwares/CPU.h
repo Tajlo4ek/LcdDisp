@@ -6,8 +6,7 @@ namespace Hardwares
 {
     class CPU : public Hardware
     {
-
-    private:
+    public:
         struct CpuCore
         {
             int temp;
@@ -15,14 +14,20 @@ namespace Hardwares
             int clock;
         };
 
-        int coreCount;
-        CpuCore *cores;
-
-    public:
         void AddData(const String &json) override;
 
+        int GetAvgLoad();
+        int GetAvgTemp();
+
+        const int GetCoreCount();
+        const CpuCore *GetCores();
+
         CPU(const String &json);
-        ~CPU() override;
+        ~CPU();
+
+    private:
+        int coreCount;
+        CpuCore *cores;
     };
 
 }

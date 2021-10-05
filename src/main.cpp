@@ -75,9 +75,6 @@ void setup()
   visualizerScreen = new VisualizerScreen::VisualizerScreen(&lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, SPECTRUM_OFF_TIME);
 
   SetActiveScreen(mainScreen, MAIN_MODE);
-
-  String json = "{\"cpuCount\":\"1\",\"hddCount\":\"2\",\"gpuCount\":\"1\",\"ramCount\":\"1\",\"cpu\":[{\"name\":\"Intel Core i3-4160\",\"coreCount\":\"2\",\"cores\":[{\"temp\":\"44\",\"load\":\"26\",\"clock\":\"1497\",\"num\":\"1\"},{\"temp\":\"45\",\"load\":\"24\",\"clock\":\"1497\",\"num\":\"2\"}]}],\"hdd\":[{\"name\":\"Samsung SSD 860 EVO 250GB\",\"temp\":\"38\",\"used\":\"55.9\",\"written\":\"13746\"},{\"name\":\"ST1000DM010-2EP102\",\"temp\":\"34\",\"used\":\"23.4\",\"written\":\"-1\"}],\"gpu\":[{\"name\":\"NVIDIA GeForce GTX 1050 Ti\",\"temp\":\"39\",\"clock\":\"607.5\",\"loadMem\":\"9.9\",\"fanRpm\":\"0\",\"fanPr\":\"0\",\"totalMem\":\"4096\"}],\"ram\":[{\"name\":\"Generic Memory\",\"usedPr\":\"42.76\",\"total\":\"15.9\"}]}";
-  ParsePcData(json);
 }
 
 void InitWiFi()
@@ -179,18 +176,24 @@ void ParseCpuData(const String &json, int cpuCount)
 
     cpuScreens = new HardwareScreens::CpuScreen *[cpuCount];
     cpuScreenCount = cpuCount;
+
+    for (int i = 0; i < cpuCount; i++)
+    {
+      cpuScreens[i] = new HardwareScreens::CpuScreen(&lcd, OnScreenWorkEnd);
+    }
+
+    if (cpuScreenCount != 0)
+    {
+      SetActiveScreen(cpuScreens[0], VIEW_HARDWARE_MODE);
+    }
   }
 
   for (int i = 0; i < cpuCount; i++)
   {
-    cpuScreens[i] = new HardwareScreens::CpuScreen(&lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd);
     cpuScreens[i]->ParseMessage(cpuDatas[i]);
   }
 
-  if (cpuScreenCount != 0)
-  {
-    SetActiveScreen(cpuScreens[0], VIEW_HARDWARE_MODE);
-  }
+  delete[] cpuDatas;
 }
 
 /* #region Loop */
@@ -228,6 +231,10 @@ void NotBlockDelay(unsigned long delayTime)
 
 void loop()
 {
+  String json = "{\"cpuCount\":\"1\",\"hddCount\":\"2\",\"gpuCount\":\"1\",\"ramCount\":\"1\",\"cpu\":[{\"name\":\"Intel Core i3-4160\",\"coreCount\":\"2\",\"cores\":[{\"temp\":\"44\",\"load\":\"26\",\"clock\":\"1497\",\"num\":\"1\"},{\"temp\":\"45\",\"load\":\"24\",\"clock\":\"1497\",\"num\":\"2\"}]}],\"hdd\":[{\"name\":\"Samsung SSD 860 EVO 250GB\",\"temp\":\"38\",\"used\":\"55.9\",\"written\":\"13746\"},{\"name\":\"ST1000DM010-2EP102\",\"temp\":\"34\",\"used\":\"23.4\",\"written\":\"-1\"}],\"gpu\":[{\"name\":\"NVIDIA GeForce GTX 1050 Ti\",\"temp\":\"39\",\"clock\":\"607.5\",\"loadMem\":\"9.9\",\"fanRpm\":\"0\",\"fanPr\":\"0\",\"totalMem\":\"4096\"}],\"ram\":[{\"name\":\"Generic Memory\",\"usedPr\":\"42.76\",\"total\":\"15.9\"}]}";
+  ParsePcData(json);
+
+  delay(1000);
   MyLoop();
 }
 

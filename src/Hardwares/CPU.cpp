@@ -28,6 +28,50 @@ namespace Hardwares
             this->cores[coreNum].load = JsonParser::GetJsonData(coreDatas[coreNum], "load").toInt();
             this->cores[coreNum].clock = JsonParser::GetJsonData(coreDatas[coreNum], "clock").toInt();
         }
+
+        delete[] coreDatas;
+    }
+
+    int CPU::GetAvgLoad()
+    {
+        if (coreCount == 0)
+        {
+            return 0;
+        }
+
+        int load = 0;
+        for (int i = 0; i < coreCount; i++)
+        {
+            load += cores[i].load;
+        }
+
+        return load / coreCount;
+    }
+
+    int CPU::GetAvgTemp()
+    {
+        if (coreCount == 0)
+        {
+            return 0;
+        }
+
+        int temp = 0;
+        for (int i = 0; i < coreCount; i++)
+        {
+            temp += cores[i].temp;
+        }
+
+        return temp / coreCount;
+    }
+
+    const CPU::CpuCore *CPU::GetCores()
+    {
+        return cores;
+    }
+
+    const int CPU::GetCoreCount()
+    {
+        return coreCount;
     }
 
     CPU::~CPU()
