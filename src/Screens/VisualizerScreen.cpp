@@ -15,7 +15,7 @@ namespace VisualizerScreen
         this->spectrumCheckTimer.SetInterval(offTime);
         this->spectrumCheckTimer.Stop();
 
-        this->spectrumDrawer = new SpectrumDrawer::SpectrumDrawer(lcd, lcdWidth, lcdHeight);
+        this->spectrumDrawer = new Drawers::SpectrumDrawer(lcd, lcdWidth, lcdHeight);
     }
 
     void VisualizerScreen::ReloadConfig()

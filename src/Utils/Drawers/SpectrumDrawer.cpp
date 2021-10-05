@@ -6,7 +6,7 @@
 #include "Utils/DrawUtils/Color.h"
 #include "Utils/Parsers/JsonParser.h"
 
-namespace SpectrumDrawer
+namespace Drawers
 {
 
 #define SPECTRUM_MAX_PROC 45

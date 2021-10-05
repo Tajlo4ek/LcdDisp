@@ -3,7 +3,7 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 
-namespace ScreenDrawer
+namespace Drawers
 {
     class ScreenDrawer
     {
@@ -23,5 +23,10 @@ namespace ScreenDrawer
         }
 
         virtual void ReloadConfig() = 0;
+
+        virtual ~ScreenDrawer()
+        {
+            lcd = nullptr;
+        }
     };
 }

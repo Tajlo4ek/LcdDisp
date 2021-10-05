@@ -2,7 +2,7 @@
 
 #include "BaseClockDrawer.h"
 
-namespace ClockDrawer
+namespace Drawers
 {
     class DigitalClockDrawer : public BaseClockDrawer
     {

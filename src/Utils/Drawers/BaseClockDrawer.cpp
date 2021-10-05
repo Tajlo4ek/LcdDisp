@@ -1,6 +1,6 @@
 #include "BaseClockDrawer.h"
 
-namespace ClockDrawer
+namespace Drawers
 {
     BaseClockDrawer::BaseClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock) : ScreenDrawer(lcd, width, height)
     {

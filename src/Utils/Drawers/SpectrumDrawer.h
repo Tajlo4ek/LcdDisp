@@ -3,7 +3,7 @@
 #include "ScreenDrawer.h"
 #include "Utils/TrackedVal.h"
 
-namespace SpectrumDrawer
+namespace Drawers
 {
     class SpectrumDrawer : public ScreenDrawer::ScreenDrawer
     {

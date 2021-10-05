@@ -7,7 +7,7 @@
 #include "Utils/DrawUtils/Color.h"
 #include "Utils/Parsers/JsonParser.h"
 
-namespace ClockDrawer
+namespace Drawers
 {
 #define SPACE_SIZE 3
 #define CONFIG_BACK_COLOR F("backColor")

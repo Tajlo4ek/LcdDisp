@@ -7,7 +7,7 @@
 #include "Utils/Drawers/ScreenDrawer.h"
 #include "Utils/Internet/Weather.h"
 
-namespace ClockDrawer
+namespace Drawers
 {
     class BaseClockDrawer : public ScreenDrawer::ScreenDrawer
     {

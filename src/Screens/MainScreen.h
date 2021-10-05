@@ -20,7 +20,7 @@ namespace MainScreen
         bool isTimeSync;
 
         Clock::Clock myClock;
-        ClockDrawer::BaseClockDrawer *clockDrawer;
+        Drawers::BaseClockDrawer *clockDrawer;
         MillisTimer::Timer clockTimer;
         MillisTimer::Timer timeSyncTimer;
         MillisTimer::Timer resetSyncTimer;

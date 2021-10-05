@@ -10,7 +10,7 @@ namespace VisualizerScreen
     class VisualizerScreen : public BaseScreen::Screen
     {
     private:
-        SpectrumDrawer::SpectrumDrawer *spectrumDrawer;
+        Drawers::SpectrumDrawer *spectrumDrawer;
         MillisTimer::Timer spectrumCheckTimer;
 
         String GetSpectrumData();
