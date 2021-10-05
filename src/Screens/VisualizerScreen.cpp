@@ -1,12 +1,12 @@
 #include "VisualizerScreen.h"
 
-#include "Utils/Spectrum/SpectrumDrawer.h"
+#include "Utils/Drawers/SpectrumDrawer.h"
 #include "Commands.h"
 
 namespace VisualizerScreen
 {
-    VisualizerScreen::VisualizerScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, int offTime)
-        : BaseScreen::Screen(onWorkEnd)
+    VisualizerScreen::VisualizerScreen(TFT_eSPI *lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, int offTime)
+        : BaseScreen::Screen(lcd, onWorkEnd)
     {
         this->spectrumCheckTimer.callback = [this]()
         {
@@ -15,7 +15,7 @@ namespace VisualizerScreen
         this->spectrumCheckTimer.SetInterval(offTime);
         this->spectrumCheckTimer.Stop();
 
-        this->spectrumDrawer = new SpectrumDrawer::SpectrumDrawer(lcd, lcdWidth, lcdHeight);
+        this->spectrumDrawer = new Drawers::SpectrumDrawer(lcd, lcdWidth, lcdHeight);
     }
 
     void VisualizerScreen::ReloadConfig()
@@ -25,7 +25,7 @@ namespace VisualizerScreen
 
     String VisualizerScreen::ParseMessage(const String &message)
     {
-        //TODO: smt crash 
+        //TODO: smt crash
         if (message.startsWith(COMMAND_SET_MODE_SPECTRUM))
         {
             return GetSpectrumData();

@@ -1,8 +1,8 @@
 #include "BaseClockDrawer.h"
 
-namespace ClockDrawer
+namespace Drawers
 {
-    BaseClockDrawer::BaseClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock) : ScreenDrawer(lcd, width, height)
+    BaseClockDrawer::BaseClockDrawer(TFT_eSPI *lcd, int width, int height, Clock::Clock &clock) : ScreenDrawer(lcd, width, height)
     {
         this->myClock = &clock;
 
@@ -25,8 +25,8 @@ namespace ClockDrawer
 
         if (isError)
         {
-            data.temp = this->weatherData->GetPrevievValue().temp;
-            data.imageName = this->weatherData->GetPrevievValue().imageName;
+            data.temp = this->weatherData->GetValue().temp;
+            data.imageName = this->weatherData->GetValue().imageName;
         }
         else
         {

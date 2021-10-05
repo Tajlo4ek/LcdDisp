@@ -3,14 +3,14 @@
 #include "BaseScreen.h"
 
 #include "Utils/Timer/MillisTimer.h"
-#include "Utils/Spectrum/SpectrumDrawer.h"
+#include "Utils/Drawers/SpectrumDrawer.h"
 
 namespace VisualizerScreen
 {
     class VisualizerScreen : public BaseScreen::Screen
     {
     private:
-        SpectrumDrawer::SpectrumDrawer *spectrumDrawer;
+        Drawers::SpectrumDrawer *spectrumDrawer;
         MillisTimer::Timer spectrumCheckTimer;
 
         String GetSpectrumData();
@@ -23,6 +23,6 @@ namespace VisualizerScreen
         String ParseMessage(const String &message) override;
         void ReloadConfig() override;
 
-        VisualizerScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, int offTime);
+        VisualizerScreen(TFT_eSPI *lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, int offTime);
     };
 }

@@ -6,7 +6,7 @@
 #include "Utils/DrawUtils/Color.h"
 #include "Utils/Parsers/JsonParser.h"
 
-namespace SpectrumDrawer
+namespace Drawers
 {
 
 #define SPECTRUM_MAX_PROC 45
@@ -20,7 +20,7 @@ namespace SpectrumDrawer
 #define CONFIG_HIGH_COLOR F("highColor")
 #define CONFIG_MAX_COLOR F("maxColor")
 
-    SpectrumDrawer::SpectrumDrawer(TFT_eSPI &lcd, int width, int height) : ScreenDrawer(lcd, width, height)
+    SpectrumDrawer::SpectrumDrawer(TFT_eSPI *lcd, int width, int height) : ScreenDrawer(lcd, width, height)
     {
         this->ReloadConfig();
 
@@ -271,11 +271,20 @@ namespace SpectrumDrawer
 
     void SpectrumDrawer::Reset()
     {
-        memset(this->nowLeftSpectrum, 0, this->spectrumLineCount);
-        memset(this->maxLeftSpectrumData, 0, this->spectrumLineCount);
-        memset(this->nowRightSpectrum, 0, this->spectrumLineCount);
-        memset(this->maxRightSpectrumData, 0, this->spectrumLineCount);
+        for (int i = 0; i < this->spectrumLineCount; i++)
+        {
+            this->nowLeftSpectrum[i] =0;
+            this->maxLeftSpectrumData[i] =0;
+            this->nowRightSpectrum[i] =0;
+            this->maxRightSpectrumData[i] =0;
+        }
+        this->ReDraw();
+    }
+
+    void SpectrumDrawer::ReDraw()
+    {
         this->lcd->fillScreen(this->backColor);
+        DrawSpectrum(this->nowLeftSpectrum, this->nowRightSpectrum);
     }
 
 }

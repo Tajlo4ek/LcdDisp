@@ -69,6 +69,48 @@ namespace JsonParser
         return GetJsonData(json, name, isOk);
     }
 
+    void ParseJsonArray(const String &json, const int itemCount, String *output)
+    {
+        int index = 1;
+        int countBracket = 0;
+        int parsed = 0;
+        String buf;
+
+        while (true)
+        {
+            char ch = json[index];
+
+            if (ch == '{')
+            {
+                countBracket++;
+            }
+            else if (ch == '}')
+            {
+                countBracket--;
+            }
+
+            if (countBracket == 0 && (ch == ',' || ch == ']'))
+            {
+                output[parsed] = buf;
+                buf.clear();
+                parsed++;
+
+                index = json.indexOf(',', index);
+
+                if (parsed == itemCount)
+                {
+                    break;
+                }
+            }
+            else
+            {
+                buf += ch;
+            }
+
+            index++;
+        }
+    }
+
     String BuildJson(const String *names, const String *data, int dataCount)
     {
         String json = String('{');
@@ -104,4 +146,5 @@ namespace JsonParser
 
         return json;
     }
+
 }

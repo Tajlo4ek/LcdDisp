@@ -57,10 +57,10 @@ void setup()
   HttpServer::Init(CheckCommand);
 
   activeScreen = nullptr;
-  mainScreen = new MainScreen::MainScreen(lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, NotBlockDelay);
+  mainScreen = new MainScreen::MainScreen(&lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, NotBlockDelay);
   mainScreen->SetEthernetAvailable(isSTA);
 
-  visualizerScreen = new VisualizerScreen::VisualizerScreen(lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, SPECTRUM_OFF_TIME);
+  visualizerScreen = new VisualizerScreen::VisualizerScreen(&lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, SPECTRUM_OFF_TIME);
 
   SetActiveScreen(mainScreen, MAIN_MODE);
 }

@@ -7,14 +7,14 @@
 #include "Utils/DrawUtils/Color.h"
 #include "Utils/Parsers/JsonParser.h"
 
-namespace ClockDrawer
+namespace Drawers
 {
 #define SPACE_SIZE 3
 #define CONFIG_BACK_COLOR F("backColor")
 #define CONFIG_CLOCK_MAIN_COLOR F("clockMainColor")
 #define CONFIG_CLOCK_SECOND_COLOR F("clockSecondColor")
 
-    DigitalClockDrawer::DigitalClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock)
+    DigitalClockDrawer::DigitalClockDrawer(TFT_eSPI *lcd, int width, int height, Clock::Clock &clock)
         : BaseClockDrawer::BaseClockDrawer(lcd, width, height, clock)
     {
 
@@ -101,7 +101,7 @@ namespace ClockDrawer
 
     void DigitalClockDrawer::WeatherChanged()
     {
-        auto weatherNow = this->weatherData->GetCurrentValue();
+        auto weatherNow = this->weatherData->GetValue();
 
         auto weatherImage = WeatherImages::GetImage(weatherNow.imageName);
 
@@ -183,10 +183,9 @@ namespace ClockDrawer
 
     void DigitalClockDrawer::MessageChanged()
     {
-        auto text = this->message->GetPrevievValue();
-        this->DrawCentralText(text, 2, this->backColor, 1);
+        lcd->drawRect(0, 0, lcdWidth, 10, this->backColor);
 
-        text = this->message->GetCurrentValue();
+        auto text = this->message->GetValue();
         this->DrawCentralText(text, 2, this->clockMainColor, 1);
     }
 
@@ -227,7 +226,7 @@ namespace ClockDrawer
 
         DrawCentralText(F("sync"), textY + 1, this->backColor, 1);
 
-        if (this->isTimeSync->GetCurrentValue() == false)
+        if (this->isTimeSync->GetValue() == false)
         {
             DrawCentralText(F("not"), textY - 7, TFT_RED, 1);
 

@@ -3,8 +3,9 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 
-namespace ScreenDrawer
+namespace Drawers
 {
+
     class ScreenDrawer
     {
     protected:
@@ -15,13 +16,19 @@ namespace ScreenDrawer
         virtual void CreateDefaultConfig() = 0;
 
     public:
-        ScreenDrawer(TFT_eSPI &lcd, int lcdWidth, int lcdHeight)
+        ScreenDrawer(TFT_eSPI *lcd, int lcdWidth, int lcdHeight)
         {
-            this->lcd = &lcd;
+            this->lcd = lcd;
             this->lcdWidth = lcdWidth;
             this->lcdHeight = lcdHeight;
         }
 
         virtual void ReloadConfig() = 0;
+        virtual void ReDraw() = 0;
+
+        virtual ~ScreenDrawer()
+        {
+            lcd = nullptr;
+        }
     };
 }

@@ -2,14 +2,14 @@
 
 #include <TFT_eSPI.h>
 #include <Arduino.h>
-#include "Clock.h"
+#include "Utils/Clock/Clock.h"
 #include "Utils/TrackedVal.h"
-#include "Utils/ScreenDrawer.h"
+#include "Utils/Drawers/ScreenDrawer.h"
 #include "Utils/Internet/Weather.h"
 
-namespace ClockDrawer
+namespace Drawers
 {
-    class BaseClockDrawer : public ScreenDrawer::ScreenDrawer
+    class BaseClockDrawer : public Drawers::ScreenDrawer
     {
     protected:
         Clock::Clock *myClock;
@@ -26,12 +26,15 @@ namespace ClockDrawer
         virtual void TimeSyncChanged() = 0;
 
     public:
-        BaseClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock);
+        BaseClockDrawer(TFT_eSPI *lcd, int width, int height, Clock::Clock &clock);
         virtual void Init() = 0;
 
         void SetMessage(const String &message);
         void SetWeather(Weather::WeatherData weatherData, bool isError);
         void SetTimeSync(bool isSync);
+
+        //TODO:
+        void ReDraw() override {}
 
         ~BaseClockDrawer();
     };

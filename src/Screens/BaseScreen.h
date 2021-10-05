@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <TFT_eSPI.h>
 
 namespace BaseScreen
 {
@@ -11,6 +12,7 @@ namespace BaseScreen
 
     protected:
         bool hasEthernet;
+        TFT_eSPI *lcd;
 
         OnScreenWorkEnd onScreenWorkEnd = nullptr;
 
@@ -26,9 +28,10 @@ namespace BaseScreen
             this->hasEthernet = val;
         }
 
-        Screen(OnScreenWorkEnd onScreenWorkEnd)
+        Screen(TFT_eSPI *lcd, OnScreenWorkEnd onScreenWorkEnd)
         {
             this->onScreenWorkEnd = onScreenWorkEnd;
+            this->lcd = lcd;
         }
 
         /*virtual void OnBtnUpClick() = 0;

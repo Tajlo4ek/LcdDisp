@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Utils/ScreenDrawer.h"
+#include "ScreenDrawer.h"
 #include "Utils/TrackedVal.h"
 
-namespace SpectrumDrawer
+namespace Drawers
 {
     class SpectrumDrawer : public ScreenDrawer::ScreenDrawer
     {
     public:
-        SpectrumDrawer(TFT_eSPI &lcd, int width, int height);
+        SpectrumDrawer(TFT_eSPI *lcd, int width, int height);
 
         void DrawSpectrum(byte *spectrumLeft, byte *spectrumRight);
         const int GetLineCount() const;
@@ -18,6 +18,8 @@ namespace SpectrumDrawer
         void Reset();
 
         void ReloadConfig() override;
+
+        void ReDraw() override;
 
     private:
         int spectrumLineCount;

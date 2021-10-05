@@ -5,7 +5,7 @@
 #include "Utils/Timer/MillisTimer.h"
 #include "Utils/Timer/TimerManager.h"
 #include "Utils/Clock/Clock.h"
-#include "Utils/Clock/DigitalClockDrawer.h"
+#include "Utils/Drawers/DigitalClockDrawer.h"
 
 namespace MainScreen
 {
@@ -20,7 +20,7 @@ namespace MainScreen
         bool isTimeSync;
 
         Clock::Clock myClock;
-        ClockDrawer::BaseClockDrawer *clockDrawer;
+        Drawers::BaseClockDrawer *clockDrawer;
         MillisTimer::Timer clockTimer;
         MillisTimer::Timer timeSyncTimer;
         MillisTimer::Timer resetSyncTimer;
@@ -39,7 +39,7 @@ namespace MainScreen
         String ParseMessage(const String &message) override;
         void ReloadConfig() override;
 
-        MainScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, NotBlockDelay notBlockDelay);
+        MainScreen(TFT_eSPI *lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, NotBlockDelay notBlockDelay);
         ~MainScreen();
     };
 }

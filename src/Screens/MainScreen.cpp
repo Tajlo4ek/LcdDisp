@@ -14,10 +14,10 @@ namespace MainScreen
 #define WEATHER_CONFIG_CITY F("city")
 #define WEATHER_CONFIG_APIKEY F("apiKey")
 
-    MainScreen::MainScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, NotBlockDelay notBlockDelay)
-        : BaseScreen::Screen(onWorkEnd)
+    MainScreen::MainScreen(TFT_eSPI *lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, NotBlockDelay notBlockDelay)
+        : BaseScreen::Screen(lcd, onWorkEnd)
     {
-        this->clockDrawer = new ClockDrawer::DigitalClockDrawer(lcd, lcdWidth, lcdHeight, this->myClock);
+        this->clockDrawer = new Drawers::DigitalClockDrawer(lcd, lcdWidth, lcdHeight, this->myClock);
 
         this->notBlockDelay = notBlockDelay;
         this->isTimeSync = false;
