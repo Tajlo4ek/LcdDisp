@@ -41,7 +41,7 @@ namespace Clock
         unsigned long delta = millis() - this->lastTickTime;
         this->lastTickTime = millis();
 
-        Time nextTime = this->time->GetCurrentValue();
+        Time nextTime = this->time->GetValue();
         nextTime.milliSecond += delta;
         nextTime.second += delta / 1000.0;
         nextTime.minute += delta / 1000.0 / 60.0;
@@ -64,7 +64,7 @@ namespace Clock
 
         if (nextTime.hour >= 24)
         {
-            Date nextDate = this->date->GetCurrentValue();
+            Date nextDate = this->date->GetValue();
 
             nextTime.hour -= 24;
 
@@ -97,19 +97,19 @@ namespace Clock
 
     const Date Clock::GetDate() const
     {
-        return this->date->GetCurrentValue();
+        return this->date->GetValue();
     }
 
     const Time Clock::GetTime() const
     {
-        return this->time->GetCurrentValue();
+        return this->time->GetValue();
     }
 
     const String Clock::GetDateString() const
     {
         char res[] = "00.00.0000";
 
-        Date nowDate = this->date->GetCurrentValue();
+        Date nowDate = this->date->GetValue();
 
         res[0] = nowDate.day / 10 + 48;
         res[1] = nowDate.day % 10 + 48;

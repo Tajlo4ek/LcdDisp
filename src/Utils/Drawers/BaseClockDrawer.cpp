@@ -25,8 +25,8 @@ namespace ClockDrawer
 
         if (isError)
         {
-            data.temp = this->weatherData->GetPrevievValue().temp;
-            data.imageName = this->weatherData->GetPrevievValue().imageName;
+            data.temp = this->weatherData->GetValue().temp;
+            data.imageName = this->weatherData->GetValue().imageName;
         }
         else
         {
