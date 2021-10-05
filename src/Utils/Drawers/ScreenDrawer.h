@@ -23,6 +23,7 @@ namespace Drawers
         }
 
         virtual void ReloadConfig() = 0;
+        virtual void ReDraw() = 0;
 
         virtual ~ScreenDrawer()
         {

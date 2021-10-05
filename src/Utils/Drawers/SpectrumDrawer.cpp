@@ -275,7 +275,13 @@ namespace Drawers
         memset(this->maxLeftSpectrumData, 0, this->spectrumLineCount);
         memset(this->nowRightSpectrum, 0, this->spectrumLineCount);
         memset(this->maxRightSpectrumData, 0, this->spectrumLineCount);
+        this->ReDraw();
+    }
+
+    void SpectrumDrawer::ReDraw()
+    {
         this->lcd->fillScreen(this->backColor);
+        DrawSpectrum(this->nowLeftSpectrum, this->nowRightSpectrum);
     }
 
 }

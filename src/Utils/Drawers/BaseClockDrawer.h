@@ -9,7 +9,7 @@
 
 namespace Drawers
 {
-    class BaseClockDrawer : public ScreenDrawer::ScreenDrawer
+    class BaseClockDrawer : public Drawers::ScreenDrawer
     {
     protected:
         Clock::Clock *myClock;
@@ -32,6 +32,9 @@ namespace Drawers
         void SetMessage(const String &message);
         void SetWeather(Weather::WeatherData weatherData, bool isError);
         void SetTimeSync(bool isSync);
+
+        //TODO:
+        void ReDraw() override {}
 
         ~BaseClockDrawer();
     };

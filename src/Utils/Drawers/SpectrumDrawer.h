@@ -19,6 +19,8 @@ namespace Drawers
 
         void ReloadConfig() override;
 
+        void ReDraw() override;
+
     private:
         int spectrumLineCount;
         byte *nowLeftSpectrum;
