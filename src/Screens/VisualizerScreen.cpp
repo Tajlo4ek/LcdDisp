@@ -5,8 +5,8 @@
 
 namespace VisualizerScreen
 {
-    VisualizerScreen::VisualizerScreen(TFT_eSPI &lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, int offTime)
-        : BaseScreen::Screen(onWorkEnd)
+    VisualizerScreen::VisualizerScreen(TFT_eSPI *lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, int offTime)
+        : BaseScreen::Screen(lcd, onWorkEnd)
     {
         this->spectrumCheckTimer.callback = [this]()
         {
@@ -25,7 +25,7 @@ namespace VisualizerScreen
 
     String VisualizerScreen::ParseMessage(const String &message)
     {
-        //TODO: smt crash 
+        //TODO: smt crash
         if (message.startsWith(COMMAND_SET_MODE_SPECTRUM))
         {
             return GetSpectrumData();

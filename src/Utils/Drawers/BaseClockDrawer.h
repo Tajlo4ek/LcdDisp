@@ -26,7 +26,7 @@ namespace Drawers
         virtual void TimeSyncChanged() = 0;
 
     public:
-        BaseClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock);
+        BaseClockDrawer(TFT_eSPI *lcd, int width, int height, Clock::Clock &clock);
         virtual void Init() = 0;
 
         void SetMessage(const String &message);

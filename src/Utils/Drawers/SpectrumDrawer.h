@@ -8,7 +8,7 @@ namespace Drawers
     class SpectrumDrawer : public ScreenDrawer::ScreenDrawer
     {
     public:
-        SpectrumDrawer(TFT_eSPI &lcd, int width, int height);
+        SpectrumDrawer(TFT_eSPI *lcd, int width, int height);
 
         void DrawSpectrum(byte *spectrumLeft, byte *spectrumRight);
         const int GetLineCount() const;

@@ -20,7 +20,7 @@ namespace Drawers
 #define CONFIG_HIGH_COLOR F("highColor")
 #define CONFIG_MAX_COLOR F("maxColor")
 
-    SpectrumDrawer::SpectrumDrawer(TFT_eSPI &lcd, int width, int height) : ScreenDrawer(lcd, width, height)
+    SpectrumDrawer::SpectrumDrawer(TFT_eSPI *lcd, int width, int height) : ScreenDrawer(lcd, width, height)
     {
         this->ReloadConfig();
 

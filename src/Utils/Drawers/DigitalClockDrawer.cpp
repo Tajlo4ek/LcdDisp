@@ -14,7 +14,7 @@ namespace Drawers
 #define CONFIG_CLOCK_MAIN_COLOR F("clockMainColor")
 #define CONFIG_CLOCK_SECOND_COLOR F("clockSecondColor")
 
-    DigitalClockDrawer::DigitalClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock)
+    DigitalClockDrawer::DigitalClockDrawer(TFT_eSPI *lcd, int width, int height, Clock::Clock &clock)
         : BaseClockDrawer::BaseClockDrawer(lcd, width, height, clock)
     {
 

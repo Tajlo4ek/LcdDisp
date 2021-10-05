@@ -2,7 +2,7 @@
 
 namespace Drawers
 {
-    BaseClockDrawer::BaseClockDrawer(TFT_eSPI &lcd, int width, int height, Clock::Clock &clock) : ScreenDrawer(lcd, width, height)
+    BaseClockDrawer::BaseClockDrawer(TFT_eSPI *lcd, int width, int height, Clock::Clock &clock) : ScreenDrawer(lcd, width, height)
     {
         this->myClock = &clock;
 

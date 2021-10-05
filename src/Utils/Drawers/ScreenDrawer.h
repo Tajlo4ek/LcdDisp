@@ -5,6 +5,7 @@
 
 namespace Drawers
 {
+
     class ScreenDrawer
     {
     protected:
@@ -15,9 +16,9 @@ namespace Drawers
         virtual void CreateDefaultConfig() = 0;
 
     public:
-        ScreenDrawer(TFT_eSPI &lcd, int lcdWidth, int lcdHeight)
+        ScreenDrawer(TFT_eSPI *lcd, int lcdWidth, int lcdHeight)
         {
-            this->lcd = &lcd;
+            this->lcd = lcd;
             this->lcdWidth = lcdWidth;
             this->lcdHeight = lcdHeight;
         }
