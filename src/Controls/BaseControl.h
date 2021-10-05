@@ -17,6 +17,7 @@ namespace Controls
     protected:
         ControlRect controlRect;
         TFT_eSPI *lcd;
+        bool visible = true;
 
     public:
         BaseControl(TFT_eSPI *lcd, ControlRect controlRect)
@@ -31,6 +32,11 @@ namespace Controls
         }
 
         virtual void ReDraw() = 0;
+        void SetVisible(bool val)
+        {
+            visible = val;
+            ReDraw();
+        }
     };
 
 }

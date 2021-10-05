@@ -12,7 +12,7 @@ namespace Controls
     Chart::Chart(TFT_eSPI *lcd, ControlRect rect)
         : BaseControl(lcd, rect)
     {
-        backgroundColor = DrawUtils::Get565Color(50, 50, 50);
+        backgroundColor = DrawUtils::Get565Color(0, 0, 0);
         mainColor = DrawUtils::Get565Color(0, 255, 0);
         secondColor = DrawUtils::Get565Color(0, 127, 0);
 
@@ -50,6 +50,11 @@ namespace Controls
 
     void Chart::DrawChart()
     {
+        if (visible == false)
+        {
+            return;
+        }
+
         int leftUpX = controlRect.leftUpX;
         int leftUpY = controlRect.leftUpY;
         lcd->drawFastVLine(leftUpX, leftUpY, controlRect.height, secondColor);

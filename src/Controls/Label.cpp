@@ -52,6 +52,11 @@ namespace Controls
 
     void Label::DrawText(const uint16_t color)
     {
+        if (visible == false)
+        {
+            return;
+        }
+
         lcd->setTextSize(size);
         lcd->setTextColor(textColor, backColor);
 
