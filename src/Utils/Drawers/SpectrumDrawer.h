@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utils/ScreenDrawer.h"
+#include "ScreenDrawer.h"
 #include "Utils/TrackedVal.h"
 
 namespace SpectrumDrawer

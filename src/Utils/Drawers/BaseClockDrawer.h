@@ -2,9 +2,9 @@
 
 #include <TFT_eSPI.h>
 #include <Arduino.h>
-#include "Clock.h"
+#include "Utils/Clock/Clock.h"
 #include "Utils/TrackedVal.h"
-#include "Utils/ScreenDrawer.h"
+#include "Utils/Drawers/ScreenDrawer.h"
 #include "Utils/Internet/Weather.h"
 
 namespace ClockDrawer

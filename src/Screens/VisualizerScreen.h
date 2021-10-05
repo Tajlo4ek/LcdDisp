@@ -3,7 +3,7 @@
 #include "BaseScreen.h"
 
 #include "Utils/Timer/MillisTimer.h"
-#include "Utils/Spectrum/SpectrumDrawer.h"
+#include "Utils/Drawers/SpectrumDrawer.h"
 
 namespace VisualizerScreen
 {

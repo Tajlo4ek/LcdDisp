@@ -5,7 +5,7 @@
 #include "Utils/Timer/MillisTimer.h"
 #include "Utils/Timer/TimerManager.h"
 #include "Utils/Clock/Clock.h"
-#include "Utils/Clock/DigitalClockDrawer.h"
+#include "Utils/Drawers/DigitalClockDrawer.h"
 
 namespace MainScreen
 {
