@@ -41,10 +41,8 @@ namespace BaseScreen
             this->lcd = lcd;
         }
 
-        /*virtual void OnBtnUpClick() = 0;
-        virtual void OnBtnDownClick() = 0;
-        virtual void OnBtnLeftClick() = 0;
-        virtual void OnBtnRightClick() = 0;
-        virtual void OnBtnCenterClick() = 0;*/
+        virtual bool OnBtnLeftClick() { return false; }
+        virtual bool OnBtnRightClick() { return false; }
+        virtual bool OnBtnCenterClick() { return false; }
     };
 }
