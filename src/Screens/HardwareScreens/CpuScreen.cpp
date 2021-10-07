@@ -72,7 +72,7 @@ namespace HardwareScreens
         }
 
         lcd->fillScreen(DrawUtils::Get565Color(0, 0, 0));
-        labelCpuName->DrawCentralText(cpu->GetName());
+        labelCpuName->DrawText(cpu->GetName(), Controls::Label::TextAlignment::Center);
 
         switch (screenMode)
         {
@@ -138,7 +138,7 @@ namespace HardwareScreens
         String text = F("now load: ");
         text += value;
         text += '%';
-        labelCpuCurrentValue->DrawCentralText(text);
+        labelCpuCurrentValue->DrawText(text, Controls::Label::TextAlignment::Center);
     }
 
     inline void CpuScreen::DrawChartCpuTemp() const
@@ -148,7 +148,7 @@ namespace HardwareScreens
         String text = F("now temp: ");
         text += value;
         text += 'C';
-        labelCpuCurrentValue->DrawCentralText(text);
+        labelCpuCurrentValue->DrawText(text, Controls::Label::TextAlignment::Center);
     }
 
     inline void CpuScreen::ViewCoreInfo() const
@@ -166,7 +166,7 @@ namespace HardwareScreens
             text += cores[coreNum].clock;
             text += F(" MHz");
 
-            labelCoreInfo[coreNum * 2]->DrawText(text);
+            labelCoreInfo[coreNum * 2]->DrawText(text, Controls::Label::TextAlignment::Left);
 
             text = F("load: ");
             text += cores[coreNum].load;
@@ -175,7 +175,7 @@ namespace HardwareScreens
             text += cores[coreNum].temp;
             text += 'C';
 
-            labelCoreInfo[coreNum * 2 + 1]->DrawText(text);
+            labelCoreInfo[coreNum * 2 + 1]->DrawText(text, Controls::Label::TextAlignment::Left);
         }
     }
 
