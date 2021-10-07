@@ -77,7 +77,7 @@ namespace Controls
 
         if (isCentral == true)
         {
-            lcd->drawString(text, (controlRect.width - textWidth) / 2, controlRect.leftUpY);
+            lcd->drawString(text, controlRect.leftUpX + (controlRect.width - textWidth) / 2, controlRect.leftUpY);
         }
         else
         {
