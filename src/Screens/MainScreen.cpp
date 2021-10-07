@@ -2,24 +2,23 @@
 
 #include "FileNames.h"
 #include "Commands.h"
+#include "Utils/WeatherImages.h"
 
 #include "Utils/Internet/NtpTime.h"
-#include "Utils/Internet/Weather.h"
 #include "Utils/Internet/WifiUtils.h"
 #include "Utils/FileSystem/FileSystem.h"
 #include "Utils/Parsers/JsonParser.h"
+
+#include "Utils/Logger/Logger.h"
 
 namespace MainScreen
 {
 #define WEATHER_CONFIG_CITY F("city")
 #define WEATHER_CONFIG_APIKEY F("apiKey")
 
-    MainScreen::MainScreen(TFT_eSPI *lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, NotBlockDelay notBlockDelay)
+    MainScreen::MainScreen(TFT_eSPI *lcd, BaseScreen::OnScreenWorkEnd onWorkEnd)
         : BaseScreen::Screen(lcd, onWorkEnd)
     {
-        this->clockDrawer = new Drawers::DigitalClockDrawer(lcd, lcdWidth, lcdHeight, this->myClock);
-
-        this->notBlockDelay = notBlockDelay;
         this->isTimeSync = false;
 
         //clock tick 500 ms
@@ -43,7 +42,7 @@ namespace MainScreen
         //update weather 10 minute
         this->weatherTimer.callback = [this]
         {
-            this->myClock.Tick();
+            this->GetWeather();
         };
         this->weatherTimer.SetInterval(10 * 60 * 1000);
 
@@ -51,43 +50,106 @@ namespace MainScreen
         clockTimersManager.AddTimer(timeSyncTimer);
         clockTimersManager.AddTimer(resetSyncTimer);
         clockTimersManager.AddTimer(weatherTimer);
-
         clockTimersManager.StopAll();
+
+        Controls::ControlRect controlRect = {2, 2, 156, 8};
+        this->labelMessage = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);
+        this->labelMessage->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+
+        controlRect = {2, 75, 156, 16};
+        this->labelDate = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
+        this->labelDate->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+
+        this->digitalClock = new Controls::DigitalClock(lcd, 17);
+        this->digitalClock->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+
+        controlRect = {64, 55, 32, 8};
+        this->labelTimeSync = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);
+        this->labelTimeSync->SetColor(DrawUtils::Get565Color(255, 0, 0), DrawUtils::Get565Color(0, 0, 0));
+        this->labelTimeSync->SetVisible(false);
+        this->labelTimeSync->DrawText(F("sync"), Controls::Label::TextAlignment::Center);
+
+        controlRect = {0, 92, 32, 32};
+        this->imageWeather = new Controls::Image(lcd, controlRect);
+        this->imageWeather->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+
+        controlRect = {112, 100, 48, 16};
+        this->labelTemp = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
+        this->labelTemp->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+
+        controlRect = {32, 92, 80, 32};
+        this->labelWeatherDescription = new Controls::MultilineLable(lcd, controlRect, Controls::Label::TextSize::Small);
+        this->labelWeatherDescription->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+
+        this->myClock.SetTimeChangeCallback(std::bind(&MainScreen::DrawTime, this));
+        this->myClock.SetDateChangeCallback(std::bind(&MainScreen::DrawDate, this));
 
         String json = FileSystem::ReadFile(WEATHER_CONFIG_PATH);
         this->weatherCity = JsonParser::GetJsonData(json, WEATHER_CONFIG_CITY);
         this->weatherApiKey = JsonParser::GetJsonData(json, WEATHER_CONFIG_APIKEY);
-    }
 
-    String MainScreen::ParseMessage(const String &message)
-    {
-        return String();
+        nowWeather = {99, F("weather not sync"), F("abort")};
     }
 
     void MainScreen::ReloadConfig()
     {
-        clockDrawer->ReloadConfig();
+        //clockDrawer->ReloadConfig();
     }
 
     void MainScreen::EnterFocus()
     {
-        clockDrawer->Init();
-
-        Weather::WeatherData defaultWeaterData;
-        defaultWeaterData.temp = String('+');
-        defaultWeaterData.temp += 666;
-        defaultWeaterData.temp += 'C';
-        defaultWeaterData.description = F("weather not sync");
-        defaultWeaterData.imageName = F("abort");
-        clockDrawer->SetWeather(defaultWeaterData, false);
+        lcd->fillScreen(DrawUtils::Get565Color(0, 0, 0));
 
         String message = F("IP: ");
         message += WifiUtils::GetIpString();
-        clockDrawer->SetMessage(message);
+        this->labelMessage->DrawText(message, Controls::Label::TextAlignment::Center);
+
         this->isTimeSync = false;
+        DrawTime();
+        DrawDate();
+        DrawWeather();
+
         this->CheckTimeSync();
         this->GetWeather();
+
         clockTimersManager.StartAll();
+    }
+
+    void MainScreen::DrawTime()
+    {
+        auto time = this->myClock.GetTime();
+
+        this->digitalClock->DrawTime((byte)time.hour, (byte)time.minute, (int)(time.second) % 2 == 1);
+
+        this->labelTimeSync->SetVisible(!isTimeSync);
+    }
+
+    void MainScreen::DrawDate()
+    {
+        this->labelDate->DrawText(myClock.GetDateString(), Controls::Label::TextAlignment::Center);
+    }
+
+    void MainScreen::DrawWeather()
+    {
+        this->imageWeather->DrawImage(
+            WeatherImages::GetImage(nowWeather.imageName),
+            WeatherImages::ImageByteCount);
+
+        int tempAbs = nowWeather.temp >= 0 ? nowWeather.temp : -nowWeather.temp;
+
+        char tempStr[] = {
+            nowWeather.temp > 0 ? '+' : '-',
+            '0',
+            '0',
+            'C',
+            '\0'};
+
+        tempStr[1] += tempAbs / 10;
+        tempStr[2] += tempAbs % 10;
+
+        this->labelTemp->DrawText(String(tempStr), Controls::Label::TextAlignment::Right);
+
+        this->labelWeatherDescription->DrawText(this->nowWeather.description, Controls::Label::TextAlignment::Left);
     }
 
     void MainScreen::LeaveFocus()
@@ -102,37 +164,51 @@ namespace MainScreen
 
     void MainScreen::CheckTimeSync()
     {
-        if (hasEthernet == false)
+        if (hasEthernet == true)
         {
-            clockDrawer->SetTimeSync(false);
-            return;
+            if (isTimeSync == false)
+            {
+                auto time = NtpTime::Ask_NTP_Time(isTimeSync);
+                if (isTimeSync)
+                {
+                    myClock.ParseFromNtp(time);
+                }
+            }
+        }
+        else
+        {
+            isTimeSync = false;
         }
 
-        if (isTimeSync == false)
-        {
-            auto time = NtpTime::Ask_NTP_Time(this->notBlockDelay, isTimeSync);
-            if (isTimeSync)
-            {
-                myClock.ParseFromNtp(time);
-            }
-            clockDrawer->SetTimeSync(isTimeSync);
-        }
+        DrawTime();
     }
 
     void MainScreen::GetWeather()
     {
-        if (hasEthernet == false)
+        if (hasEthernet == true)
         {
-            return;
+            bool isOk = false;
+            auto weather = Weather::GetWether(isOk, this->weatherCity, this->weatherApiKey);
+
+            nowWeather.imageName = weather.imageName;
+            if (isOk == true)
+            {
+                nowWeather.description = weather.description;
+                nowWeather.temp = weather.temp;
+            }
         }
 
-        bool isOk = false;
-        auto weather = Weather::GetWether(this->notBlockDelay, isOk, this->weatherCity, this->weatherApiKey);
-        clockDrawer->SetWeather(weather, !isOk);
+        DrawWeather();
     }
 
     MainScreen::~MainScreen()
     {
+        delete labelMessage;
+        delete labelDate;
+        delete digitalClock;
+        delete labelTimeSync;
+        delete labelTemp;
+        delete labelWeatherDescription;
     }
 
 }
