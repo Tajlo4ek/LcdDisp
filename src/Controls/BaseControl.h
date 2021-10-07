@@ -32,8 +32,14 @@ namespace Controls
         }
 
         virtual void ReDraw() = 0;
+        
         void SetVisible(bool val)
         {
+            if (isVisible == val)
+            {
+                return;
+            }
+
             isVisible = val;
             ReDraw();
         }
