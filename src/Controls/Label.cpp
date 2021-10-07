@@ -7,25 +7,16 @@ namespace Controls
     Label::Label(TFT_eSPI *lcd, ControlRect rect)
         : BaseControl(lcd, rect)
     {
-        isCentral = false;
-        text = "";
-        size = 1;
-        backColor = DrawUtils::Get565Color(255, 255, 255);
+        this->alignment = Controls::Label::TextAlignment::Left;
+        this->text = "";
+        this->size = 1;
     }
 
-    void Label::DrawText(const String &text)
+    void Label::DrawText(const String &text, TextAlignment alignment)
     {
         DrawText(backColor);
         this->text = text;
-        this->isCentral = false;
-        DrawText(textColor);
-    }
-
-    void Label::DrawCentralText(const String &text)
-    {
-        DrawText(backColor);
-        this->text = text;
-        this->isCentral = true;
+        this->alignment = alignment;
         DrawText(textColor);
     }
 
@@ -74,13 +65,20 @@ namespace Controls
             textWidth = lcd->textWidth(buf);
         }
 
-        if (isCentral == true)
+        switch (this->alignment)
         {
-            lcd->drawString(text, controlRect.leftUpX + (controlRect.width - textWidth) / 2, controlRect.leftUpY);
-        }
-        else
-        {
+        default:
+        case TextAlignment::Left:
             lcd->drawString(buf, controlRect.leftUpX, controlRect.leftUpY);
+            break;
+
+        case TextAlignment::Center:
+            lcd->drawString(text, controlRect.leftUpX + (controlRect.width - textWidth) / 2, controlRect.leftUpY);
+            break;
+
+        case TextAlignment::Right:
+            lcd->drawString(buf, controlRect.leftUpX + controlRect.width - textWidth, controlRect.leftUpY);
+            break;
         }
     }
 }
