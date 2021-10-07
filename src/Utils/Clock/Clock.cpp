@@ -127,6 +127,7 @@ namespace Clock
 
         res[8] = year / 10 + '0';
         res[9] = year % 10 + '0';
+        res[10] = '\0';
 
         return String(res);
     }
