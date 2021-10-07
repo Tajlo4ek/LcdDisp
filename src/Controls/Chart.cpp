@@ -60,7 +60,7 @@ namespace Controls
 
     void Chart::DrawChart()
     {
-        if (visible == false)
+        if (isVisible == false)
         {
             return;
         }
@@ -123,6 +123,7 @@ namespace Controls
         }
     }
 
+    //TODO: add all colors
     void Chart::SetColor(ColorConfigName colorName, uint16_t value)
     {
         switch (colorName)

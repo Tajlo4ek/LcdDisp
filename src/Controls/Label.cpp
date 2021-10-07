@@ -52,7 +52,7 @@ namespace Controls
 
     void Label::DrawText(const uint16_t color)
     {
-        if (visible == false)
+        if (isVisible == false)
         {
             return;
         }
