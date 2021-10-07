@@ -27,7 +27,7 @@ namespace BaseScreen
             }
         };
         virtual void Loop() = 0;
-        virtual String ParseMessage(const String &message) = 0;
+        virtual String ParseMessage(const String &message) { return String(); }
         virtual void ReloadConfig() = 0;
 
         void SetEthernetAvailable(bool val)

@@ -84,7 +84,7 @@ void setup()
   HttpServer::Init(CheckCommand);
 
   activeScreen = nullptr;
-  mainScreen = new MainScreen::MainScreen(&lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, NotBlockDelay);
+  mainScreen = new MainScreen::MainScreen(&lcd, OnScreenWorkEnd);
   mainScreen->SetEthernetAvailable(isSTA);
 
   visualizerScreen = new VisualizerScreen::VisualizerScreen(&lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, SPECTRUM_OFF_TIME);
@@ -162,6 +162,8 @@ void CheckCommand(const String &data)
   Serial.print(activeScreen->ParseMessage(data));
 }
 
+/* #region parse pc data */
+
 void ParsePcData(const String &json)
 {
   //String json = "{\"cpuCount\":\"1\",\"hddCount\":\"2\",\"gpuCount\":\"1\",\"ramCount\":\"1\",\"cpu\":[{\"name\":\"Intel Core i3-4160\",\"coreCount\":\"2\",\"cores\":[{\"temp\":\"44\",\"load\":\"26\",\"clock\":\"1497\",\"num\":\"1\"},{\"temp\":\"45\",\"load\":\"24\",\"clock\":\"1497\",\"num\":\"2\"}]}],\"hdd\":[{\"name\":\"Samsung SSD 860 EVO 250GB\",\"temp\":\"38\",\"used\":\"55.9\",\"written\":\"13746\"},{\"name\":\"ST1000DM010-2EP102\",\"temp\":\"34\",\"used\":\"23.4\",\"written\":\"-1\"}],\"gpu\":[{\"name\":\"NVIDIA GeForce GTX 1050 Ti\",\"temp\":\"39\",\"clock\":\"607.5\",\"loadMem\":\"9.9\",\"fanRpm\":\"0\",\"fanPr\":\"0\",\"totalMem\":\"4096\"}],\"ram\":[{\"name\":\"Generic Memory\",\"usedPr\":\"42.76\",\"total\":\"15.9\"}]}";
@@ -210,6 +212,8 @@ void ParseCpuData(const String &json, int cpuCount)
 
   delete[] cpuDatas;
 }
+
+/* #endregion */
 
 void CheckButtons()
 {

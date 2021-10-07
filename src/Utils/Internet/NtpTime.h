@@ -9,7 +9,5 @@ namespace NtpTime
 #define UDP_PORT 2390
 #define NTP_PACKET_SIZE 48
 
-    typedef std::function<void(unsigned int)> NotBlockDelay;
-
-    unsigned long Ask_NTP_Time(NotBlockDelay notBlockDelay, bool &isOk);
+    unsigned long Ask_NTP_Time(bool &isOk);
 }

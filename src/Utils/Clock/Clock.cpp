@@ -21,8 +21,8 @@ namespace Clock
         Time nextTime;
         nextTime.milliSecond = 0;
         nextTime.second = second;
-        nextTime.minute = (minute * 60 + second) / 60.0;
-        nextTime.hour = (hour * 60 * 60 + minute * 60 + second) / 60.0 / 60.0;
+        nextTime.minute = (minute * 60 + second) / 60.0F;
+        nextTime.hour = (hour * 60 * 60 + minute * 60 + second) / 60.0F / 60.0F;
 
         this->time->SetValue(nextTime);
     }
@@ -43,9 +43,9 @@ namespace Clock
 
         Time nextTime = this->time->GetValue();
         nextTime.milliSecond += delta;
-        nextTime.second += delta / 1000.0;
-        nextTime.minute += delta / 1000.0 / 60.0;
-        nextTime.hour += delta / 1000.0 / 60.0 / 60.0;
+        nextTime.second += delta / 1000.0F;
+        nextTime.minute += delta / 1000.0F / 60.0F;
+        nextTime.hour += delta / 1000.0F / 60.0F / 60.0F;
 
         while (nextTime.milliSecond >= 1000)
         {
@@ -107,26 +107,27 @@ namespace Clock
 
     const String Clock::GetDateString() const
     {
-        char res[] = "00.00.0000";
+        char res[11];
 
         Date nowDate = this->date->GetValue();
 
-        res[0] = nowDate.day / 10 + 48;
-        res[1] = nowDate.day % 10 + 48;
-
-        res[3] = nowDate.month / 10 + 48;
-        res[4] = nowDate.month % 10 + 48;
+        res[0] = nowDate.day / 10 + '0';
+        res[1] = nowDate.day % 10 + '0';
+        res[2] = '.';
+        res[3] = nowDate.month / 10 + '0';
+        res[4] = nowDate.month % 10 + '0';
+        res[5] = '.';
 
         int year = nowDate.year;
-
-        res[6] = year / 1000 + 48;
+        res[6] = year / 1000 + '0';
         year %= 1000;
 
-        res[7] = year / 100 + 48;
+        res[7] = year / 100 + '0';
         year %= 100;
 
-        res[8] = year / 10 + 48;
-        res[9] = year % 10 + 48;
+        res[8] = year / 10 + '0';
+        res[9] = year % 10 + '0';
+        res[10] = '\0';
 
         return String(res);
     }
