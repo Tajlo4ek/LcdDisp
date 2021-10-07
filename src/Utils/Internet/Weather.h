@@ -12,7 +12,5 @@ namespace Weather
         String imageName;
     };
 
-    typedef std::function<void(unsigned int)> NotBlockDelay;
-
-    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, const String &city, const String &apiKey);
+    WeatherData GetWether(bool &isOk, const String &city, const String &apiKey);
 }

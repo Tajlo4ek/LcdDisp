@@ -3,9 +3,9 @@
 namespace NtpTime
 {
     void sendNTPpacket(WiFiUDP &udp, IPAddress &address);
-    unsigned long Ask_NTP_Time(NotBlockDelay notBlockDelay, bool &isOk);
+    unsigned long Ask_NTP_Time(bool &isOk);
 
-    unsigned long Ask_NTP_Time(NotBlockDelay notBlockDelay, bool &isOk)
+    unsigned long Ask_NTP_Time(bool &isOk)
     {
         WiFiUDP udp;
         udp.begin(UDP_PORT);
@@ -13,7 +13,7 @@ namespace NtpTime
         int cb;
         while (udp.parsePacket() > 0)
         {
-            notBlockDelay(0);
+            delay(10);
         }
         IPAddress timeServerIP;
         WiFi.hostByName(String(NTP_SERVER_NAME).c_str(), timeServerIP);
@@ -22,7 +22,7 @@ namespace NtpTime
         unsigned long beginWait = millis();
         while (millis() - beginWait < 5000)
         {
-            notBlockDelay(0);
+            delay(10);
             cb = udp.parsePacket();
             if (cb >= NTP_PACKET_SIZE)
             {

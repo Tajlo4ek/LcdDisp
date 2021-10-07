@@ -6,9 +6,9 @@
 namespace Weather
 {
     void ParseWeather(const String &json, WeatherData &weather, bool &isOk);
-    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, const String &city, const String &apiKey);
+    WeatherData GetWether(bool &isOk, const String &city, const String &apiKey);
 
-    WeatherData GetWether(NotBlockDelay notBlockDelay, bool &isOk, const String &city, const String &apiKey)
+    WeatherData GetWether(bool &isOk, const String &city, const String &apiKey)
     {
         auto host = F("api.openweathermap.org");
 
