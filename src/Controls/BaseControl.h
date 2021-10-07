@@ -21,6 +21,7 @@ namespace Controls
         bool isVisible = true;
 
         uint16_t backColor;
+        uint16_t mainColor;
 
         void ClearRect();
 
@@ -30,6 +31,8 @@ namespace Controls
         virtual ~BaseControl();
 
         virtual void ReDraw() = 0;
+
+        void SetColor(uint16_t mainColor, uint16_t backColor);
 
         void SetVisible(bool val);
     };

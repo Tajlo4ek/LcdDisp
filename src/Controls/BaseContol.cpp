@@ -7,6 +7,7 @@ namespace Controls
         this->lcd = lcd;
         this->controlRect = controlRect;
         this->backColor = DrawUtils::Get565Color(0, 0, 0);
+        this->mainColor = DrawUtils::Get565Color(0, 255, 0);
     }
 
     BaseControl::~BaseControl()
@@ -22,6 +23,14 @@ namespace Controls
         }
 
         isVisible = val;
+        ReDraw();
+    }
+
+    void BaseControl::SetColor(uint16_t mainColor, uint16_t backColor)
+    {
+        this->backColor = backColor;
+        this->mainColor = mainColor;
+
         ReDraw();
     }
 

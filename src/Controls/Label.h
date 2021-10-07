@@ -15,21 +15,24 @@ namespace Controls
             Right
         };
 
-        Label(TFT_eSPI *lcd, ControlRect rect);
+        enum TextSize
+        {
+            Small = 8,
+            Big = 16,
+        };
+
+        Label(TFT_eSPI *lcd, ControlRect rect, TextSize size);
 
         void DrawText(const String &text, TextAlignment alignment);
-        void SetSize(const byte size);
-        void SetColor(const uint16_t textColor, const uint16_t backColor);
 
         void ReDraw() override;
 
-    private:
+    protected:
         String text;
-        uint16_t textColor;
-        byte size;
+        TextSize size;
         TextAlignment alignment;
 
-        void DrawText(const uint16_t color);
+        virtual void Draw();
     };
 
 }

@@ -13,7 +13,6 @@ namespace Controls
         void DrawHorBlock(int x, int y, uint16_t color) const;
         void DrawSpecLine(int x0, int y0, int x1, int y1, uint16_t mainColor, uint16_t secondColor) const;
 
-        uint16_t clockMainColor;
         uint16_t clockSecondColor;
 
         int blockWidth;

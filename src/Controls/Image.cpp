@@ -13,6 +13,11 @@ namespace Controls
     {
         ClearRect();
 
+        if (this->isVisible == false)
+        {
+            return;
+        }
+
         if (this->imageLen == 0)
         {
             return;
@@ -39,7 +44,7 @@ namespace Controls
                 this->lcd->drawPixel(
                     controlRect.leftUpX + x,
                     controlRect.leftUpY + y,
-                    item % 2 == 1 ? this->color : this->backColor);
+                    item % 2 == 1 ? this->mainColor : this->backColor);
 
                 item /= 2;
                 x++;
@@ -47,11 +52,10 @@ namespace Controls
         }
     }
 
-    void Image::DrawImage(const uint8_t *image, const uint16_t imageLen, uint16_t color)
+    void Image::DrawImage(const uint8_t *image, const uint16_t imageLen)
     {
         this->image = image;
         this->imageLen = imageLen;
-        this->color = color;
 
         ReDraw();
     }

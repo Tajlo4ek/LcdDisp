@@ -12,7 +12,7 @@ namespace Controls
                             lcd->width(),
                             63})
     {
-        this->clockMainColor = DrawUtils::Get565Color(0, 0, 255);
+        this->mainColor = DrawUtils::Get565Color(0, 0, 255);
         this->clockSecondColor = DrawUtils::Get565Color(0, 0, 200);
 
         this->blockWidth = 29;
@@ -21,12 +21,7 @@ namespace Controls
 
     void DigitalClock::ReDraw()
     {
-        lcd->fillRect(
-            controlRect.leftUpX,
-            controlRect.leftUpY,
-            controlRect.width,
-            controlRect.height,
-            DrawUtils::Get565Color(0, 0, 0));
+        ClearRect();
 
         if (isVisible == false)
         {
@@ -54,7 +49,7 @@ namespace Controls
         int dotX = controlRect.width / 2;
         int dotY = (this->blockWidth - dotRadius) / 2;
 
-        uint16_t dotColor = needDots ? this->clockMainColor : this->backColor;
+        uint16_t dotColor = needDots ? this->mainColor : this->backColor;
         this->lcd->fillEllipse(dotX, controlRect.leftUpY + dotY, dotRadius, dotRadius, dotColor);
         this->lcd->fillEllipse(dotX, controlRect.leftUpY + dotY + this->blockWidth - this->blockHeight, dotRadius, dotRadius, dotColor);
     }
@@ -69,7 +64,7 @@ namespace Controls
         //top
         if (num != 1 && num != 4)
         {
-            DrawHorBlock(x, y, this->clockMainColor);
+            DrawHorBlock(x, y, this->mainColor);
         }
         else
         {
@@ -79,7 +74,7 @@ namespace Controls
         //left top
         if (num != 1 && num != 2 && num != 3 && num != 7)
         {
-            DrawVerBlock(x, y, this->clockMainColor);
+            DrawVerBlock(x, y, this->mainColor);
         }
         else
         {
@@ -89,7 +84,7 @@ namespace Controls
         //right top
         if (num != 5 && num != 6)
         {
-            DrawVerBlock(x + this->blockWidth - this->blockHeight + 1, y, this->clockMainColor);
+            DrawVerBlock(x + this->blockWidth - this->blockHeight + 1, y, this->mainColor);
         }
         else
         {
@@ -99,7 +94,7 @@ namespace Controls
         //center
         if (num > 1 && num != 7)
         {
-            DrawHorBlock(x, y + this->blockWidth - this->blockHeight + 1, this->clockMainColor);
+            DrawHorBlock(x, y + this->blockWidth - this->blockHeight + 1, this->mainColor);
         }
         else
         {
@@ -109,7 +104,7 @@ namespace Controls
         //left bottom
         if (num == 0 || num == 2 || num == 6 || num == 8)
         {
-            DrawVerBlock(x, y + this->blockWidth - this->blockHeight + 1, this->clockMainColor);
+            DrawVerBlock(x, y + this->blockWidth - this->blockHeight + 1, this->mainColor);
         }
         else
         {
@@ -119,7 +114,7 @@ namespace Controls
         //right bottom
         if (num != 2)
         {
-            DrawVerBlock(x + this->blockWidth - this->blockHeight + 1, y + this->blockWidth - this->blockHeight + 1, this->clockMainColor);
+            DrawVerBlock(x + this->blockWidth - this->blockHeight + 1, y + this->blockWidth - this->blockHeight + 1, this->mainColor);
         }
         else
         {
@@ -129,7 +124,7 @@ namespace Controls
         //bottom
         if (num != 1 && num != 4 && num != 7)
         {
-            DrawHorBlock(x, y + (this->blockWidth - this->blockHeight + 1) * 2, this->clockMainColor);
+            DrawHorBlock(x, y + (this->blockWidth - this->blockHeight + 1) * 2, this->mainColor);
         }
         else
         {

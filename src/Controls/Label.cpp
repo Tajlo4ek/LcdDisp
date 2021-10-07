@@ -4,53 +4,39 @@
 
 namespace Controls
 {
-    Label::Label(TFT_eSPI *lcd, ControlRect rect)
+    Label::Label(TFT_eSPI *lcd, ControlRect rect, TextSize size)
         : BaseControl(lcd, rect)
     {
         this->alignment = Controls::Label::TextAlignment::Left;
         this->text = "";
-        this->size = 1;
+        this->size = size;
     }
 
     void Label::DrawText(const String &text, TextAlignment alignment)
     {
-        DrawText(backColor);
         this->text = text;
         this->alignment = alignment;
-        DrawText(textColor);
-    }
-
-    void Label::SetColor(const uint16_t textColor, const uint16_t backColor)
-    {
-        this->textColor = textColor;
-        this->backColor = backColor;
         ReDraw();
-    }
-
-    void Label::SetSize(const byte size)
-    {
-        DrawText(backColor);
-        this->size = size;
-        DrawText(textColor);
     }
 
     void Label::ReDraw()
     {
         ClearRect();
-        DrawText(textColor);
-    }
 
-    void Label::DrawText(const uint16_t color)
-    {
         if (isVisible == false)
         {
             return;
         }
 
-        lcd->setTextSize(size);
-        lcd->setTextColor(textColor, backColor);
+        Draw();
+    }
 
-        if (size * 8 > controlRect.height)
+    void Label::Draw()
+    {
+        lcd->setTextSize((int)size / 8);
+        lcd->setTextColor(mainColor, backColor);
+
+        if ((int)this->size > controlRect.height)
         {
             lcd->setTextSize(1);
             lcd->drawString(F("size to big"), controlRect.leftUpX, controlRect.leftUpY);

@@ -122,17 +122,6 @@ namespace Controls
         }
     }
 
-    //TODO: add all colors
-    void Chart::SetColor(ColorConfigName colorName, uint16_t value)
-    {
-        switch (colorName)
-        {
-        case ColorConfigName::BackgroundColor:
-            this->backColor = value;
-            break;
-        }
-    }
-
     Chart::~Chart()
     {
         delete[] values;
