@@ -27,6 +27,6 @@ namespace Controls
 
     void BaseControl::ClearRect()
     {
-        lcd->fillRect(controlRect.leftUpX, controlRect.leftUpX, controlRect.width, controlRect.height, backColor);
+        lcd->fillRect(controlRect.leftUpX, controlRect.leftUpY, controlRect.width, controlRect.height, backColor);
     }
 }
