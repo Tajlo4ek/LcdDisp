@@ -15,7 +15,6 @@ namespace Controls
 
         uint16_t clockMainColor;
         uint16_t clockSecondColor;
-        uint16_t backColor;
 
         int blockWidth;
         int blockHeight;

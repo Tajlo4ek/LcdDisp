@@ -9,7 +9,6 @@ namespace Controls
     private:
         String text;
         uint16_t textColor;
-        uint16_t backColor;
         byte size;
         bool isCentral;
 

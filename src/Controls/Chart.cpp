@@ -12,7 +12,6 @@ namespace Controls
     Chart::Chart(TFT_eSPI *lcd, ControlRect rect)
         : BaseControl(lcd, rect)
     {
-        backgroundColor = DrawUtils::Get565Color(0, 0, 0);
         mainColor = DrawUtils::Get565Color(0, 255, 0);
         secondColor = DrawUtils::Get565Color(0, 127, 0);
 
@@ -26,7 +25,7 @@ namespace Controls
 
     void Chart::ReDraw()
     {
-        lcd->fillRect(controlRect.leftUpX, controlRect.leftUpY, controlRect.width, controlRect.height, backgroundColor);
+        ClearRect();
         DrawChart();
     }
 
@@ -90,7 +89,7 @@ namespace Controls
                     leftDownY - values[partNum],
                     leftDownX + (partNum + 1) * STEP_SIZE,
                     leftDownY - values[partNum + 1],
-                    backgroundColor);
+                    backColor);
             }
 
             lcd->drawFastVLine(leftUpX + partNum * STEP_SIZE, leftUpY, controlRect.height, secondColor);
@@ -129,7 +128,7 @@ namespace Controls
         switch (colorName)
         {
         case ColorConfigName::BackgroundColor:
-            this->backgroundColor = value;
+            this->backColor = value;
             break;
         }
     }

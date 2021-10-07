@@ -12,7 +12,6 @@ namespace Controls
         };
 
     private:
-        uint16_t backgroundColor;
         uint16_t mainColor;
         uint16_t secondColor;
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <TFT_eSPI.h>
+#include "Utils/DrawUtils/Color.h"
 
 namespace Controls
 {
@@ -19,30 +20,18 @@ namespace Controls
         TFT_eSPI *lcd;
         bool isVisible = true;
 
-    public:
-        BaseControl(TFT_eSPI *lcd, ControlRect controlRect)
-        {
-            this->lcd = lcd;
-            this->controlRect = controlRect;
-        }
+        uint16_t backColor;
 
-        virtual ~BaseControl()
-        {
-            this->lcd = nullptr;
-        }
+        void ClearRect();
+
+    public:
+        BaseControl(TFT_eSPI *lcd, ControlRect controlRect);
+
+        virtual ~BaseControl();
 
         virtual void ReDraw() = 0;
-        
-        void SetVisible(bool val)
-        {
-            if (isVisible == val)
-            {
-                return;
-            }
 
-            isVisible = val;
-            ReDraw();
-        }
+        void SetVisible(bool val);
     };
 
 }

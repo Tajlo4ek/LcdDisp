@@ -10,7 +10,6 @@ namespace Controls
         isCentral = false;
         text = "";
         size = 1;
-        backColor = DrawUtils::Get565Color(0, 0, 0);
         backColor = DrawUtils::Get565Color(255, 255, 255);
     }
 
@@ -46,7 +45,7 @@ namespace Controls
 
     void Label::ReDraw()
     {
-        lcd->fillRect(controlRect.leftUpX, controlRect.leftUpY, controlRect.width, controlRect.height, backColor);
+        ClearRect();
         DrawText(textColor);
     }
 

@@ -14,7 +14,6 @@ namespace Controls
     {
         this->clockMainColor = DrawUtils::Get565Color(0, 0, 255);
         this->clockSecondColor = DrawUtils::Get565Color(0, 0, 200);
-        this->backColor = DrawUtils::Get565Color(0, 0, 0);
 
         this->blockWidth = 29;
         this->blockHeight = 9;
