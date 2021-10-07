@@ -70,29 +70,17 @@ namespace Weather
             return;
         }
 
+        //TODO: check ok
         weather.description = JsonParser::GetJsonData(json, F("description"));
         weather.imageName = JsonParser::GetJsonData(json, F("icon"));
-        String tempString = JsonParser::GetJsonData(json, F("temp"));
+        weather.temp = JsonParser::GetJsonData(json, F("temp")).toInt() - 273;
 
         auto firstChar = weather.description[0];
-        //TODO:
+        //first char to upper
         if (firstChar >= 'a' && firstChar <= 'z')
         {
-            weather.description.setCharAt(0, firstChar - 32);
+            weather.description.setCharAt(0, firstChar - ('a' - 'A'));
         }
-
-        auto temp = tempString.toInt() - 273;
-
-        if (temp <= 0)
-        {
-            weather.temp += '-';
-        }
-        else
-        {
-            weather.temp += '+';
-        }
-        weather.temp += temp;
-        weather.temp += 'C';
         isOk = true;
     }
 

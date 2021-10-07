@@ -7,7 +7,7 @@ namespace Weather
 {
     struct WeatherData
     {
-        String temp;
+        int temp;
         String description;
         String imageName;
     };
