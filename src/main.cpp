@@ -24,7 +24,6 @@ enum Mode
 
 /* #region func prototypes */
 
-void OnScreenWorkEnd();
 void SetActiveScreen(Screens::Screen *screen, Mode nextMode);
 
 void CheckCommand(const String &data);
@@ -94,37 +93,34 @@ void InitWiFi()
 {
   auto wifiConfig = WifiUtils::LoadWiFiConfig();
 
-  lcd.drawString(F("Try connect: "), 0, 10, 1, lcd.color565(0, 255, 0));
+  lcd.setTextColor(lcd.color565(0, 255, 0));
+  lcd.setTextSize(1);
+  lcd.drawString(F("Try connect: "), 0, 10);
 
-  lcd.drawString(wifiConfig.ssid, 0, 20, 1, lcd.color565(0, 255, 0));
+  lcd.drawString(wifiConfig.ssid, 0, 20);
 
-  lcd.drawString(F("Attempts: "), 0, 35, 1, lcd.color565(0, 255, 0));
+  lcd.drawString(F("Attempts: "), 0, 35);
 
   WifiUtils::TryConnectCallback callback = [](int tryCount)
   {
     lcd.fillRect(55, 35, 30, 8, TFT_BLACK);
-    lcd.drawString(String(tryCount), 55, 35, 1, lcd.color565(0, 255, 0));
+    lcd.drawString(String(tryCount), 55, 35);
   };
 
   isSTA = true;
   if (WifiUtils::ConnectWifi(wifiConfig.ssid, wifiConfig.password, 20, callback) == false)
   {
     lcd.fillScreen(TFT_BLACK);
-    lcd.drawString(F("can't connect. start ap"), 0, 0, 1, lcd.color565(0, 255, 0));
+    lcd.drawString(F("can't connect. start ap"), 0, 0);
 
     String ssid = BASE_SSID;
     String pass = BASE_PASS;
 
-    lcd.drawString(ssid + ' ' + pass, 0, 15, 1, lcd.color565(0, 255, 0));
+    lcd.drawString(ssid + ' ' + pass, 0, 15);
     isSTA = false;
     delay(2000);
     WifiUtils::StartAP(ssid, pass);
   }
-}
-
-void OnScreenWorkEnd()
-{
-  SetActiveScreen(mainScreen, Mode::MAIN_MODE);
 }
 
 void SetActiveScreen(Screens::Screen *screen, Mode nextMode)

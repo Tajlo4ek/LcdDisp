@@ -1,6 +1,6 @@
 #include "MultilineLable.h"
 
-#include "Utils/Logger/Logger.h"
+#include "Utils/DrawUtils/Color.h"
 
 namespace Controls
 {

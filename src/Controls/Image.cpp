@@ -1,5 +1,7 @@
 #include "Image.h"
 
+#include "Utils/DrawUtils/Color.h"
+
 namespace Controls
 {
 
