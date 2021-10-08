@@ -10,9 +10,16 @@ namespace Weather
 
     WeatherData GetWether(bool &isOk, const String &city, const String &apiKey)
     {
-        auto host = F("api.openweathermap.org");
-
         WeatherData weatherData;
+
+        if (city.isEmpty() || apiKey.isEmpty())
+        {
+            SetAbortWeather(weatherData, F("check city or apiKey"));
+            isOk = false;
+            return weatherData;
+        }
+
+        auto host = F("api.openweathermap.org");
         WiFiClient client;
 
         if (client.connect(host, 80) == 0)
