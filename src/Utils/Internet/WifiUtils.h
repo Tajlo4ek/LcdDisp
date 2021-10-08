@@ -7,6 +7,8 @@ namespace WifiUtils
 {
 
 #define BASE_IP_STRING F("192.168.0.43")
+#define BASE_SSID F("HOME")
+#define BASE_PASS F("1234567890")
 
     typedef void (*TryConnectCallback)(int);
 
