@@ -24,7 +24,6 @@ enum Mode
 
 /* #region func prototypes */
 
-void OnScreenWorkEnd();
 void SetActiveScreen(Screens::Screen *screen, Mode nextMode);
 
 void CheckCommand(const String &data);
@@ -122,11 +121,6 @@ void InitWiFi()
     delay(2000);
     WifiUtils::StartAP(ssid, pass);
   }
-}
-
-void OnScreenWorkEnd()
-{
-  SetActiveScreen(mainScreen, Mode::MAIN_MODE);
 }
 
 void SetActiveScreen(Screens::Screen *screen, Mode nextMode)
