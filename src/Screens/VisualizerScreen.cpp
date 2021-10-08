@@ -1,6 +1,5 @@
 #include "VisualizerScreen.h"
 
-#include "Utils/Drawers/SpectrumDrawer.h"
 #include "Commands.h"
 
 namespace Screens

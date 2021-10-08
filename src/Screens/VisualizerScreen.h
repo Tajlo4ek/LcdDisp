@@ -3,7 +3,6 @@
 #include "BaseScreen.h"
 
 #include "Utils/Timer/MillisTimer.h"
-#include "Utils/Drawers/SpectrumDrawer.h"
 
 #include "Controls/VisualizerControl.h"
 

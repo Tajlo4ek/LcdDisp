@@ -22,8 +22,6 @@ enum Mode
   VIEW_HARDWARE_MODE,
 };
 
-#define SPECTRUM_OFF_TIME 3000
-
 /* #region func prototypes */
 
 void OnScreenWorkEnd();
