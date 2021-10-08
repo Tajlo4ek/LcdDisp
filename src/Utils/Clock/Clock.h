@@ -1,7 +1,6 @@
 #pragma once
 
 #include <Arduino.h>
-#include "Utils/TrackedVal.h"
 
 namespace Clock
 {
@@ -22,16 +21,10 @@ namespace Clock
 
     class Clock
     {
-    private:
-        TrackedVal::TrackedValue<Time> *time;
-        TrackedVal::TrackedValue<Date> *date;
-
-        long lastTickTime;
-
-        const byte monthDays[12] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
     public:
-        Clock();
+        typedef std::function<void()> Callback;
+
+        Clock(int utc);
         void SetTime(int hour, int minute, int second);
         void SetDate(int day, int month, int year);
         void Tick();
@@ -42,7 +35,19 @@ namespace Clock
 
         void ParseFromNtp(unsigned long time);
 
-        void SetTimeChangeCallback(TrackedVal::Callback callback);
-        void SetDateChangeCallback(TrackedVal::Callback callback);
+        void SetTimeChangeCallback(Callback callback);
+        void SetDateChangeCallback(Callback callback);
+
+    private:
+        Time nowTime;
+        Date nowDate;
+
+        long lastTickTime;
+        int utc;
+
+        Callback timeChanged;
+        Callback dateChanged;
+
+        static const byte monthDays[];
     };
 }

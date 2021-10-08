@@ -2,38 +2,41 @@
 
 namespace Clock
 {
-    Clock::Clock()
+    const byte Clock::monthDays[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+    Clock::Clock(int utc)
     {
-        Time time;
-        Date date;
-
-        this->time = new TrackedVal::TrackedValue<Time>(time);
-        this->date = new TrackedVal::TrackedValue<Date>(date);
-
         this->SetTime(0, 0, 0);
         this->SetDate(1, 1, 1970);
+        this->utc = utc;
+
+        timeChanged = nullptr;
+        dateChanged = nullptr;
     }
 
     void Clock::SetTime(int hour, int minute, int second)
     {
-        this->lastTickTime = millis();
+        this->nowTime.milliSecond = 0;
+        this->nowTime.second = second;
+        this->nowTime.minute = (minute * 60 + second) / 60.0F;
+        this->nowTime.hour = (hour * 60 * 60 + minute * 60 + second) / 60.0F / 60.0F;
 
-        Time nextTime;
-        nextTime.milliSecond = 0;
-        nextTime.second = second;
-        nextTime.minute = (minute * 60 + second) / 60.0F;
-        nextTime.hour = (hour * 60 * 60 + minute * 60 + second) / 60.0F / 60.0F;
-
-        this->time->SetValue(nextTime);
+        if (timeChanged != nullptr)
+        {
+            timeChanged();
+        }
     }
 
     void Clock::SetDate(int day, int month, int year)
     {
-        Date nextDate;
-        nextDate.day = day;
-        nextDate.month = month;
-        nextDate.year = year;
-        this->date->SetValue(nextDate);
+        this->nowDate.day = day;
+        this->nowDate.month = month;
+        this->nowDate.year = year;
+
+        if (dateChanged != nullptr)
+        {
+            dateChanged();
+        }
     }
 
     void Clock::Tick()
@@ -41,84 +44,85 @@ namespace Clock
         unsigned long delta = millis() - this->lastTickTime;
         this->lastTickTime = millis();
 
-        Time nextTime = this->time->GetValue();
-        nextTime.milliSecond += delta;
-        nextTime.second += delta / 1000.0F;
-        nextTime.minute += delta / 1000.0F / 60.0F;
-        nextTime.hour += delta / 1000.0F / 60.0F / 60.0F;
+        this->nowTime.milliSecond += delta;
+        this->nowTime.second += delta / 1000.0F;
+        this->nowTime.minute += delta / 1000.0F / 60.0F;
+        this->nowTime.hour += delta / 1000.0F / 60.0F / 60.0F;
 
-        while (nextTime.milliSecond >= 1000)
+        while (this->nowTime.milliSecond >= 1000)
         {
-            nextTime.milliSecond -= 1000;
+            this->nowTime.milliSecond -= 1000;
         }
 
-        while (nextTime.second >= 60)
+        while (this->nowTime.second >= 60)
         {
-            nextTime.second -= 60;
+            this->nowTime.second -= 60;
         }
 
-        while (nextTime.minute >= 60)
+        while (this->nowTime.minute >= 60)
         {
-            nextTime.minute -= 60;
+            this->nowTime.minute -= 60;
         }
 
-        if (nextTime.hour >= 24)
+        if (this->nowTime.hour >= 24)
         {
-            Date nextDate = this->date->GetValue();
+            this->nowTime.hour -= 24;
 
-            nextTime.hour -= 24;
-
-            nextDate.day++;
+            this->nowDate.day++;
             byte monthLength = 0;
-            if (nextDate.month == 2)
+            if (this->nowDate.month == 2)
             { // february
-                monthLength = nextDate.year % 4 == 0 ? 29 : 28;
+                monthLength = this->nowDate.year % 4 == 0 ? 29 : 28;
             }
             else
             {
-                monthLength = this->monthDays[nextDate.month - 1];
+                monthLength = this->monthDays[this->nowDate.month - 1];
             }
-            if (nextDate.day > monthLength)
+            if (this->nowDate.day > monthLength)
             {
-                nextDate.day = 1;
-                nextDate.month++;
-                if (nextDate.month >= 13)
+                this->nowDate.day = 1;
+                this->nowDate.month++;
+                if (this->nowDate.month >= 13)
                 {
-                    nextDate.month = 1;
-                    nextDate.year++;
+                    this->nowDate.month = 1;
+                    this->nowDate.year++;
                 }
             }
 
-            this->date->SetValue(nextDate);
+            if (dateChanged != nullptr)
+            {
+                dateChanged();
+            }
         }
 
-        this->time->SetValue(nextTime);
+        if (timeChanged != nullptr)
+        {
+            timeChanged();
+        }
     }
 
     const Date Clock::GetDate() const
     {
-        return this->date->GetValue();
+        return nowDate;
     }
 
     const Time Clock::GetTime() const
     {
-        return this->time->GetValue();
+        return nowTime;
     }
 
     const String Clock::GetDateString() const
     {
         char res[11];
 
-        Date nowDate = this->date->GetValue();
-
-        res[0] = nowDate.day / 10 + '0';
-        res[1] = nowDate.day % 10 + '0';
+        res[0] = this->nowDate.day / 10 + '0';
+        res[1] = this->nowDate.day % 10 + '0';
         res[2] = '.';
-        res[3] = nowDate.month / 10 + '0';
-        res[4] = nowDate.month % 10 + '0';
+        res[3] = this->nowDate.month / 10 + '0';
+        res[4] = this->nowDate.month % 10 + '0';
         res[5] = '.';
 
-        int year = nowDate.year;
+        int year = this->nowDate.year;
         res[6] = year / 1000 + '0';
         year %= 1000;
 
@@ -134,10 +138,7 @@ namespace Clock
 
     void Clock::ParseFromNtp(unsigned long time)
     {
-        int UTC = 3;
-
-        // корректировка часового пояса и синхронизация
-        time = time + UTC * 3600;
+        time = time + this->utc * 3600;
 
         int second = time % 60;
         time /= 60; // now it is minutes
@@ -196,13 +197,13 @@ namespace Clock
         this->SetDate(day, month, year);
     }
 
-    void Clock::SetTimeChangeCallback(TrackedVal::Callback callback)
+    void Clock::SetTimeChangeCallback(Callback callback)
     {
-        this->time->SetCallback(callback);
+        this->timeChanged = callback;
     }
 
-    void Clock::SetDateChangeCallback(TrackedVal::Callback callback)
+    void Clock::SetDateChangeCallback(Callback callback)
     {
-        this->date->SetCallback(callback);
+        this->dateChanged = callback;
     }
 }
