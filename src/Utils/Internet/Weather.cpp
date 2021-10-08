@@ -1,12 +1,12 @@
 #include "Weather.h"
 
 #include "Utils/Parsers/JsonParser.h"
-#include "Utils/Logger/Logger.h"
 
 namespace Weather
 {
     void ParseWeather(const String &json, WeatherData &weather, bool &isOk);
     WeatherData GetWether(bool &isOk, const String &city, const String &apiKey);
+    void SetAbortWeather(WeatherData &weather, const String &description);
 
     WeatherData GetWether(bool &isOk, const String &city, const String &apiKey)
     {
@@ -17,7 +17,7 @@ namespace Weather
 
         if (client.connect(host, 80) == 0)
         {
-            ParseWeather(F("{\"cod\":404}"), weatherData, isOk);
+            SetAbortWeather(weatherData, F("cannot connect to server"));
             isOk = false;
             return weatherData;
         }
@@ -34,14 +34,12 @@ namespace Weather
         client.println(F("Connection: close"));
         client.println();
 
-        //TODO: mb remove delay
         delay(1000);
 
         String json;
         while (client.available())
         {
-            char next = (char)client.read();
-            json += next;
+            json += (char)client.read();
         }
         json += '}';
 
@@ -50,30 +48,38 @@ namespace Weather
         return weatherData;
     }
 
+    void SetAbortWeather(WeatherData &weather, const String &description)
+    {
+        weather.imageName = F("abort");
+        weather.description = description;
+        weather.temp = 99;
+    }
+
     void ParseWeather(const String &json, WeatherData &weather, bool &isOk)
     {
-
-        //TODO: code 0 ?
         auto cod = JsonParser::GetJsonData(json, F("cod")).toInt();
         if (cod != 200)
         {
-            weather.imageName = F("abort");
-            weather.description = F("not sync. error: ");
-            weather.description += cod;
+            String decription = F("not sync. error: ");
+            decription += cod;
+            SetAbortWeather(weather, decription);
             isOk = false;
-
-            String log = F("weather error. code:");
-            log += cod;
-            log += F("json: ");
-            log += json;
-            Logger::Log(log);
             return;
         }
 
-        //TODO: check ok
-        weather.description = JsonParser::GetJsonData(json, F("description"));
-        weather.imageName = JsonParser::GetJsonData(json, F("icon"));
-        weather.temp = JsonParser::GetJsonData(json, F("temp")).toInt() - 273;
+        bool descIsOk;
+        bool imgIsOk;
+        bool tempIsOk;
+        weather.description = JsonParser::GetJsonData(json, F("description"), descIsOk);
+        weather.imageName = JsonParser::GetJsonData(json, F("icon"), imgIsOk);
+        weather.temp = JsonParser::GetJsonData(json, F("temp"), tempIsOk).toInt() - 273;
+
+        if ((descIsOk && imgIsOk && tempIsOk) == false)
+        {
+            SetAbortWeather(weather, F("parse error"));
+            isOk = false;
+            return;
+        }
 
         auto firstChar = weather.description[0];
         //first char to upper

@@ -22,13 +22,10 @@ enum Mode
   VIEW_HARDWARE_MODE,
 };
 
-#define SPECTRUM_OFF_TIME 3000
-
 /* #region func prototypes */
-void NotBlockDelay(unsigned long delayTime);
 
 void OnScreenWorkEnd();
-void SetActiveScreen(BaseScreen::Screen *screen, Mode nextMode);
+void SetActiveScreen(Screens::Screen *screen, Mode nextMode);
 
 void CheckCommand(const String &data);
 
@@ -38,6 +35,7 @@ void ParseCpuData(const String &json, int cpuCount);
 void CheckButtons();
 
 void InitWiFi();
+
 /* #endregion */
 
 TFT_eSPI lcd = TFT_eSPI();
@@ -49,10 +47,10 @@ bool isSTA;
 String serialData;
 
 Mode nowMode;
-BaseScreen::Screen *activeScreen;
+Screens::Screen *activeScreen;
 
-BaseScreen::Screen *mainScreen;
-BaseScreen::Screen *visualizerScreen;
+Screens::Screen *mainScreen;
+Screens::Screen *visualizerScreen;
 
 #define HARDWARE_SCREEN_NOT_INIT_COUNT -1
 
@@ -84,10 +82,10 @@ void setup()
   HttpServer::Init(CheckCommand);
 
   activeScreen = nullptr;
-  mainScreen = new MainScreen::MainScreen(&lcd, OnScreenWorkEnd);
+  mainScreen = new Screens::MainScreen(&lcd);
   mainScreen->SetEthernetAvailable(isSTA);
 
-  visualizerScreen = new VisualizerScreen::VisualizerScreen(&lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, SPECTRUM_OFF_TIME);
+  visualizerScreen = new Screens::VisualizerScreen(&lcd);
 
   SetActiveScreen(mainScreen, MAIN_MODE);
 }
@@ -113,10 +111,14 @@ void InitWiFi()
   {
     lcd.fillScreen(TFT_BLACK);
     lcd.drawString(F("can't connect. start ap"), 0, 0, 1, lcd.color565(0, 255, 0));
-    lcd.drawString(F("HOME 1234567890"), 0, 15, 1, lcd.color565(0, 255, 0));
+
+    String ssid = BASE_SSID;
+    String pass = BASE_PASS;
+
+    lcd.drawString(ssid + ' ' + pass, 0, 15, 1, lcd.color565(0, 255, 0));
     isSTA = false;
     delay(2000);
-    WifiUtils::StartAP(F("HOME"), F("1234567890"));
+    WifiUtils::StartAP(ssid, pass);
   }
 }
 
@@ -125,7 +127,7 @@ void OnScreenWorkEnd()
   SetActiveScreen(mainScreen, Mode::MAIN_MODE);
 }
 
-void SetActiveScreen(BaseScreen::Screen *screen, Mode nextMode)
+void SetActiveScreen(Screens::Screen *screen, Mode nextMode)
 {
   if (activeScreen != nullptr)
   {
@@ -196,7 +198,7 @@ void ParseCpuData(const String &json, int cpuCount)
 
     for (int i = 0; i < cpuCount; i++)
     {
-      cpuScreens[i] = new HardwareScreens::CpuScreen(&lcd, OnScreenWorkEnd);
+      cpuScreens[i] = new HardwareScreens::CpuScreen(&lcd);
     }
 
     if (cpuScreenCount != 0)
@@ -248,8 +250,11 @@ void CheckButtons()
 
 /* #region Loop */
 
-void MyLoop()
+void loop()
 {
+  //String json = "{\"cpuCount\":\"1\",\"hddCount\":\"2\",\"gpuCount\":\"1\",\"ramCount\":\"1\",\"cpu\":[{\"name\":\"Intel Core i3-4160\",\"coreCount\":\"2\",\"cores\":[{\"temp\":\"44\",\"load\":\"26\",\"clock\":\"1497\",\"num\":\"1\"},{\"temp\":\"45\",\"load\":\"24\",\"clock\":\"1497\",\"num\":\"2\"}]}],\"hdd\":[{\"name\":\"Samsung SSD 860 EVO 250GB\",\"temp\":\"38\",\"used\":\"55.9\",\"written\":\"13746\"},{\"name\":\"ST1000DM010-2EP102\",\"temp\":\"34\",\"used\":\"23.4\",\"written\":\"-1\"}],\"gpu\":[{\"name\":\"NVIDIA GeForce GTX 1050 Ti\",\"temp\":\"39\",\"clock\":\"607.5\",\"loadMem\":\"9.9\",\"fanRpm\":\"0\",\"fanPr\":\"0\",\"totalMem\":\"4096\"}],\"ram\":[{\"name\":\"Generic Memory\",\"usedPr\":\"42.76\",\"total\":\"15.9\"}]}";
+  //ParsePcData(json);
+
   while (Serial.available())
   {
     char ch = (char)Serial.read();
@@ -261,30 +266,10 @@ void MyLoop()
       serialData.clear();
     }
   }
+
   CheckButtons();
   activeScreen->Loop();
   HttpServer::HandleServer();
-}
-
-void NotBlockDelay(unsigned long delayTime)
-{
-  unsigned long start = millis();
-  while (1)
-  {
-    MyLoop();
-    if (millis() - start > delayTime)
-    {
-      break;
-    }
-  }
-}
-
-void loop()
-{
-  //String json = "{\"cpuCount\":\"1\",\"hddCount\":\"2\",\"gpuCount\":\"1\",\"ramCount\":\"1\",\"cpu\":[{\"name\":\"Intel Core i3-4160\",\"coreCount\":\"2\",\"cores\":[{\"temp\":\"44\",\"load\":\"26\",\"clock\":\"1497\",\"num\":\"1\"},{\"temp\":\"45\",\"load\":\"24\",\"clock\":\"1497\",\"num\":\"2\"}]}],\"hdd\":[{\"name\":\"Samsung SSD 860 EVO 250GB\",\"temp\":\"38\",\"used\":\"55.9\",\"written\":\"13746\"},{\"name\":\"ST1000DM010-2EP102\",\"temp\":\"34\",\"used\":\"23.4\",\"written\":\"-1\"}],\"gpu\":[{\"name\":\"NVIDIA GeForce GTX 1050 Ti\",\"temp\":\"39\",\"clock\":\"607.5\",\"loadMem\":\"9.9\",\"fanRpm\":\"0\",\"fanPr\":\"0\",\"totalMem\":\"4096\"}],\"ram\":[{\"name\":\"Generic Memory\",\"usedPr\":\"42.76\",\"total\":\"15.9\"}]}";
-  //ParsePcData(json);
-
-  MyLoop();
 }
 
 /* #endregion */

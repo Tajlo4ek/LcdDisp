@@ -12,11 +12,11 @@
 #include "Controls/Image.h"
 #include "Controls/MultilineLable.h"
 
-namespace MainScreen
+namespace Screens
 {
 
     //TODO: make not fixed size
-    class MainScreen : public BaseScreen::Screen
+    class MainScreen : public Screen
     {
 
     private:
@@ -25,7 +25,7 @@ namespace MainScreen
 
         bool isTimeSync;
 
-        Clock::Clock myClock;
+        Clock::Clock myClock = Clock::Clock(3);
         MillisTimer::Timer clockTimer;
         MillisTimer::Timer timeSyncTimer;
         MillisTimer::Timer resetSyncTimer;
@@ -56,7 +56,7 @@ namespace MainScreen
         void Loop() override;
         void ReloadConfig() override;
 
-        MainScreen(TFT_eSPI *lcd, BaseScreen::OnScreenWorkEnd onWorkEnd);
+        MainScreen(TFT_eSPI *lcd);
         ~MainScreen();
     };
 }

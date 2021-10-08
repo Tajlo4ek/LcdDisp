@@ -16,6 +16,7 @@ namespace Controls
 
         int nowY = controlRect.leftUpY;
 
+        String text = this->text + ' ';
         int nowIndex = 0;
         while (nowY < controlRect.leftUpY + controlRect.height)
         {
@@ -23,13 +24,13 @@ namespace Controls
 
             while (true)
             {
-                int ind = this->text.indexOf(' ', nowIndex);
+                int ind = text.indexOf(' ', nowIndex);
                 if (ind == -1)
                 {
                     break;
                 }
 
-                String sub = this->text.substring(nowIndex, ind);
+                String sub = text.substring(nowIndex, ind);
 
                 if (lcd->textWidth(buf) + lcd->textWidth(sub) >= controlRect.width)
                 {

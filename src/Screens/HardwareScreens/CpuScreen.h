@@ -10,7 +10,7 @@
 namespace HardwareScreens
 {
     //TODO: if core count >4
-    class CpuScreen : public BaseScreen::Screen
+    class CpuScreen : public Screens::Screen
     {
         enum ScreenMode
         {
@@ -40,7 +40,7 @@ namespace HardwareScreens
         String ParseMessage(const String &message) override;
         void ReloadConfig() override;
 
-        CpuScreen(TFT_eSPI *lcd, BaseScreen::OnScreenWorkEnd onWorkEnd);
+        CpuScreen(TFT_eSPI *lcd);
         ~CpuScreen();
     };
 
