@@ -5,8 +5,8 @@
 
 namespace HardwareScreens
 {
-    CpuScreen::CpuScreen(TFT_eSPI *lcd, BaseScreen::OnScreenWorkEnd onWorkEnd)
-        : BaseScreen::Screen(lcd, onWorkEnd)
+    CpuScreen::CpuScreen(TFT_eSPI *lcd)
+        : Screens::Screen(lcd)
     {
         this->cpu = nullptr;
 

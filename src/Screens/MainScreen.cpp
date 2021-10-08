@@ -11,13 +11,13 @@
 
 #include "Utils/Logger/Logger.h"
 
-namespace MainScreen
+namespace Screens
 {
 #define WEATHER_CONFIG_CITY F("city")
 #define WEATHER_CONFIG_APIKEY F("apiKey")
 
-    MainScreen::MainScreen(TFT_eSPI *lcd, BaseScreen::OnScreenWorkEnd onWorkEnd)
-        : BaseScreen::Screen(lcd, onWorkEnd)
+    MainScreen::MainScreen(TFT_eSPI *lcd)
+        : Screen(lcd)
     {
         this->isTimeSync = false;
 

@@ -27,7 +27,7 @@ enum Mode
 /* #region func prototypes */
 
 void OnScreenWorkEnd();
-void SetActiveScreen(BaseScreen::Screen *screen, Mode nextMode);
+void SetActiveScreen(Screens::Screen *screen, Mode nextMode);
 
 void CheckCommand(const String &data);
 
@@ -49,10 +49,10 @@ bool isSTA;
 String serialData;
 
 Mode nowMode;
-BaseScreen::Screen *activeScreen;
+Screens::Screen *activeScreen;
 
-BaseScreen::Screen *mainScreen;
-BaseScreen::Screen *visualizerScreen;
+Screens::Screen *mainScreen;
+Screens::Screen *visualizerScreen;
 
 #define HARDWARE_SCREEN_NOT_INIT_COUNT -1
 
@@ -84,10 +84,10 @@ void setup()
   HttpServer::Init(CheckCommand);
 
   activeScreen = nullptr;
-  mainScreen = new MainScreen::MainScreen(&lcd, OnScreenWorkEnd);
+  mainScreen = new Screens::MainScreen(&lcd);
   mainScreen->SetEthernetAvailable(isSTA);
 
-  visualizerScreen = new VisualizerScreen::VisualizerScreen(&lcd, LCD_WIDTH, LCD_HEIGHT, OnScreenWorkEnd, SPECTRUM_OFF_TIME);
+  visualizerScreen = new Screens::VisualizerScreen(&lcd);
 
   SetActiveScreen(mainScreen, MAIN_MODE);
 }
@@ -129,7 +129,7 @@ void OnScreenWorkEnd()
   SetActiveScreen(mainScreen, Mode::MAIN_MODE);
 }
 
-void SetActiveScreen(BaseScreen::Screen *screen, Mode nextMode)
+void SetActiveScreen(Screens::Screen *screen, Mode nextMode)
 {
   if (activeScreen != nullptr)
   {
@@ -200,7 +200,7 @@ void ParseCpuData(const String &json, int cpuCount)
 
     for (int i = 0; i < cpuCount; i++)
     {
-      cpuScreens[i] = new HardwareScreens::CpuScreen(&lcd, OnScreenWorkEnd);
+      cpuScreens[i] = new HardwareScreens::CpuScreen(&lcd);
     }
 
     if (cpuScreenCount != 0)

@@ -3,46 +3,29 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 
-namespace BaseScreen
+namespace Screens
 {
     typedef std::function<void()> OnScreenWorkEnd;
 
     class Screen
     {
-
-    private:
-        OnScreenWorkEnd onScreenWorkEnd = nullptr;
-
     protected:
         bool hasEthernet;
         TFT_eSPI *lcd;
 
     public:
         virtual void EnterFocus() = 0;
-        virtual void LeaveFocus()
-        {
-            if (onScreenWorkEnd != nullptr)
-            {
-                onScreenWorkEnd();
-            }
-        };
-        virtual void Loop() = 0;
-        virtual String ParseMessage(const String &message) { return String(); }
+        virtual void LeaveFocus();
+        virtual void Loop();
+        virtual String ParseMessage(const String &message);
         virtual void ReloadConfig() = 0;
 
-        void SetEthernetAvailable(bool val)
-        {
-            this->hasEthernet = val;
-        }
+        void SetEthernetAvailable(bool val);
 
-        Screen(TFT_eSPI *lcd, OnScreenWorkEnd onScreenWorkEnd)
-        {
-            this->onScreenWorkEnd = onScreenWorkEnd;
-            this->lcd = lcd;
-        }
+        Screen(TFT_eSPI *lcd);
 
-        virtual bool OnBtnLeftClick() { return false; }
-        virtual bool OnBtnRightClick() { return false; }
-        virtual bool OnBtnCenterClick() { return false; }
+        virtual bool OnBtnLeftClick();
+        virtual bool OnBtnRightClick();
+        virtual bool OnBtnCenterClick();
     };
 }

@@ -3,29 +3,62 @@
 #include "Utils/Drawers/SpectrumDrawer.h"
 #include "Commands.h"
 
-namespace VisualizerScreen
+namespace Screens
 {
-    VisualizerScreen::VisualizerScreen(TFT_eSPI *lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, int offTime)
-        : BaseScreen::Screen(lcd, onWorkEnd)
+    VisualizerScreen::VisualizerScreen(TFT_eSPI *lcd)
+        : Screen(lcd)
     {
-        this->spectrumCheckTimer.callback = [this]()
-        {
-            this->LeaveFocus();
-        };
-        this->spectrumCheckTimer.SetInterval(offTime);
-        this->spectrumCheckTimer.Stop();
-
-        this->spectrumDrawer = new Drawers::SpectrumDrawer(lcd, lcdWidth, lcdHeight);
+        Controls::ControlRect rect = {10, 10, 160, 128};
+        this->visualizer = new Controls::VisualizerControl(lcd, rect);
     }
 
     void VisualizerScreen::ReloadConfig()
     {
-        spectrumDrawer->ReloadConfig();
+        //spectrumDrawer->ReloadConfig();
+
+        /*
+        #define CONFIG_BACK_COLOR F("backColor")
+#define CONFIG_LOW_COLOR F("lowColor")
+#define CONFIG_MEDIUM_COLOR F("mediumColor")
+#define CONFIG_HIGH_COLOR F("highColor")
+#define CONFIG_MAX_COLOR F("maxColor")
+
+auto json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
+        if (json.isEmpty())
+        {
+            this->CreateDefaultConfig();
+        }
+
+        const uint colorCount = 5;
+        String colorNames[colorCount]{
+            CONFIG_BACK_COLOR,
+            CONFIG_LOW_COLOR,
+            CONFIG_MEDIUM_COLOR,
+            CONFIG_HIGH_COLOR,
+            CONFIG_MAX_COLOR,
+        };
+
+        uint16_t *colors[colorCount]{
+            &this->backColor,
+            &this->lowColor,
+            &this->mediumColor,
+            &this->highColor,
+            &this->maxColor,
+        };
+
+        bool loadRes = DrawUtils::LoadColorsFromJson(json, colorNames, colors, colorCount);
+
+        if (loadRes == false)
+        {
+            this->CreateDefaultConfig();
+            this->ReloadConfig();
+        }
+        
+        */
     }
 
     String VisualizerScreen::ParseMessage(const String &message)
     {
-        //TODO: smt crash
         if (message.startsWith(COMMAND_SET_MODE_SPECTRUM))
         {
             return GetSpectrumData();
@@ -40,19 +73,17 @@ namespace VisualizerScreen
     String VisualizerScreen::GetSpectrumData()
     {
         String data = COMMAND_SEND_LINE_COUNT;
-        data += spectrumDrawer->GetLineCount();
+        data += visualizer->GetLineCount();
         data += COMMAND_STOP_CHAR;
         data += COMMAND_SET_MAX_SPECTRUM_DATA;
-        data += spectrumDrawer->GetMaxLineLength();
+        data += visualizer->GetMaxLineLength();
         data += COMMAND_STOP_CHAR;
         return data;
     }
 
     void VisualizerScreen::ParseSpectrum(const String &data)
     {
-        this->spectrumCheckTimer.Reset();
-
-        auto spectrumLen = this->spectrumDrawer->GetLineCount();
+        auto spectrumLen = this->visualizer->GetLineCount();
         auto spectrumLeft = new byte[spectrumLen];
         auto spectrumRight = new byte[spectrumLen];
         int dateLen = data.length();
@@ -81,25 +112,20 @@ namespace VisualizerScreen
                 spNum++;
             }
         }
-        spectrumDrawer->DrawSpectrum(spectrumLeft, spectrumRight);
+        visualizer->DrawSpectrum(spectrumLeft, spectrumRight);
         delete[] spectrumLeft;
         delete[] spectrumRight;
     }
 
     void VisualizerScreen::EnterFocus()
     {
-        this->spectrumDrawer->Reset();
-        this->spectrumCheckTimer.Start();
+        lcd->fillScreen(DrawUtils::Get565Color(0, 0, 0));
+        this->visualizer->Reset();
+        this->visualizer->ReDraw();
     }
 
-    void VisualizerScreen::LeaveFocus()
+    VisualizerScreen::~VisualizerScreen()
     {
-        this->spectrumCheckTimer.Stop();
-        Screen::LeaveFocus();
-    }
-
-    void VisualizerScreen::Loop()
-    {
-        this->spectrumCheckTimer.Tick();
+        delete this->visualizer;
     }
 }

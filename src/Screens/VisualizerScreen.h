@@ -5,24 +5,24 @@
 #include "Utils/Timer/MillisTimer.h"
 #include "Utils/Drawers/SpectrumDrawer.h"
 
-namespace VisualizerScreen
+#include "Controls/VisualizerControl.h"
+
+namespace Screens
 {
-    class VisualizerScreen : public BaseScreen::Screen
+    class VisualizerScreen : public Screen
     {
     private:
-        Drawers::SpectrumDrawer *spectrumDrawer;
-        MillisTimer::Timer spectrumCheckTimer;
-
         String GetSpectrumData();
         void ParseSpectrum(const String &data);
 
+        Controls::VisualizerControl *visualizer;
+
     public:
         void EnterFocus() override;
-        void LeaveFocus() override;
-        void Loop() override;
         String ParseMessage(const String &message) override;
         void ReloadConfig() override;
 
-        VisualizerScreen(TFT_eSPI *lcd, int lcdWidth, int lcdHeight, BaseScreen::OnScreenWorkEnd onWorkEnd, int offTime);
+        VisualizerScreen(TFT_eSPI *lcd);
+        ~VisualizerScreen();
     };
 }
