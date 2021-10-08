@@ -16,6 +16,8 @@ namespace Clock
 
     void Clock::SetTime(int hour, int minute, int second)
     {
+        this->lastTickTime = millis();
+
         this->nowTime.milliSecond = 0;
         this->nowTime.second = second;
         this->nowTime.minute = (minute * 60 + second) / 60.0F;
