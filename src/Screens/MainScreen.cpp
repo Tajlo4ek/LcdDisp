@@ -135,20 +135,23 @@ namespace MainScreen
             WeatherImages::GetImage(nowWeather.imageName),
             WeatherImages::ImageByteCount);
 
+        char tempStr[] = {'+', '_', '_', 'C', '\0'};
+
         int tempAbs = nowWeather.temp >= 0 ? nowWeather.temp : -nowWeather.temp;
+        if (tempAbs < 10)
+        {
+            tempStr[0] = ' ';
+            tempStr[1] = nowWeather.temp > 0 ? '+' : '-';
+        }
+        else
+        {
+            tempStr[0] = nowWeather.temp > 0 ? '+' : '-';
+            tempStr[1] = tempAbs / 10 + '0';
+        }
 
-        char tempStr[] = {
-            nowWeather.temp > 0 ? '+' : '-',
-            '0',
-            '0',
-            'C',
-            '\0'};
-
-        tempStr[1] += tempAbs / 10;
-        tempStr[2] += tempAbs % 10;
+        tempStr[2] = tempAbs % 10 + '0';
 
         this->labelTemp->DrawText(String(tempStr), Controls::Label::TextAlignment::Right);
-
         this->labelWeatherDescription->DrawText(this->nowWeather.description, Controls::Label::TextAlignment::Left);
     }
 
@@ -191,9 +194,9 @@ namespace MainScreen
             auto weather = Weather::GetWether(isOk, this->weatherCity, this->weatherApiKey);
 
             nowWeather.imageName = weather.imageName;
+            nowWeather.description = weather.description;
             if (isOk == true)
             {
-                nowWeather.description = weather.description;
                 nowWeather.temp = weather.temp;
             }
         }
