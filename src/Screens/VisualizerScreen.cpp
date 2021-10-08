@@ -1,13 +1,14 @@
 #include "VisualizerScreen.h"
 
 #include "Commands.h"
+#include "Utils/DrawUtils/Color.h"
 
 namespace Screens
 {
     VisualizerScreen::VisualizerScreen(TFT_eSPI *lcd)
         : Screen(lcd)
     {
-        Controls::ControlRect rect = {10, 10, 160, 128};
+        Controls::ControlRect rect = {5, 0, 150, 128};
         this->visualizer = new Controls::VisualizerControl(lcd, rect);
     }
 

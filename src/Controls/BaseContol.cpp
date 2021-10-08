@@ -1,5 +1,7 @@
 #include "BaseControl.h"
 
+#include "Utils/DrawUtils/Color.h"
+
 namespace Controls
 {
     BaseControl::BaseControl(TFT_eSPI *lcd, ControlRect controlRect)

@@ -50,8 +50,20 @@ namespace Controls
         int dotY = (this->blockWidth - dotRadius) / 2;
 
         uint16_t dotColor = needDots ? this->mainColor : this->backColor;
-        this->lcd->fillEllipse(dotX, controlRect.leftUpY + dotY, dotRadius, dotRadius, dotColor);
-        this->lcd->fillEllipse(dotX, controlRect.leftUpY + dotY + this->blockWidth - this->blockHeight, dotRadius, dotRadius, dotColor);
+
+        this->lcd->fillEllipse(
+            dotX,
+            controlRect.leftUpY + dotY,
+            dotRadius,
+            dotRadius,
+            dotColor);
+
+        this->lcd->fillEllipse(
+            dotX,
+            controlRect.leftUpY + dotY + this->blockWidth - this->blockHeight,
+            dotRadius,
+            dotRadius,
+            dotColor);
     }
 
     void DigitalClock::DrawNum(byte num, int x, int y) const
@@ -114,11 +126,17 @@ namespace Controls
         //right bottom
         if (num != 2)
         {
-            DrawVerBlock(x + this->blockWidth - this->blockHeight + 1, y + this->blockWidth - this->blockHeight + 1, this->mainColor);
+            DrawVerBlock(
+                x + this->blockWidth - this->blockHeight + 1,
+                y + this->blockWidth - this->blockHeight + 1,
+                this->mainColor);
         }
         else
         {
-            DrawVerBlock(x + this->blockWidth - this->blockHeight + 1, y + this->blockWidth - this->blockHeight + 1, this->backColor);
+            DrawVerBlock(
+                x + this->blockWidth - this->blockHeight + 1,
+                y + this->blockWidth - this->blockHeight + 1,
+                this->backColor);
         }
 
         //bottom

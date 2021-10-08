@@ -2,8 +2,6 @@
 #include "Chart.h"
 #include "Utils/DrawUtils/Color.h"
 
-#include "Utils/Logger/Logger.h"
-
 namespace Controls
 {
 #define STEP_SIZE 2
