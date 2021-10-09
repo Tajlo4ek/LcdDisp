@@ -12,6 +12,9 @@ namespace Screens
     protected:
         bool hasEthernet;
         TFT_eSPI *lcd;
+        uint16_t backColor;
+
+        virtual void CreateDefaultConfig() = 0;
 
     public:
         virtual void EnterFocus() = 0;

@@ -1,6 +1,9 @@
 #include "VisualizerScreen.h"
 
 #include "Commands.h"
+#include "FileNames.h"
+
+#include "Utils/FileSystem/FileSystem.h"
 #include "Utils/DrawUtils/Color.h"
 
 namespace Screens
@@ -14,16 +17,14 @@ namespace Screens
 
     void VisualizerScreen::ReloadConfig()
     {
-        //spectrumDrawer->ReloadConfig();
-
-        /*
-        #define CONFIG_BACK_COLOR F("backColor")
+/*
+#define CONFIG_BACK_COLOR F("backColor")
 #define CONFIG_LOW_COLOR F("lowColor")
 #define CONFIG_MEDIUM_COLOR F("mediumColor")
 #define CONFIG_HIGH_COLOR F("highColor")
 #define CONFIG_MAX_COLOR F("maxColor")
 
-auto json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
+        auto json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
         if (json.isEmpty())
         {
             this->CreateDefaultConfig();
@@ -52,9 +53,11 @@ auto json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
         {
             this->CreateDefaultConfig();
             this->ReloadConfig();
-        }
-        
-        */
+        }*/
+    }
+
+    void VisualizerScreen::CreateDefaultConfig()
+    {
     }
 
     String VisualizerScreen::ParseMessage(const String &message)

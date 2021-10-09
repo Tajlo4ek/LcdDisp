@@ -50,6 +50,8 @@ namespace Screens
         void DrawDate();
         void DrawWeather();
 
+        void CreateDefaultConfig() override;
+
     public:
         void EnterFocus() override;
         void LeaveFocus() override;

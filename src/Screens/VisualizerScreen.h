@@ -16,6 +16,13 @@ namespace Screens
 
         Controls::VisualizerControl *visualizer;
 
+        uint16_t lowColor;
+        uint16_t mediumColor;
+        uint16_t highColor;
+        uint16_t maxColor;
+
+        void CreateDefaultConfig() override;
+
     public:
         void EnterFocus() override;
         String ParseMessage(const String &message) override;

@@ -96,6 +96,10 @@ namespace Screens
         //clockDrawer->ReloadConfig();
     }
 
+    void MainScreen::CreateDefaultConfig()
+    {
+    }
+
     void MainScreen::EnterFocus()
     {
         lcd->fillScreen(DrawUtils::Get565Color(0, 0, 0));

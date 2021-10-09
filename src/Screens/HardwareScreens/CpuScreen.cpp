@@ -6,7 +6,7 @@
 namespace HardwareScreens
 {
     CpuScreen::CpuScreen(TFT_eSPI *lcd)
-        : Screens::Screen(lcd)
+        : BaseHardwareScreen(lcd)
     {
         this->cpu = nullptr;
 
@@ -174,10 +174,6 @@ namespace HardwareScreens
 
             labelCoreInfo[coreNum * 2 + 1]->DrawText(text, Controls::Label::TextAlignment::Left);
         }
-    }
-
-    void CpuScreen::ReloadConfig()
-    {
     }
 
     CpuScreen::~CpuScreen()
