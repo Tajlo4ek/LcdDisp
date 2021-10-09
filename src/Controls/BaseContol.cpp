@@ -30,12 +30,12 @@ namespace Controls
 
     void BaseControl::SetMainColor(uint16_t color)
     {
-        this->mainColor = mainColor;
+        this->mainColor = color;
     }
 
     void BaseControl::SetbackColor(uint16_t color)
     {
-        this->backColor = backColor;
+        this->backColor = color;
     }
 
     void BaseControl::ClearRect()
