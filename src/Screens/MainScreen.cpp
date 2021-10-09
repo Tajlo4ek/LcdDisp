@@ -168,9 +168,21 @@ namespace Screens
             JsonParser::BuildJson(configNames, datas, configCount));
     }
 
+    void MainScreen::ReDraw()
+    {
+        lcd->fillScreen(this->backColor);
+        this->labelMessage->ReDraw();
+        this->labelDate->ReDraw();
+        this->labelTimeSync->ReDraw();
+        this->imageWeather->ReDraw();
+        this->labelTemp->ReDraw();
+        this->labelWeatherDescription->ReDraw();
+        this->digitalClock->ReDraw();
+    }
+
     void MainScreen::EnterFocus()
     {
-        lcd->fillScreen(DrawUtils::Get565Color(0, 0, 0));
+        lcd->fillScreen(this->backColor);
 
         String message = F("IP: ");
         message += WifiUtils::GetIpString();

@@ -22,6 +22,7 @@ namespace Screens
         virtual void Loop();
         virtual String ParseMessage(const String &message);
         virtual void ReloadConfig() = 0;
+        virtual void ReDraw() = 0;
 
         void SetEthernetAvailable(bool val);
 

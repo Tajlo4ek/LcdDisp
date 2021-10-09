@@ -27,8 +27,16 @@ namespace HardwareScreens
         lcd->fillScreen(DrawUtils::Get565Color(0, 0, 0));
     }
 
-    void CpuScreen::Loop()
+    void CpuScreen::ReDraw()
     {
+        this->chart->ReDraw();
+        this->labelCpuName->ReDraw();
+        this->labelCpuCurrentValue->ReDraw();
+
+        for (uint i = 0; i < this->labelCoreInfo.size(); i++)
+        {
+            this->labelCoreInfo[i]->ReDraw();
+        }
     }
 
     String CpuScreen::ParseMessage(const String &message)

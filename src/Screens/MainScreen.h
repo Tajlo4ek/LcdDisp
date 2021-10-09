@@ -57,6 +57,7 @@ namespace Screens
         void LeaveFocus() override;
         void Loop() override;
         void ReloadConfig() override;
+        void ReDraw() override;
 
         MainScreen(TFT_eSPI *lcd);
         ~MainScreen();

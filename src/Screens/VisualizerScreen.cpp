@@ -94,6 +94,11 @@ namespace Screens
             JsonParser::BuildJson(configNames, datas, configCount));
     }
 
+    void VisualizerScreen::ReDraw()
+    {
+        this->visualizer->ReDraw();
+    }
+
     String VisualizerScreen::ParseMessage(const String &message)
     {
         if (message.startsWith(COMMAND_SET_MODE_SPECTRUM))

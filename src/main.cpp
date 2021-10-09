@@ -155,6 +155,7 @@ void CheckCommand(const String &data)
   else if (data.startsWith(COMMAND_RELOAD_SCREEN))
   {
     activeScreen->ReloadConfig();
+    activeScreen->ReDraw();
   }
 
   Serial.print(activeScreen->ParseMessage(data));

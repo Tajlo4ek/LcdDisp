@@ -39,6 +39,8 @@ namespace HardwareScreens
         void Loop() override;
         String ParseMessage(const String &message) override;
 
+        void ReDraw() override;
+
         CpuScreen(TFT_eSPI *lcd);
         ~CpuScreen();
     };
