@@ -54,32 +54,32 @@ namespace Screens
 
         Controls::ControlRect controlRect = {2, 2, 156, 8};
         this->labelMessage = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);
-        this->labelMessage->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+        //this->labelMessage->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         controlRect = {2, 75, 156, 16};
         this->labelDate = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
-        this->labelDate->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+        //this->labelDate->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         this->digitalClock = new Controls::DigitalClock(lcd, 17);
-        this->digitalClock->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+        //this->digitalClock->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         controlRect = {64, 55, 32, 8};
         this->labelTimeSync = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);
-        this->labelTimeSync->SetColor(DrawUtils::Get565Color(255, 0, 0), DrawUtils::Get565Color(0, 0, 0));
+        //this->labelTimeSync->SetColor(DrawUtils::Get565Color(255, 0, 0), DrawUtils::Get565Color(0, 0, 0));
         this->labelTimeSync->SetVisible(false);
         this->labelTimeSync->DrawText(F("sync"), Controls::Label::TextAlignment::Center);
 
         controlRect = {0, 92, 32, 32};
         this->imageWeather = new Controls::Image(lcd, controlRect);
-        this->imageWeather->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+        //this->imageWeather->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         controlRect = {112, 100, 48, 16};
         this->labelTemp = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
-        this->labelTemp->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+        //this->labelTemp->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         controlRect = {32, 92, 80, 32};
         this->labelWeatherDescription = new Controls::MultilineLable(lcd, controlRect, Controls::Label::TextSize::Small);
-        this->labelWeatherDescription->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
+        //this->labelWeatherDescription->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         this->myClock.SetTimeChangeCallback(std::bind(&MainScreen::DrawTime, this));
         this->myClock.SetDateChangeCallback(std::bind(&MainScreen::DrawDate, this));
