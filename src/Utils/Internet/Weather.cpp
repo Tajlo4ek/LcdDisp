@@ -64,12 +64,23 @@ namespace Weather
 
     void ParseWeather(const String &json, WeatherData &weather, bool &isOk)
     {
-        auto cod = JsonParser::GetJsonData(json, F("cod")).toInt();
+        String codString = JsonParser::GetJsonData(json, F("cod"), isOk);
+
+        if (isOk == false)
+        {
+            SetAbortWeather(weather, F("cannot get gata"));
+            return;
+        }
+
+        auto cod = codString.toInt();
         if (cod != 200)
         {
             String decription = F("not sync. error: ");
             decription += cod;
             SetAbortWeather(weather, decription);
+
+            Serial.println(json);
+
             isOk = false;
             return;
         }

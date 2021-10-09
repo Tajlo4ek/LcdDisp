@@ -13,15 +13,9 @@ namespace Controls
 
     void Image::ReDraw()
     {
-        ClearRect();
-
-        if (this->isVisible == false)
+        if (this->isVisible == false || this->imageLen == 0)
         {
-            return;
-        }
-
-        if (this->imageLen == 0)
-        {
+            ClearRect();
             return;
         }
 
@@ -64,6 +58,6 @@ namespace Controls
 
     Image::~Image()
     {
-        this->image = nullptr;
+        delete[] this->image;
     }
 }
