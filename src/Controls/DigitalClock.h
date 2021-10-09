@@ -25,6 +25,8 @@ namespace Controls
         DigitalClock(TFT_eSPI *lcd, int posY);
         void ReDraw() override;
 
+        void SetClockSecondColor(uint16_t color);
+
         void DrawTime(byte hours, byte minutes, bool needDots);
     };
 

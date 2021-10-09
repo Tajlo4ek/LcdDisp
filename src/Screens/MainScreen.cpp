@@ -16,6 +16,10 @@ namespace Screens
 #define WEATHER_CONFIG_CITY F("city")
 #define WEATHER_CONFIG_APIKEY F("apiKey")
 
+#define CONFIG_BACK_COLOR String(F("backColor"))
+#define CONFIG_CLOCK_MAIN_COLOR String(F("clockMainColor"))
+#define CONFIG_CLOCK_SECOND_COLOR String(F("clockSecondColor"))
+
     MainScreen::MainScreen(TFT_eSPI *lcd)
         : Screen(lcd)
     {
@@ -54,50 +58,114 @@ namespace Screens
 
         Controls::ControlRect controlRect = {2, 2, 156, 8};
         this->labelMessage = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);
-        //this->labelMessage->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         controlRect = {2, 75, 156, 16};
         this->labelDate = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
-        //this->labelDate->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         this->digitalClock = new Controls::DigitalClock(lcd, 17);
-        //this->digitalClock->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         controlRect = {64, 55, 32, 8};
         this->labelTimeSync = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);
-        //this->labelTimeSync->SetColor(DrawUtils::Get565Color(255, 0, 0), DrawUtils::Get565Color(0, 0, 0));
         this->labelTimeSync->SetVisible(false);
         this->labelTimeSync->DrawText(F("sync"), Controls::Label::TextAlignment::Center);
 
         controlRect = {0, 92, 32, 32};
         this->imageWeather = new Controls::Image(lcd, controlRect);
-        //this->imageWeather->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         controlRect = {112, 100, 48, 16};
         this->labelTemp = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
-        //this->labelTemp->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         controlRect = {32, 92, 80, 32};
         this->labelWeatherDescription = new Controls::MultilineLable(lcd, controlRect, Controls::Label::TextSize::Small);
-        //this->labelWeatherDescription->SetColor(DrawUtils::Get565Color(0, 0, 255), DrawUtils::Get565Color(0, 0, 0));
 
         this->myClock.SetTimeChangeCallback(std::bind(&MainScreen::DrawTime, this));
         this->myClock.SetDateChangeCallback(std::bind(&MainScreen::DrawDate, this));
 
-        String json = FileSystem::ReadFile(WEATHER_CONFIG_PATH);
-        this->weatherCity = JsonParser::GetJsonData(json, WEATHER_CONFIG_CITY);
-        this->weatherApiKey = JsonParser::GetJsonData(json, WEATHER_CONFIG_APIKEY);
-
         nowWeather = {99, F("weather not sync"), F("abort")};
+
+        ReloadConfig();
     }
 
     void MainScreen::ReloadConfig()
     {
-        //clockDrawer->ReloadConfig();
+        String json = FileSystem::ReadFile(WEATHER_CONFIG_PATH);
+        this->weatherCity = JsonParser::GetJsonData(json, WEATHER_CONFIG_CITY);
+        this->weatherApiKey = JsonParser::GetJsonData(json, WEATHER_CONFIG_APIKEY);
+
+        json = FileSystem::ReadFile(MAIN_SCREEN_CONFIG_PATH);
+        if (json.isEmpty())
+        {
+            this->CreateDefaultConfig();
+            json = FileSystem::ReadFile(MAIN_SCREEN_CONFIG_PATH);
+        }
+
+        const uint colorCount = 3;
+        String colorNames[colorCount]{
+            CONFIG_BACK_COLOR,
+            CONFIG_CLOCK_MAIN_COLOR,
+            CONFIG_CLOCK_SECOND_COLOR,
+        };
+
+        uint16_t clockMainColor;
+        uint16_t clockSecondColor;
+
+        uint16_t *colors[colorCount]{
+            &this->backColor,
+            &clockMainColor,
+            &clockSecondColor,
+        };
+
+        bool loadRes = DrawUtils::LoadColorsFromJson(json, colorNames, colors, colorCount);
+
+        if (loadRes == false)
+        {
+            this->CreateDefaultConfig();
+            this->ReloadConfig();
+        }
+        else
+        {
+            this->labelMessage->SetbackColor(this->backColor);
+            this->labelMessage->SetMainColor(clockMainColor);
+
+            this->labelDate->SetbackColor(this->backColor);
+            this->labelDate->SetMainColor(clockMainColor);
+
+            this->labelTimeSync->SetbackColor(this->backColor);
+            this->labelTimeSync->SetMainColor(clockMainColor);
+
+            this->imageWeather->SetbackColor(this->backColor);
+            this->imageWeather->SetMainColor(clockMainColor);
+
+            this->labelTemp->SetbackColor(this->backColor);
+            this->labelTemp->SetMainColor(clockMainColor);
+
+            this->labelWeatherDescription->SetbackColor(this->backColor);
+            this->labelWeatherDescription->SetMainColor(clockMainColor);
+
+            this->digitalClock->SetbackColor(this->backColor);
+            this->digitalClock->SetMainColor(clockMainColor);
+            this->digitalClock->SetClockSecondColor(clockSecondColor);
+        }
     }
 
     void MainScreen::CreateDefaultConfig()
     {
+        const uint configCount = 3;
+        String configNames[configCount]{
+            CONFIG_BACK_COLOR,
+            CONFIG_CLOCK_MAIN_COLOR,
+            CONFIG_CLOCK_SECOND_COLOR,
+        };
+
+        String datas[configCount]{
+            DrawUtils::GetJsonColor(0, 0, 0),
+            DrawUtils::GetJsonColor(0, 0, 255),
+            DrawUtils::GetJsonColor(0, 0, 200),
+        };
+
+        FileSystem::WriteFile(
+            MAIN_SCREEN_CONFIG_PATH,
+            JsonParser::BuildJson(configNames, datas, configCount));
     }
 
     void MainScreen::EnterFocus()

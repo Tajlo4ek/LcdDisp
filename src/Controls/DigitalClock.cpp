@@ -19,6 +19,11 @@ namespace Controls
         this->blockHeight = 9;
     }
 
+    void DigitalClock::SetClockSecondColor(uint16_t color)
+    {
+        this->clockSecondColor = color;
+    }
+
     void DigitalClock::ReDraw()
     {
         ClearRect();
