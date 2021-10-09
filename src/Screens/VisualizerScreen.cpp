@@ -43,14 +43,13 @@ namespace Screens
             CONFIG_MAX_COLOR,
         };
 
-        uint16_t backColor;
         uint16_t lowColor;
         uint16_t mediumColor;
         uint16_t highColor;
         uint16_t maxColor;
 
         uint16_t *colors[colorCount]{
-            &backColor,
+            &this->backColor,
             &lowColor,
             &mediumColor,
             &highColor,
@@ -67,6 +66,7 @@ namespace Screens
         else
         {
             this->visualizer->SetColors(lowColor, mediumColor, highColor, maxColor);
+            this->visualizer->SetbackColor(this->backColor);
         }
     }
 
