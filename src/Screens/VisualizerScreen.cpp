@@ -96,6 +96,7 @@ namespace Screens
 
     void VisualizerScreen::ReDraw()
     {
+        lcd->fillScreen(this->backColor);
         this->visualizer->ReDraw();
     }
 
@@ -161,9 +162,8 @@ namespace Screens
 
     void VisualizerScreen::EnterFocus()
     {
-        lcd->fillScreen(DrawUtils::Get565Color(0, 0, 0));
         this->visualizer->Reset();
-        this->visualizer->ReDraw();
+        this->ReDraw();
     }
 
     VisualizerScreen::~VisualizerScreen()
