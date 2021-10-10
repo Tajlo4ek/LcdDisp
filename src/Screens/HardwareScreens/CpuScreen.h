@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Screens/BaseScreen.h"
+#include "BaseHardwareScreen.h"
 #include <TFT_eSPI.h>
 #include "Hardwares/CPU.h"
 
@@ -10,7 +10,7 @@
 namespace HardwareScreens
 {
     //TODO: if core count >4
-    class CpuScreen : public Screens::Screen
+    class CpuScreen : public BaseHardwareScreen
     {
         enum ScreenMode
         {
@@ -38,7 +38,8 @@ namespace HardwareScreens
         void EnterFocus() override;
         void Loop() override;
         String ParseMessage(const String &message) override;
-        void ReloadConfig() override;
+
+        void ReDraw() override;
 
         CpuScreen(TFT_eSPI *lcd);
         ~CpuScreen();

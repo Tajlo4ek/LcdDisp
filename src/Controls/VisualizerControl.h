@@ -30,6 +30,8 @@ namespace Controls
         const int GetLineCount() const;
         const int GetMaxLineLength() const;
 
+        void SetColors(uint16_t lowColor, uint16_t mediumColor, uint16_t highColor, uint16_t maxColor);
+
         void Reset();
         void ReDraw() override;
     };

@@ -67,4 +67,9 @@ namespace Controls
             break;
         }
     }
+
+    Label::~Label()
+    {
+        this->text.clear();
+    }
 }

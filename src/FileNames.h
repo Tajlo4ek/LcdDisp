@@ -2,7 +2,7 @@
 
 #define WEATHER_CONFIG_PATH F("/cnfg/Weather.json")
 #define WIFI_CONFIG_PATH F("/cnfg/Wifi.json")
-#define DIGITAL_CLOCK_CONFIG_PATH F("/cnfg/DigitalClock.json")
+#define MAIN_SCREEN_CONFIG_PATH F("/cnfg/MainScreen.json")
 #define SPECTRUM_CONFIG_PATH F("/cnfg/Spectrum.json")
 
 #define INDEX_PAGE_PATH F("/pages/index.html")

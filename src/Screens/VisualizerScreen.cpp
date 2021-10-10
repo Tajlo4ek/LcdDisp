@@ -1,32 +1,37 @@
 #include "VisualizerScreen.h"
 
 #include "Commands.h"
+#include "FileNames.h"
+
+#include "Utils/FileSystem/FileSystem.h"
+#include "Utils/Parsers/JsonParser.h"
 #include "Utils/DrawUtils/Color.h"
 
 namespace Screens
 {
-    VisualizerScreen::VisualizerScreen(TFT_eSPI *lcd)
-        : Screen(lcd)
-    {
-        Controls::ControlRect rect = {5, 0, 150, 128};
-        this->visualizer = new Controls::VisualizerControl(lcd, rect);
-    }
 
-    void VisualizerScreen::ReloadConfig()
-    {
-        //spectrumDrawer->ReloadConfig();
-
-        /*
-        #define CONFIG_BACK_COLOR F("backColor")
+#define CONFIG_BACK_COLOR F("backColor")
 #define CONFIG_LOW_COLOR F("lowColor")
 #define CONFIG_MEDIUM_COLOR F("mediumColor")
 #define CONFIG_HIGH_COLOR F("highColor")
 #define CONFIG_MAX_COLOR F("maxColor")
 
-auto json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
+    VisualizerScreen::VisualizerScreen(TFT_eSPI *lcd)
+        : Screen(lcd)
+    {
+        Controls::ControlRect rect = {5, 0, 150, 128};
+        this->visualizer = new Controls::VisualizerControl(lcd, rect);
+
+        this->ReloadConfig();
+    }
+
+    void VisualizerScreen::ReloadConfig()
+    {
+        auto json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
         if (json.isEmpty())
         {
             this->CreateDefaultConfig();
+            json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
         }
 
         const uint colorCount = 5;
@@ -38,12 +43,17 @@ auto json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
             CONFIG_MAX_COLOR,
         };
 
+        uint16_t lowColor;
+        uint16_t mediumColor;
+        uint16_t highColor;
+        uint16_t maxColor;
+
         uint16_t *colors[colorCount]{
             &this->backColor,
-            &this->lowColor,
-            &this->mediumColor,
-            &this->highColor,
-            &this->maxColor,
+            &lowColor,
+            &mediumColor,
+            &highColor,
+            &maxColor,
         };
 
         bool loadRes = DrawUtils::LoadColorsFromJson(json, colorNames, colors, colorCount);
@@ -53,8 +63,40 @@ auto json = FileSystem::ReadFile(SPECTRUM_CONFIG_PATH);
             this->CreateDefaultConfig();
             this->ReloadConfig();
         }
-        
-        */
+        else
+        {
+            this->visualizer->SetColors(lowColor, mediumColor, highColor, maxColor);
+            this->visualizer->SetBackColor(this->backColor);
+        }
+    }
+
+    void VisualizerScreen::CreateDefaultConfig()
+    {
+        const uint configCount = 5;
+        String configNames[configCount]{
+            CONFIG_BACK_COLOR,
+            CONFIG_LOW_COLOR,
+            CONFIG_MEDIUM_COLOR,
+            CONFIG_HIGH_COLOR,
+            CONFIG_MAX_COLOR,
+        };
+
+        String datas[configCount]{
+            DrawUtils::GetJsonColor(0, 0, 0),
+            DrawUtils::GetJsonColor(0, 255, 0),
+            DrawUtils::GetJsonColor(255, 255, 0),
+            DrawUtils::GetJsonColor(255, 0, 0),
+            DrawUtils::GetJsonColor(0, 255, 255),
+        };
+
+        FileSystem::WriteFile(
+            SPECTRUM_CONFIG_PATH,
+            JsonParser::BuildJson(configNames, datas, configCount));
+    }
+
+    void VisualizerScreen::ReDraw()
+    {
+        this->visualizer->ReDraw();
     }
 
     String VisualizerScreen::ParseMessage(const String &message)

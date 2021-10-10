@@ -31,7 +31,7 @@
         function LoadConfig() {
 
             let clockForm = new FormData();
-            clockForm.append("name", "{clock_config}");
+            clockForm.append("name", "{main_screen_config}");
             SendRequest(clockForm, "/edit/getFileData", LoadConfigClock);
 
             let spectrumForm = new FormData();
@@ -64,7 +64,7 @@
             }
 
             let formData = new FormData();
-            formData.append("name", "{clock_config}");
+            formData.append("name", "{main_screen_config}");
             formData.append("data", JSON.stringify(config));
             SendRequest(formData, "/edit/saveFileData", function() {
                 SendResetCommand()

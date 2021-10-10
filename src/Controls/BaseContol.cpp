@@ -28,12 +28,14 @@ namespace Controls
         ReDraw();
     }
 
-    void BaseControl::SetColor(uint16_t mainColor, uint16_t backColor)
+    void BaseControl::SetMainColor(uint16_t color)
     {
-        this->backColor = backColor;
-        this->mainColor = mainColor;
+        this->mainColor = color;
+    }
 
-        ReDraw();
+    void BaseControl::SetBackColor(uint16_t color)
+    {
+        this->backColor = color;
     }
 
     void BaseControl::ClearRect()

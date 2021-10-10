@@ -22,6 +22,7 @@ namespace Controls
         };
 
         Label(TFT_eSPI *lcd, ControlRect rect, TextSize size);
+        ~Label();
 
         void DrawText(const String &text, TextAlignment alignment);
 

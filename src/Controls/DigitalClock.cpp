@@ -10,13 +10,18 @@ namespace Controls
         : BaseControl(lcd, {0,
                             posY,
                             lcd->width(),
-                            63})
+                            50})
     {
         this->mainColor = DrawUtils::Get565Color(0, 0, 255);
         this->clockSecondColor = DrawUtils::Get565Color(0, 0, 200);
 
         this->blockWidth = 29;
         this->blockHeight = 9;
+    }
+
+    void DigitalClock::SetClockSecondColor(uint16_t color)
+    {
+        this->clockSecondColor = color;
     }
 
     void DigitalClock::ReDraw()

@@ -16,10 +16,13 @@ namespace Screens
 
         Controls::VisualizerControl *visualizer;
 
+        void CreateDefaultConfig() override;
+
     public:
         void EnterFocus() override;
         String ParseMessage(const String &message) override;
         void ReloadConfig() override;
+        void ReDraw() override;
 
         VisualizerScreen(TFT_eSPI *lcd);
         ~VisualizerScreen();

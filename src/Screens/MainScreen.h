@@ -50,11 +50,14 @@ namespace Screens
         void DrawDate();
         void DrawWeather();
 
+        void CreateDefaultConfig() override;
+
     public:
         void EnterFocus() override;
         void LeaveFocus() override;
         void Loop() override;
         void ReloadConfig() override;
+        void ReDraw() override;
 
         MainScreen(TFT_eSPI *lcd);
         ~MainScreen();

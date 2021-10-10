@@ -12,6 +12,9 @@ namespace Screens
     protected:
         bool hasEthernet;
         TFT_eSPI *lcd;
+        uint16_t backColor;
+
+        virtual void CreateDefaultConfig() = 0;
 
     public:
         virtual void EnterFocus() = 0;
@@ -19,6 +22,7 @@ namespace Screens
         virtual void Loop();
         virtual String ParseMessage(const String &message);
         virtual void ReloadConfig() = 0;
+        virtual void ReDraw() = 0;
 
         void SetEthernetAvailable(bool val);
 

@@ -6,7 +6,7 @@
 namespace HardwareScreens
 {
     CpuScreen::CpuScreen(TFT_eSPI *lcd)
-        : Screens::Screen(lcd)
+        : BaseHardwareScreen(lcd)
     {
         this->cpu = nullptr;
 
@@ -15,11 +15,11 @@ namespace HardwareScreens
 
         Controls::ControlRect labelRect = {2, 2, lcd->width(), 10};
         this->labelCpuName = new Controls::Label(lcd, labelRect, Controls::Label::TextSize::Small);
-        this->labelCpuName->SetColor(DrawUtils::Get565Color(0, 255, 0), DrawUtils::Get565Color(0, 0, 0));
+        //this->labelCpuName->SetColor(DrawUtils::Get565Color(0, 255, 0), DrawUtils::Get565Color(0, 0, 0));
 
         labelRect = {2, lcd->height() - 10, lcd->width(), 10};
         this->labelCpuCurrentValue = new Controls::Label(lcd, labelRect, Controls::Label::TextSize::Small);
-        this->labelCpuCurrentValue->SetColor(DrawUtils::Get565Color(0, 255, 0), DrawUtils::Get565Color(0, 0, 0));
+        //this->labelCpuCurrentValue->SetColor(DrawUtils::Get565Color(0, 255, 0), DrawUtils::Get565Color(0, 0, 0));
     }
 
     void CpuScreen::EnterFocus()
@@ -27,8 +27,16 @@ namespace HardwareScreens
         lcd->fillScreen(DrawUtils::Get565Color(0, 0, 0));
     }
 
-    void CpuScreen::Loop()
+    void CpuScreen::ReDraw()
     {
+        this->chart->ReDraw();
+        this->labelCpuName->ReDraw();
+        this->labelCpuCurrentValue->ReDraw();
+
+        for (uint i = 0; i < this->labelCoreInfo.size(); i++)
+        {
+            this->labelCoreInfo[i]->ReDraw();
+        }
     }
 
     String CpuScreen::ParseMessage(const String &message)
@@ -42,7 +50,7 @@ namespace HardwareScreens
                 {
                     Controls::ControlRect labelRect = {2, 15 + (i * 2 + j) * 12, lcd->width(), 12};
                     Controls::Label *label = new Controls::Label(lcd, labelRect, Controls::Label::TextSize::Small);
-                    label->SetColor(DrawUtils::Get565Color(0, 255, 0), DrawUtils::Get565Color(0, 0, 0));
+                    //label->SetColor(DrawUtils::Get565Color(0, 255, 0), DrawUtils::Get565Color(0, 0, 0));
                     label->SetVisible(false);
                     labelCoreInfo.push_back(label);
                 }
@@ -174,10 +182,6 @@ namespace HardwareScreens
 
             labelCoreInfo[coreNum * 2 + 1]->DrawText(text, Controls::Label::TextAlignment::Left);
         }
-    }
-
-    void CpuScreen::ReloadConfig()
-    {
     }
 
     CpuScreen::~CpuScreen()

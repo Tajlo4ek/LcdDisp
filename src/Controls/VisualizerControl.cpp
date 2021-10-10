@@ -35,6 +35,14 @@ namespace Controls
         Reset();
     }
 
+    void VisualizerControl::SetColors(uint16_t lowColor, uint16_t mediumColor, uint16_t highColor, uint16_t maxColor)
+    {
+        this->lowColor = lowColor;
+        this->mediumColor = mediumColor;
+        this->highColor = highColor;
+        this->maxColor = maxColor;
+    }
+
     void VisualizerControl::DrawSpectrum(byte *spectrumLeft, byte *spectrumRight)
     {
         int leftOffsetY = controlRect.leftUpY + this->spectrumMaxSize + 1;

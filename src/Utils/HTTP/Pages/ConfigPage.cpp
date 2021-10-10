@@ -15,7 +15,7 @@ namespace Pages
     {
         String page = FileSystem::ReadFile(CONFIG_PAGE_PATH);
 
-        page.replace(F("{clock_config}"), DIGITAL_CLOCK_CONFIG_PATH);
+        page.replace(F("{main_screen_config}"), MAIN_SCREEN_CONFIG_PATH);
         page.replace(F("{spectrum_config}"), SPECTRUM_CONFIG_PATH);
         page.replace(F("{reload-command}"), COMMAND_RELOAD_SCREEN);
 
