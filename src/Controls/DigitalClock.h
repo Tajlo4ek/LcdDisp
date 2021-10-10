@@ -27,6 +27,9 @@ namespace Controls
         int blockWidth;
         int blockHeight;
 
+        int dotSpaceWidth;
+        int dotSpacePosX;
+
         byte nowMinutes;
         byte nowHours;
 

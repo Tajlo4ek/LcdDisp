@@ -62,7 +62,7 @@ namespace Screens
         controlRect = {2, 75, 156, 16};
         this->labelDate = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
 
-        controlRect = {0, 17, 160, 50};
+        controlRect = {0, 17, 160, 58};
         this->digitalClock = new Controls::DigitalClock(lcd, controlRect);
 
         controlRect = {64, 55, 32, 8};
@@ -76,7 +76,7 @@ namespace Screens
         controlRect = {112, 100, 48, 16};
         this->labelTemp = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
 
-        controlRect = {32, 92, 80, 32};
+        controlRect = {33, 92, 79, 32};
         this->labelWeatherDescription = new Controls::MultilineLable(lcd, controlRect, Controls::Label::TextSize::Small);
 
         this->myClock.SetTimeChangeCallback(std::bind(&MainScreen::DrawTime, this));

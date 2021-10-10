@@ -29,6 +29,9 @@ namespace Controls
         this->blockHeight = (this->numHeight - this->blockWidth * 2) / 2;
 
         this->numWidth += 2;
+
+        this->dotSpacePosX = this->numWidth * 2 + SPACE_SIZE * 3;
+        this->dotSpaceWidth = rect.width - this->dotSpacePosX * 2;
     }
 
     void DigitalClock::SetClockSecondColor(uint16_t color)
@@ -59,7 +62,52 @@ namespace Controls
         DrawNum(minutes / 10, controlRect.leftUpX + controlRect.width - (SPACE_SIZE + this->numWidth) * 2, controlRect.leftUpY);
         DrawNum(minutes % 10, controlRect.leftUpX + controlRect.width - (SPACE_SIZE + this->numWidth), controlRect.leftUpY);
 
-        //TODO: dots
+        int heightDiv5 = this->numHeight / 5;
+        int dotRadius = this->dotSpaceWidth * 40 / 100 / 2;
+
+        int dotX = controlRect.leftUpX + this->dotSpacePosX + this->dotSpaceWidth / 2;
+        int dotY = controlRect.leftUpY + heightDiv5;
+
+        uint16_t dotColor = needDots ? this->mainColor : this->backColor;
+
+        this->lcd->fillEllipse(
+            dotX,
+            dotY,
+            dotRadius,
+            dotRadius,
+            dotColor);
+
+        this->lcd->fillEllipse(
+            dotX,
+            dotY + 2 * heightDiv5,
+            dotRadius,
+            dotRadius,
+            dotColor);
+
+        /*        
+        //dot radius = 30% of empty central space
+        int delta = controlRect.width - (SPACE_SIZE + this->blockWidth) * 4;
+        int dotRadius = delta * 30 / 100 / 2;
+
+        int dotX = controlRect.width / 2;
+        int dotY = (this->blockWidth - dotRadius) / 2;
+
+        uint16_t dotColor = needDots ? this->mainColor : this->backColor;
+
+        this->lcd->fillEllipse(
+            dotX,
+            controlRect.leftUpY + dotY,
+            dotRadius,
+            dotRadius,
+            dotColor);
+
+        this->lcd->fillEllipse(
+            dotX,
+            controlRect.leftUpY + dotY + this->blockWidth - this->blockHeight,
+            dotRadius,
+            dotRadius,
+            dotColor);
+        */
     }
 
     void DigitalClock::DrawNum(byte num, int x, int y) const
