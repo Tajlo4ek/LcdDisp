@@ -124,25 +124,25 @@ namespace Screens
         }
         else
         {
-            this->labelMessage->SetbackColor(this->backColor);
+            this->labelMessage->SetBackColor(this->backColor);
             this->labelMessage->SetMainColor(clockMainColor);
 
-            this->labelDate->SetbackColor(this->backColor);
+            this->labelDate->SetBackColor(this->backColor);
             this->labelDate->SetMainColor(clockMainColor);
 
-            this->labelTimeSync->SetbackColor(this->backColor);
+            this->labelTimeSync->SetBackColor(this->backColor);
             this->labelTimeSync->SetMainColor(clockMainColor);
 
-            this->imageWeather->SetbackColor(this->backColor);
+            this->imageWeather->SetBackColor(this->backColor);
             this->imageWeather->SetMainColor(clockMainColor);
 
-            this->labelTemp->SetbackColor(this->backColor);
+            this->labelTemp->SetBackColor(this->backColor);
             this->labelTemp->SetMainColor(clockMainColor);
 
-            this->labelWeatherDescription->SetbackColor(this->backColor);
+            this->labelWeatherDescription->SetBackColor(this->backColor);
             this->labelWeatherDescription->SetMainColor(clockMainColor);
 
-            this->digitalClock->SetbackColor(this->backColor);
+            this->digitalClock->SetBackColor(this->backColor);
             this->digitalClock->SetMainColor(clockMainColor);
             this->digitalClock->SetClockSecondColor(clockSecondColor);
         }

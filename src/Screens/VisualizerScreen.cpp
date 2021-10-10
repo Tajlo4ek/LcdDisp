@@ -66,7 +66,7 @@ namespace Screens
         else
         {
             this->visualizer->SetColors(lowColor, mediumColor, highColor, maxColor);
-            this->visualizer->SetbackColor(this->backColor);
+            this->visualizer->SetBackColor(this->backColor);
         }
     }
 

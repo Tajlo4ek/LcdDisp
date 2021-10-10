@@ -32,7 +32,7 @@ namespace Controls
         virtual void ReDraw() = 0;
 
         void SetMainColor(uint16_t color);
-        void SetbackColor(uint16_t color);
+        void SetBackColor(uint16_t color);
 
         void SetVisible(bool val);
     };

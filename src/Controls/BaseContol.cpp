@@ -33,7 +33,7 @@ namespace Controls
         this->mainColor = color;
     }
 
-    void BaseControl::SetbackColor(uint16_t color)
+    void BaseControl::SetBackColor(uint16_t color)
     {
         this->backColor = color;
     }
