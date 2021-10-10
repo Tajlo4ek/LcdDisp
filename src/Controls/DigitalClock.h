@@ -4,7 +4,6 @@
 
 namespace Controls
 {
-    //TODO: make not fixed size
     class DigitalClock : public BaseControl
     {
     private:
@@ -21,6 +20,7 @@ namespace Controls
 
         uint16_t clockSecondColor;
 
+        int numSpace;
         int numWidth;
         int numHeight;
 

@@ -4,7 +4,6 @@
 
 namespace Controls
 {
-#define SPACE_SIZE 3
 
     DigitalClock::DigitalClock(TFT_eSPI *lcd, ControlRect rect)
         : BaseControl(lcd, rect)
@@ -14,23 +13,31 @@ namespace Controls
         this->nowMinutes = 0;
         this->nowHours = 0;
 
-        this->numWidth = (rect.width - SPACE_SIZE * 6) / 5;
-        while (this->numWidth * 2 > rect.height)
+        this->numSpace = (int)(rect.width * 0.02F);
+
+        this->numWidth = (rect.width - this->numSpace * 6) / 5;
+        while (true)
         {
+            this->blockWidth = this->numWidth / 3;
+            while (this->blockWidth % 2 == 0)
+            {
+                this->blockWidth--;
+            }
+            this->blockHeight = this->numWidth - this->blockWidth / 2 * 2;
+
+            this->numHeight = blockHeight * 2 + this->blockWidth + 2;
+
+            if (this->numHeight <= rect.height)
+            {
+                break;
+            }
+
             this->numWidth--;
         }
-        this->numHeight = 2 * this->numWidth;
-
-        this->blockWidth = this->numWidth / 3;
-        while (this->blockWidth % 2 == 0)
-        {
-            this->blockWidth--;
-        }
-        this->blockHeight = (this->numHeight - this->blockWidth * 2) / 2;
 
         this->numWidth += 2;
 
-        this->dotSpacePosX = this->numWidth * 2 + SPACE_SIZE * 3;
+        this->dotSpacePosX = this->numWidth * 2 + this->numSpace * 3;
         this->dotSpaceWidth = rect.width - this->dotSpacePosX * 2;
     }
 
@@ -53,61 +60,43 @@ namespace Controls
 
     void DigitalClock::DrawTime(byte hours, byte minutes, bool needDots)
     {
+        lcd->setViewport(controlRect.leftUpX, controlRect.leftUpY, controlRect.width, controlRect.height);
+
         this->nowHours = hours;
         this->nowMinutes = minutes;
 
-        DrawNum(hours / 10, controlRect.leftUpX + SPACE_SIZE, controlRect.leftUpY);
-        DrawNum(hours % 10, controlRect.leftUpX + SPACE_SIZE * 2 + this->numWidth, controlRect.leftUpY);
+        DrawNum(hours / 10, this->numSpace, 0);
+        DrawNum(hours % 10, this->numSpace * 2 + this->numWidth, 0);
 
-        DrawNum(minutes / 10, controlRect.leftUpX + controlRect.width - (SPACE_SIZE + this->numWidth) * 2, controlRect.leftUpY);
-        DrawNum(minutes % 10, controlRect.leftUpX + controlRect.width - (SPACE_SIZE + this->numWidth), controlRect.leftUpY);
+        DrawNum(minutes / 10, controlRect.width - (this->numSpace + this->numWidth) * 2, 0);
+        DrawNum(minutes % 10, controlRect.width - (this->numSpace + this->numWidth), 0);
 
-        int heightDiv5 = this->numHeight / 5;
+        /*int heightDiv5 = this->numHeight / 5;
         int dotRadius = this->dotSpaceWidth * 40 / 100 / 2;
 
+        if (dotRadius < 2)
+        {
+            dotRadius = 2;
+        }
+
         int dotX = controlRect.leftUpX + this->dotSpacePosX + this->dotSpaceWidth / 2;
-        int dotY = controlRect.leftUpY + heightDiv5;
+        int dotY = controlRect.leftUpY + this->numHeight / 2;
 
         uint16_t dotColor = needDots ? this->mainColor : this->backColor;
 
         this->lcd->fillEllipse(
             dotX,
-            dotY,
+            dotY - heightDiv5,
             dotRadius,
             dotRadius,
             dotColor);
 
         this->lcd->fillEllipse(
             dotX,
-            dotY + 2 * heightDiv5,
+            dotY + heightDiv5,
             dotRadius,
             dotRadius,
-            dotColor);
-
-        /*        
-        //dot radius = 30% of empty central space
-        int delta = controlRect.width - (SPACE_SIZE + this->blockWidth) * 4;
-        int dotRadius = delta * 30 / 100 / 2;
-
-        int dotX = controlRect.width / 2;
-        int dotY = (this->blockWidth - dotRadius) / 2;
-
-        uint16_t dotColor = needDots ? this->mainColor : this->backColor;
-
-        this->lcd->fillEllipse(
-            dotX,
-            controlRect.leftUpY + dotY,
-            dotRadius,
-            dotRadius,
-            dotColor);
-
-        this->lcd->fillEllipse(
-            dotX,
-            controlRect.leftUpY + dotY + this->blockWidth - this->blockHeight,
-            dotRadius,
-            dotRadius,
-            dotColor);
-        */
+            dotColor);*/
     }
 
     void DigitalClock::DrawNum(byte num, int x, int y) const
@@ -120,56 +109,56 @@ namespace Controls
         //top
         uint16_t color = (num != 1 && num != 4) ? this->mainColor : this->backColor;
         DrawBlock(
-            x + this->blockWidth / 2 + 2,
-            y,
+            x + this->blockWidth / 2 + 1,
+            y - 1,
             color,
             Orientation::Horizontal);
 
         //top left
         color = (num != 1 && num != 2 && num != 3 && num != 7) ? this->mainColor : this->backColor;
         DrawBlock(
-            x,
-            y + this->blockWidth / 2 + 2,
+            x - 1,
+            y + this->blockWidth / 2 + 1,
             color,
             Orientation::Vertical);
 
         //top right
         color = (num != 5 && num != 6) ? this->mainColor : this->backColor;
         DrawBlock(
-            x + this->blockHeight + 1,
-            y + this->blockWidth / 2 + 2,
+            x + this->blockHeight,
+            y + this->blockWidth / 2 + 1,
             color,
             Orientation::Vertical);
 
         //center
         color = (num > 1 && num != 7) ? this->mainColor : this->backColor;
         DrawBlock(
-            x + this->blockWidth / 2 + 2,
-            y + this->blockHeight + 1,
+            x + this->blockWidth / 2 + 1,
+            y + this->blockHeight,
             color,
             Orientation::Horizontal);
 
         //bottom left
         color = (num == 0 || num == 2 || num == 6 || num == 8) ? this->mainColor : this->backColor;
         DrawBlock(
-            x,
-            y + this->blockWidth / 2 + 2 + this->blockHeight + 1,
+            x - 1,
+            y + this->blockWidth / 2 + this->blockHeight + 2,
             color,
             Orientation::Vertical);
 
         //bottom right
         color = (num != 2) ? this->mainColor : this->backColor;
         DrawBlock(
-            x + this->blockHeight + 1,
-            y + this->blockWidth / 2 + 2 + this->blockHeight + 1,
+            x + this->blockHeight,
+            y + this->blockWidth / 2 + this->blockHeight + 2,
             color,
             Orientation::Vertical);
 
         //bottom
         color = (num != 1 && num != 4 && num != 7) ? this->mainColor : this->backColor;
         DrawBlock(
-            x + this->blockWidth / 2 + 2,
-            y + (this->blockHeight + 1) * 2,
+            x + this->blockWidth / 2 + 1,
+            y + (this->blockHeight + 1) * 2 - 1,
             color,
             Orientation::Horizontal);
     }
