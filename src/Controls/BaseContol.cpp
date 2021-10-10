@@ -40,6 +40,13 @@ namespace Controls
 
     void BaseControl::ClearRect()
     {
-        lcd->fillRect(controlRect.leftUpX, controlRect.leftUpY, controlRect.width, controlRect.height, backColor);
+        SetViewPort();
+        lcd->fillRect(0, 0, controlRect.width, controlRect.height, backColor);
     }
+
+    void BaseControl::SetViewPort()
+    {
+        lcd->setViewport(controlRect.leftUpX, controlRect.leftUpY, controlRect.width, controlRect.height);
+    }
+
 }

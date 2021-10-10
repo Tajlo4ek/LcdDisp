@@ -33,13 +33,15 @@ namespace Controls
 
     void Label::Draw()
     {
+        SetViewPort();
+
         lcd->setTextSize((int)size / 8);
         lcd->setTextColor(mainColor, backColor);
 
         if ((int)this->size > controlRect.height)
         {
             lcd->setTextSize(1);
-            lcd->drawString(F("size to big"), controlRect.leftUpX, controlRect.leftUpY);
+            lcd->drawString(F("size to big"), 0, 0);
             return;
         }
 
@@ -55,15 +57,15 @@ namespace Controls
         {
         default:
         case TextAlignment::Left:
-            lcd->drawString(buf, controlRect.leftUpX, controlRect.leftUpY);
+            lcd->drawString(buf, 0, 0);
             break;
 
         case TextAlignment::Center:
-            lcd->drawString(text, controlRect.leftUpX + (controlRect.width - textWidth) / 2, controlRect.leftUpY);
+            lcd->drawString(text, (controlRect.width - textWidth) / 2, 0);
             break;
 
         case TextAlignment::Right:
-            lcd->drawString(buf, controlRect.leftUpX + controlRect.width - textWidth, controlRect.leftUpY);
+            lcd->drawString(buf, controlRect.width - textWidth, 0);
             break;
         }
     }

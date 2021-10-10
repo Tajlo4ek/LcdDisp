@@ -60,7 +60,7 @@ namespace Controls
 
     void DigitalClock::DrawTime(byte hours, byte minutes, bool needDots)
     {
-        lcd->setViewport(controlRect.leftUpX, controlRect.leftUpY, controlRect.width, controlRect.height);
+        this->SetViewPort();
 
         this->nowHours = hours;
         this->nowMinutes = minutes;

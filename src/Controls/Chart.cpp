@@ -62,6 +62,8 @@ namespace Controls
             return;
         }
 
+        SetViewPort();
+
         int leftUpX = controlRect.leftUpX;
         int leftUpY = controlRect.leftUpY;
         lcd->drawFastVLine(leftUpX, leftUpY, controlRect.height, secondColor);
