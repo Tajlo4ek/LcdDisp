@@ -62,7 +62,8 @@ namespace Screens
         controlRect = {2, 75, 156, 16};
         this->labelDate = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
 
-        this->digitalClock = new Controls::DigitalClock(lcd, 17);
+        controlRect = {0, 17, 160, 50};
+        this->digitalClock = new Controls::DigitalClock(lcd, controlRect);
 
         controlRect = {64, 55, 32, 8};
         this->labelTimeSync = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);

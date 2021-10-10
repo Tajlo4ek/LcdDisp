@@ -14,8 +14,6 @@
 
 namespace Screens
 {
-
-    //TODO: make not fixed size
     class MainScreen : public Screen
     {
 

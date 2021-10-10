@@ -6,17 +6,29 @@ namespace Controls
 {
 #define SPACE_SIZE 3
 
-    DigitalClock::DigitalClock(TFT_eSPI *lcd, int posY)
-        : BaseControl(lcd, {0,
-                            posY,
-                            lcd->width(),
-                            50})
+    DigitalClock::DigitalClock(TFT_eSPI *lcd, ControlRect rect)
+        : BaseControl(lcd, rect)
     {
         this->mainColor = DrawUtils::Get565Color(0, 0, 255);
         this->clockSecondColor = DrawUtils::Get565Color(0, 0, 200);
+        this->nowMinutes = 0;
+        this->nowHours = 0;
 
-        this->blockWidth = 29;
-        this->blockHeight = 9;
+        this->numWidth = (rect.width - SPACE_SIZE * 6) / 5;
+        while (this->numWidth * 2 > rect.height)
+        {
+            this->numWidth--;
+        }
+        this->numHeight = 2 * this->numWidth;
+
+        this->blockWidth = this->numWidth / 3;
+        while (this->blockWidth % 2 == 0)
+        {
+            this->blockWidth--;
+        }
+        this->blockHeight = (this->numHeight - this->blockWidth * 2) / 2;
+
+        this->numWidth += 2;
     }
 
     void DigitalClock::SetClockSecondColor(uint16_t color)
@@ -38,189 +50,159 @@ namespace Controls
 
     void DigitalClock::DrawTime(byte hours, byte minutes, bool needDots)
     {
-        this->nowMinutes = minutes;
         this->nowHours = hours;
+        this->nowMinutes = minutes;
 
-        DrawNum(hours / 10, SPACE_SIZE, controlRect.leftUpY);
-        DrawNum(hours % 10, SPACE_SIZE * 2 + this->blockWidth, controlRect.leftUpY);
+        DrawNum(hours / 10, controlRect.leftUpX + SPACE_SIZE, controlRect.leftUpY);
+        DrawNum(hours % 10, controlRect.leftUpX + SPACE_SIZE * 2 + this->numWidth, controlRect.leftUpY);
 
-        DrawNum(minutes / 10, controlRect.width - (SPACE_SIZE + this->blockWidth) * 2, controlRect.leftUpY);
-        DrawNum(minutes % 10, controlRect.width - SPACE_SIZE - this->blockWidth, controlRect.leftUpY);
+        DrawNum(minutes / 10, controlRect.leftUpX + controlRect.width - (SPACE_SIZE + this->numWidth) * 2, controlRect.leftUpY);
+        DrawNum(minutes % 10, controlRect.leftUpX + controlRect.width - (SPACE_SIZE + this->numWidth), controlRect.leftUpY);
 
-        //dot radius = 30% of empty central space
-        int delta = controlRect.width - (SPACE_SIZE + this->blockWidth) * 4;
-        int dotRadius = delta * 30 / 100 / 2;
-
-        int dotX = controlRect.width / 2;
-        int dotY = (this->blockWidth - dotRadius) / 2;
-
-        uint16_t dotColor = needDots ? this->mainColor : this->backColor;
-
-        this->lcd->fillEllipse(
-            dotX,
-            controlRect.leftUpY + dotY,
-            dotRadius,
-            dotRadius,
-            dotColor);
-
-        this->lcd->fillEllipse(
-            dotX,
-            controlRect.leftUpY + dotY + this->blockWidth - this->blockHeight,
-            dotRadius,
-            dotRadius,
-            dotColor);
+        //TODO: dots
     }
 
     void DigitalClock::DrawNum(byte num, int x, int y) const
     {
         if (num > 9)
         {
-            num = 0;
+            return;
         }
 
         //top
-        if (num != 1 && num != 4)
-        {
-            DrawHorBlock(x, y, this->mainColor);
-        }
-        else
-        {
-            DrawHorBlock(x, y, this->backColor);
-        }
+        uint16_t color = (num != 1 && num != 4) ? this->mainColor : this->backColor;
+        DrawBlock(
+            x + this->blockWidth / 2 + 2,
+            y,
+            color,
+            Orientation::Horizontal);
 
-        //left top
-        if (num != 1 && num != 2 && num != 3 && num != 7)
-        {
-            DrawVerBlock(x, y, this->mainColor);
-        }
-        else
-        {
-            DrawVerBlock(x, y, this->backColor);
-        }
+        //top left
+        color = (num != 1 && num != 2 && num != 3 && num != 7) ? this->mainColor : this->backColor;
+        DrawBlock(
+            x,
+            y + this->blockWidth / 2 + 2,
+            color,
+            Orientation::Vertical);
 
-        //right top
-        if (num != 5 && num != 6)
-        {
-            DrawVerBlock(x + this->blockWidth - this->blockHeight + 1, y, this->mainColor);
-        }
-        else
-        {
-            DrawVerBlock(x + this->blockWidth - this->blockHeight + 1, y, this->backColor);
-        }
+        //top right
+        color = (num != 5 && num != 6) ? this->mainColor : this->backColor;
+        DrawBlock(
+            x + this->blockHeight + 1,
+            y + this->blockWidth / 2 + 2,
+            color,
+            Orientation::Vertical);
 
         //center
-        if (num > 1 && num != 7)
-        {
-            DrawHorBlock(x, y + this->blockWidth - this->blockHeight + 1, this->mainColor);
-        }
-        else
-        {
-            DrawHorBlock(x, y + this->blockWidth - this->blockHeight + 1, this->backColor);
-        }
+        color = (num > 1 && num != 7) ? this->mainColor : this->backColor;
+        DrawBlock(
+            x + this->blockWidth / 2 + 2,
+            y + this->blockHeight + 1,
+            color,
+            Orientation::Horizontal);
 
-        //left bottom
-        if (num == 0 || num == 2 || num == 6 || num == 8)
-        {
-            DrawVerBlock(x, y + this->blockWidth - this->blockHeight + 1, this->mainColor);
-        }
-        else
-        {
-            DrawVerBlock(x, y + this->blockWidth - this->blockHeight + 1, this->backColor);
-        }
+        //bottom left
+        color = (num == 0 || num == 2 || num == 6 || num == 8) ? this->mainColor : this->backColor;
+        DrawBlock(
+            x,
+            y + this->blockWidth / 2 + 2 + this->blockHeight + 1,
+            color,
+            Orientation::Vertical);
 
-        //right bottom
-        if (num != 2)
-        {
-            DrawVerBlock(
-                x + this->blockWidth - this->blockHeight + 1,
-                y + this->blockWidth - this->blockHeight + 1,
-                this->mainColor);
-        }
-        else
-        {
-            DrawVerBlock(
-                x + this->blockWidth - this->blockHeight + 1,
-                y + this->blockWidth - this->blockHeight + 1,
-                this->backColor);
-        }
+        //bottom right
+        color = (num != 2) ? this->mainColor : this->backColor;
+        DrawBlock(
+            x + this->blockHeight + 1,
+            y + this->blockWidth / 2 + 2 + this->blockHeight + 1,
+            color,
+            Orientation::Vertical);
 
         //bottom
-        if (num != 1 && num != 4 && num != 7)
+        color = (num != 1 && num != 4 && num != 7) ? this->mainColor : this->backColor;
+        DrawBlock(
+            x + this->blockWidth / 2 + 2,
+            y + (this->blockHeight + 1) * 2,
+            color,
+            Orientation::Horizontal);
+    }
+
+    void DigitalClock::DrawBlock(int x, int y, uint16_t color, Orientation orientation) const
+    {
+        const int blockWidthDiv2 = this->blockWidth / 2;
+        int offsetX = 0;
+        int offsetY = 0;
+        int signX = 0;
+        int signY = 0;
+
+        if (orientation == Orientation::Horizontal)
         {
-            DrawHorBlock(x, y + (this->blockWidth - this->blockHeight + 1) * 2, this->mainColor);
+            offsetX = x;
+            offsetY = y + blockWidthDiv2 + 1;
+
+            signX = 1;
+            signY = -1;
         }
         else
         {
-            DrawHorBlock(x, y + (this->blockWidth - this->blockHeight + 1) * 2, this->backColor);
+            offsetX = x + blockWidthDiv2 + 1;
+            offsetY = y;
+
+            signX = -1;
+            signY = 1;
+        }
+
+        DrawFastLine(
+            offsetX,
+            offsetY,
+            this->blockHeight,
+            color,
+            orientation);
+
+        DrawFastLine(
+            offsetX + blockWidthDiv2 * signX,
+            offsetY + blockWidthDiv2 * signY,
+            this->blockHeight - blockWidthDiv2 * 2,
+            this->clockSecondColor,
+            orientation);
+
+        DrawFastLine(
+            offsetX + blockWidthDiv2,
+            offsetY + blockWidthDiv2,
+            this->blockHeight - blockWidthDiv2 * 2,
+            this->clockSecondColor,
+            orientation);
+
+        for (int i = 1; i < blockWidthDiv2; i++)
+        {
+            DrawFastLine(
+                offsetX + i * signX,
+                offsetY + i * signY,
+                this->blockHeight - i * 2,
+                color,
+                orientation);
+
+            DrawFastLine(
+                offsetX + i,
+                offsetY + i,
+                this->blockHeight - i * 2,
+                color,
+                orientation);
         }
     }
 
-    void DigitalClock::DrawVerBlock(int x, int y, uint16_t color) const
+    void DigitalClock::DrawFastLine(int x, int y, int len, uint16_t color, Orientation orientation) const
     {
-        int blockHeightDiv2 = this->blockHeight / 2;
-
-        this->DrawSpecLine(x + blockHeightDiv2,
-                           y + 1 + blockHeightDiv2,
-                           x + blockHeightDiv2,
-                           y + blockWidth - 1 - blockHeightDiv2,
-                           color,
-                           this->clockSecondColor);
-
-        for (int i = 1; i < blockHeightDiv2; i++)
+        if (orientation == Orientation::Horizontal)
         {
-            this->DrawSpecLine(x + blockHeightDiv2 + i,
-                               y + 1 + i + blockHeightDiv2,
-                               x + blockHeightDiv2 + i,
-                               y + blockWidth - 1 - i - blockHeightDiv2,
-                               i == blockHeightDiv2 - 1 ? this->clockSecondColor : color,
-                               this->clockSecondColor);
-
-            this->DrawSpecLine(x + blockHeightDiv2 - i,
-                               y + 1 + i + blockHeightDiv2,
-                               x + blockHeightDiv2 - i,
-                               y + blockWidth - 1 - i - blockHeightDiv2,
-                               i == blockHeightDiv2 - 1 ? this->clockSecondColor : color,
-                               this->clockSecondColor);
+            lcd->drawFastHLine(x + 1, y, len - 2, color);
+            lcd->drawPixel(x + len - 1, y, this->clockSecondColor);
         }
-    }
-
-    void DigitalClock::DrawHorBlock(int x, int y, uint16_t color) const
-    {
-        int blockHeightDiv2 = this->blockHeight / 2;
-
-        this->DrawSpecLine(x + 1 + blockHeightDiv2,
-                           y + blockHeightDiv2,
-                           x + blockWidth - 1 - blockHeightDiv2,
-                           y + blockHeightDiv2,
-                           color,
-                           this->clockSecondColor);
-
-        for (int i = 1; i < blockHeightDiv2; i++)
+        else
         {
-            this->DrawSpecLine(x + 1 + i + blockHeightDiv2,
-                               y + blockHeightDiv2 + i,
-                               x + blockWidth - 1 - i - blockHeightDiv2,
-                               y + blockHeightDiv2 + i,
-                               i == blockHeightDiv2 - 1 ? this->clockSecondColor : color,
-                               this->clockSecondColor);
-
-            this->DrawSpecLine(x + 1 + i + blockHeightDiv2,
-                               y + blockHeightDiv2 - i,
-                               x + blockWidth - 1 - i - blockHeightDiv2,
-                               y + blockHeightDiv2 - i,
-                               i == blockHeightDiv2 - 1 ? this->clockSecondColor : color,
-                               this->clockSecondColor);
+            lcd->drawFastVLine(x, y + 1, len - 2, color);
+            lcd->drawPixel(x, y + len - 1, this->clockSecondColor);
         }
-    }
-
-    void DigitalClock::DrawSpecLine(int x0, int y0, int x1, int y1, uint16_t mainColor, uint16_t secondColor) const
-    {
-        this->lcd->drawLine(x0, y0, x1, y1, mainColor);
-        if (mainColor != secondColor)
-        {
-            this->lcd->drawPixel(x0, y0, secondColor);
-            this->lcd->drawPixel(x1, y1, secondColor);
-        }
+        lcd->drawPixel(x, y, this->clockSecondColor);
     }
 
 }
