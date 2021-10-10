@@ -8,8 +8,7 @@ namespace Controls
     DigitalClock::DigitalClock(TFT_eSPI *lcd, ControlRect rect)
         : BaseControl(lcd, rect)
     {
-        this->mainColor = DrawUtils::Get565Color(0, 0, 255);
-        this->clockSecondColor = DrawUtils::Get565Color(0, 0, 200);
+        this->clockSecondColor = DrawUtils::Get565Color(0, 200, 0);
         this->nowMinutes = 0;
         this->nowHours = 0;
 
