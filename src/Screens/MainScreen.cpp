@@ -66,10 +66,10 @@ namespace Screens
         controlRect = {0, 12, 160, 50};
         this->digitalClock = new Controls::DigitalClock(lcd, controlRect);
 
-        controlRect = {0, 62, 160, 16};
+        controlRect = {0, 66, 160, 16};
         this->labelDate = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
 
-        controlRect = {0, 80, 160, 8};
+        controlRect = {0, 83, 160, 8};
         this->labelTimeSync = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);
         this->labelTimeSync->SetVisible(false);
         this->labelTimeSync->DrawText(F("time not sync"), Controls::Label::TextAlignment::Center);
@@ -205,7 +205,7 @@ namespace Screens
 
         this->digitalClock->DrawTime((byte)time.hour, (byte)time.minute, (int)(time.second) % 2 == 1);
 
-        this->labelTimeSync->SetVisible(true);
+        this->labelTimeSync->SetVisible(!isTimeSync);
     }
 
     void MainScreen::DrawDate()

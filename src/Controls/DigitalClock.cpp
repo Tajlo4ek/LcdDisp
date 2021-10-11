@@ -70,16 +70,16 @@ namespace Controls
         DrawNum(minutes / 10, controlRect.width - (this->numSpace + this->numWidth) * 2, 0);
         DrawNum(minutes % 10, controlRect.width - (this->numSpace + this->numWidth), 0);
 
-        /*int heightDiv5 = this->numHeight / 5;
-        int dotRadius = this->dotSpaceWidth * 40 / 100 / 2;
+        int heightDiv5 = this->numHeight / 5;
+        int dotRadius = heightDiv5 / 2;
 
         if (dotRadius < 2)
         {
             dotRadius = 2;
         }
 
-        int dotX = controlRect.leftUpX + this->dotSpacePosX + this->dotSpaceWidth / 2;
-        int dotY = controlRect.leftUpY + this->numHeight / 2;
+        int dotX = this->dotSpacePosX + this->dotSpaceWidth / 2;
+        int dotY = this->numHeight / 2;
 
         uint16_t dotColor = needDots ? this->mainColor : this->backColor;
 
@@ -95,7 +95,7 @@ namespace Controls
             dotY + heightDiv5,
             dotRadius,
             dotRadius,
-            dotColor);*/
+            dotColor);
     }
 
     void DigitalClock::DrawNum(byte num, int x, int y) const
