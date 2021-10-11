@@ -11,14 +11,16 @@ namespace Controls
 
     void MultilineLable::Draw()
     {
+        SetViewPort();
+
         lcd->setTextSize((int)size / 8);
         lcd->setTextColor(mainColor, backColor);
 
-        int nowY = controlRect.leftUpY;
+        int nowY = 0;
 
         String text = this->text + ' ';
         int nowIndex = 0;
-        while (nowY < controlRect.leftUpY + controlRect.height)
+        while (nowY < controlRect.height)
         {
             String buf;
 
@@ -46,7 +48,7 @@ namespace Controls
                 nowIndex = ind + 1;
             }
 
-            lcd->drawString(buf, controlRect.leftUpX, nowY);
+            lcd->drawString(buf, 0, nowY);
 
             nowY += (int)size;
         }

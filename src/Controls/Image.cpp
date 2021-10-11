@@ -13,6 +13,8 @@ namespace Controls
 
     void Image::ReDraw()
     {
+        SetViewPort();
+
         if (this->isVisible == false || this->imageLen == 0)
         {
             ClearRect();
@@ -38,8 +40,8 @@ namespace Controls
                 }
 
                 this->lcd->drawPixel(
-                    controlRect.leftUpX + x,
-                    controlRect.leftUpY + y,
+                    x,
+                    y,
                     item % 2 == 1 ? this->mainColor : this->backColor);
 
                 item /= 2;

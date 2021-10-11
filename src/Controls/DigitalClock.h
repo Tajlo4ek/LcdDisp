@@ -4,25 +4,37 @@
 
 namespace Controls
 {
-    //TODO: make not fixed size
     class DigitalClock : public BaseControl
     {
     private:
         void DrawNum(byte num, int x, int y) const;
-        void DrawVerBlock(int x, int y, uint16_t color) const;
-        void DrawHorBlock(int x, int y, uint16_t color) const;
-        void DrawSpecLine(int x0, int y0, int x1, int y1, uint16_t mainColor, uint16_t secondColor) const;
+
+        enum Orientation
+        {
+            Horizontal,
+            Vertical
+        };
+
+        void DrawBlock(int x, int y, uint16_t color, Orientation orientation) const;
+        void DrawFastLine(int x, int y, int len, uint16_t color, Orientation orientation) const;
 
         uint16_t clockSecondColor;
 
+        int numSpace;
+        int numWidth;
+        int numHeight;
+
         int blockWidth;
         int blockHeight;
+
+        int dotSpaceWidth;
+        int dotSpacePosX;
 
         byte nowMinutes;
         byte nowHours;
 
     public:
-        DigitalClock(TFT_eSPI *lcd, int posY);
+        DigitalClock(TFT_eSPI *lcd, ControlRect rect);
         void ReDraw() override;
 
         void SetClockSecondColor(uint16_t color);

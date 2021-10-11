@@ -41,9 +41,10 @@
 
         function LoadConfigClock() {
             let json = JSON.parse(this.responseText);
-            document.getElementById("dClkBackColor").value = rgbToHex(json.backColor);
-            document.getElementById("dClkMainColor").value = rgbToHex(json.clockMainColor);
-            document.getElementById("dClkSecondColor").value = rgbToHex(json.clockSecondColor);
+            document.getElementById("mainScreenBackColor").value = rgbToHex(json.backColor);
+            document.getElementById("mainScreenMainColor").value = rgbToHex(json.clockMainColor);
+            document.getElementById("mainScreenSecondColor").value = rgbToHex(json.clockSecondColor);
+            document.getElementById("mainScreenErrorColor").value = rgbToHex(json.errorColor);
         }
 
         function LoadConfigSpectrum() {
@@ -58,9 +59,10 @@
         function SetConfigClock() {
 
             let config = {
-                backColor: HexToRGB(document.getElementById("dClkBackColor").value),
-                clockMainColor: HexToRGB(document.getElementById("dClkMainColor").value),
-                clockSecondColor: HexToRGB(document.getElementById("dClkSecondColor").value),
+                backColor: HexToRGB(document.getElementById("mainScreenBackColor").value),
+                clockMainColor: HexToRGB(document.getElementById("mainScreenMainColor").value),
+                clockSecondColor: HexToRGB(document.getElementById("mainScreenSecondColor").value),
+                errorColor: HexToRGB(document.getElementById("mainScreenErrorColor").value),
             }
 
             let formData = new FormData();
@@ -148,15 +150,19 @@
         <table>
             <tr>
                 <td style="width: 130px;">Background color</td>
-                <td><input type="color" id="dClkBackColor"></td>
+                <td><input type="color" id="mainScreenBackColor"></td>
             </tr>
             <tr>
                 <td style="width: 130px;">Clock main color</td>
-                <td><input type="color" id="dClkMainColor"></td>
+                <td><input type="color" id="mainScreenMainColor"></td>
             </tr>
             <tr>
                 <td style="width: 130px;">Clock second color</td>
-                <td><input type="color" id="dClkSecondColor"></td>
+                <td><input type="color" id="mainScreenSecondColor"></td>
+            </tr>
+            <tr>
+                <td style="width: 130px;">Clock second color</td>
+                <td><input type="color" id="mainScreenErrorColor"></td>
             </tr>
         </table>
         <button style="float: right; width: 75px;" onclick="SetConfigClock()">Set</button>

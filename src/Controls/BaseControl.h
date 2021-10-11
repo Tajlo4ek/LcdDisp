@@ -23,6 +23,7 @@ namespace Controls
         uint16_t mainColor;
 
         void ClearRect();
+        void SetViewPort();
 
     public:
         BaseControl(TFT_eSPI *lcd, ControlRect controlRect);

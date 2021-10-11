@@ -15,6 +15,7 @@ namespace Screens
         uint16_t backColor;
 
         virtual void CreateDefaultConfig() = 0;
+        void ClearScreen();
 
     public:
         virtual void EnterFocus() = 0;

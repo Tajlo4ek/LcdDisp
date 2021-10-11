@@ -21,6 +21,12 @@ namespace Screens
         this->lcd = lcd;
     }
 
+    void Screen::ClearScreen()
+    {
+        lcd->resetViewport();
+        lcd->fillScreen(this->backColor);
+    }
+
     bool Screen::OnBtnLeftClick() { return false; }
     bool Screen::OnBtnRightClick() { return false; }
     bool Screen::OnBtnCenterClick() { return false; }

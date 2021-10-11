@@ -10,7 +10,6 @@ namespace Controls
     Chart::Chart(TFT_eSPI *lcd, ControlRect rect)
         : BaseControl(lcd, rect)
     {
-        mainColor = DrawUtils::Get565Color(0, 255, 0);
         secondColor = DrawUtils::Get565Color(0, 127, 0);
 
         this->valueCount = rect.width / STEP_SIZE + 1;
@@ -61,6 +60,8 @@ namespace Controls
         {
             return;
         }
+
+        SetViewPort();
 
         int leftUpX = controlRect.leftUpX;
         int leftUpY = controlRect.leftUpY;

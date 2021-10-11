@@ -6,6 +6,7 @@
 #include "Screens/BaseScreen.h"
 #include "Screens/MainScreen.h"
 #include "Screens/VisualizerScreen.h"
+
 #include "Utils/Internet/WifiUtils.h"
 #include "Utils/HTTP/HttpServer.h"
 #include "Utils/FileSystem/FileSystem.h"

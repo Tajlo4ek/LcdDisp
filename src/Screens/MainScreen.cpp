@@ -16,9 +16,10 @@ namespace Screens
 #define WEATHER_CONFIG_CITY F("city")
 #define WEATHER_CONFIG_APIKEY F("apiKey")
 
-#define CONFIG_BACK_COLOR String(F("backColor"))
-#define CONFIG_CLOCK_MAIN_COLOR String(F("clockMainColor"))
-#define CONFIG_CLOCK_SECOND_COLOR String(F("clockSecondColor"))
+#define CONFIG_BACK_COLOR F("backColor")
+#define CONFIG_CLOCK_MAIN_COLOR F("clockMainColor")
+#define CONFIG_CLOCK_SECOND_COLOR F("clockSecondColor")
+#define CONFIG_ERROR_COLOR F("errorColor")
 
     MainScreen::MainScreen(TFT_eSPI *lcd)
         : Screen(lcd)
@@ -56,18 +57,22 @@ namespace Screens
         clockTimersManager.AddTimer(weatherTimer);
         clockTimersManager.StopAll();
 
-        Controls::ControlRect controlRect = {2, 2, 156, 8};
+        Controls::ControlRect controlRect = {0, 2, 160, 8};
         this->labelMessage = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);
+        String message = F("IP: ");
+        message += WifiUtils::GetIpString();
+        this->labelMessage->DrawText(message, Controls::Label::TextAlignment::Center);
 
-        controlRect = {2, 75, 156, 16};
+        controlRect = {0, 12, 160, 50};
+        this->digitalClock = new Controls::DigitalClock(lcd, controlRect);
+
+        controlRect = {0, 66, 160, 16};
         this->labelDate = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
 
-        this->digitalClock = new Controls::DigitalClock(lcd, 17);
-
-        controlRect = {64, 55, 32, 8};
+        controlRect = {0, 83, 160, 8};
         this->labelTimeSync = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);
         this->labelTimeSync->SetVisible(false);
-        this->labelTimeSync->DrawText(F("sync"), Controls::Label::TextAlignment::Center);
+        this->labelTimeSync->DrawText(F("time not sync"), Controls::Label::TextAlignment::Center);
 
         controlRect = {0, 92, 32, 32};
         this->imageWeather = new Controls::Image(lcd, controlRect);
@@ -75,7 +80,7 @@ namespace Screens
         controlRect = {112, 100, 48, 16};
         this->labelTemp = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
 
-        controlRect = {32, 92, 80, 32};
+        controlRect = {33, 100, 79, 24};
         this->labelWeatherDescription = new Controls::MultilineLable(lcd, controlRect, Controls::Label::TextSize::Small);
 
         this->myClock.SetTimeChangeCallback(std::bind(&MainScreen::DrawTime, this));
@@ -99,21 +104,23 @@ namespace Screens
             json = FileSystem::ReadFile(MAIN_SCREEN_CONFIG_PATH);
         }
 
-        const uint colorCount = 3;
+        const uint colorCount = 4;
         String colorNames[colorCount]{
             CONFIG_BACK_COLOR,
             CONFIG_CLOCK_MAIN_COLOR,
             CONFIG_CLOCK_SECOND_COLOR,
+            CONFIG_ERROR_COLOR,
         };
 
         uint16_t clockMainColor;
         uint16_t clockSecondColor;
+        uint16_t errorColor;
 
         uint16_t *colors[colorCount]{
             &this->backColor,
             &clockMainColor,
             &clockSecondColor,
-        };
+            &errorColor};
 
         bool loadRes = DrawUtils::LoadColorsFromJson(json, colorNames, colors, colorCount);
 
@@ -131,7 +138,7 @@ namespace Screens
             this->labelDate->SetMainColor(clockMainColor);
 
             this->labelTimeSync->SetBackColor(this->backColor);
-            this->labelTimeSync->SetMainColor(clockMainColor);
+            this->labelTimeSync->SetMainColor(errorColor);
 
             this->imageWeather->SetBackColor(this->backColor);
             this->imageWeather->SetMainColor(clockMainColor);
@@ -150,17 +157,18 @@ namespace Screens
 
     void MainScreen::CreateDefaultConfig()
     {
-        const uint configCount = 3;
+        const uint configCount = 4;
         String configNames[configCount]{
             CONFIG_BACK_COLOR,
             CONFIG_CLOCK_MAIN_COLOR,
             CONFIG_CLOCK_SECOND_COLOR,
-        };
+            CONFIG_ERROR_COLOR};
 
         String datas[configCount]{
             DrawUtils::GetJsonColor(0, 0, 0),
             DrawUtils::GetJsonColor(0, 0, 255),
             DrawUtils::GetJsonColor(0, 0, 200),
+            DrawUtils::GetJsonColor(255, 0, 0),
         };
 
         FileSystem::WriteFile(
@@ -170,7 +178,7 @@ namespace Screens
 
     void MainScreen::ReDraw()
     {
-        lcd->fillScreen(this->backColor);
+        ClearScreen();
         this->labelMessage->ReDraw();
         this->labelDate->ReDraw();
         this->labelTimeSync->ReDraw();
@@ -182,17 +190,9 @@ namespace Screens
 
     void MainScreen::EnterFocus()
     {
-        lcd->fillScreen(this->backColor);
-
-        String message = F("IP: ");
-        message += WifiUtils::GetIpString();
-        this->labelMessage->DrawText(message, Controls::Label::TextAlignment::Center);
+        ReDraw();
 
         this->isTimeSync = false;
-        DrawTime();
-        DrawDate();
-        DrawWeather();
-
         this->CheckTimeSync();
         this->GetWeather();
 
