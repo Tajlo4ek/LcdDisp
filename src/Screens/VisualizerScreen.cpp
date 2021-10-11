@@ -96,7 +96,7 @@ namespace Screens
 
     void VisualizerScreen::ReDraw()
     {
-        lcd->fillScreen(this->backColor);
+        ClearScreen();
         this->visualizer->ReDraw();
     }
 
