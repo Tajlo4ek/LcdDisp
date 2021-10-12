@@ -13,11 +13,10 @@ namespace Controls
 
     void Image::ReDraw()
     {
-        SetViewPort();
+        ClearRect();
 
         if (this->isVisible == false || this->imageLen == 0)
         {
-            ClearRect();
             return;
         }
 
