@@ -2,11 +2,16 @@
 
 namespace MillisTimer
 {
-    Timer::Timer()
+    Timer::Timer() : Timer(nullptr, 0)
     {
-        this->callback = nullptr;
+    }
+
+    Timer::Timer(Timercallback callback, int interval)
+    {
+        this->callback = callback;
         this->enabled = false;
         this->nextCallback = 0;
+        this->interval = interval;
     }
 
     void Timer::Tick()
@@ -19,9 +24,13 @@ namespace MillisTimer
         if (millis() >= this->nextCallback)
         {
             this->enabled = false;
-            callback();
-            this->nextCallback = millis() + this->interval;
-            this->enabled = true;
+            this->callback();
+
+            if (this->interval != 0)
+            {
+                this->nextCallback = millis() + this->interval;
+                this->enabled = true;
+            }
         }
     }
 
@@ -44,7 +53,7 @@ namespace MillisTimer
     void Timer::SetInterval(unsigned long val)
     {
         this->interval = val;
-        this->nextCallback = (enabled == false) ? 0 : millis() + this->interval;
+        this->nextCallback = millis() + this->interval;
     }
 
 }
