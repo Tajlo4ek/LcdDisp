@@ -28,6 +28,7 @@ namespace TimerManager
         for (auto timer : this->timers)
         {
             timer->Resume();
+            timer->Tick();
         }
     }
 
