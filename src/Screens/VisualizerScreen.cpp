@@ -122,7 +122,6 @@ namespace Screens
         data += COMMAND_STOP_CHAR;
         data += COMMAND_SET_MAX_SPECTRUM_DATA;
         data += visualizer->GetMaxLineLength();
-        data += COMMAND_STOP_CHAR;
         return data;
     }
 

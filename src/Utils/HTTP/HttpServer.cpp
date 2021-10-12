@@ -34,7 +34,7 @@ namespace HttpServer
 
         if (command.isEmpty() == false)
         {
-            getCommandCallback(command);
+            AddWebLog(getCommandCallback(command));
         }
     }
 
