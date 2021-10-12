@@ -19,12 +19,30 @@ namespace Screens
     Screen::Screen(TFT_eSPI *lcd)
     {
         this->lcd = lcd;
+        isVisible = false;
     }
 
     void Screen::ClearScreen()
     {
         lcd->resetViewport();
         lcd->fillScreen(this->backColor);
+    }
+
+    void Screen::SetVisible(bool isVisible)
+    {
+        if (isVisible == this->isVisible)
+        {
+            return;
+        }
+
+        if (isVisible == true)
+        {
+            EnterFocus();
+        }
+        else
+        {
+            LeaveFocus();
+        }
     }
 
     bool Screen::OnBtnLeftClick() { return false; }

@@ -9,6 +9,10 @@ namespace Screens
 
     class Screen
     {
+
+    private:
+        bool isVisible;
+
     protected:
         bool hasEthernet;
         TFT_eSPI *lcd;
@@ -17,13 +21,16 @@ namespace Screens
         virtual void CreateDefaultConfig() = 0;
         void ClearScreen();
 
-    public:
         virtual void EnterFocus() = 0;
         virtual void LeaveFocus();
+
+    public:
         virtual void Loop();
         virtual String ParseMessage(const String &message);
         virtual void ReloadConfig() = 0;
         virtual void ReDraw() = 0;
+
+        void SetVisible(bool isVisible);
 
         void SetEthernetAvailable(bool val);
 
