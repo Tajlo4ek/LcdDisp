@@ -3,6 +3,8 @@
 #include <Arduino.h>
 #include <TFT_eSPI.h>
 
+#include "Controls/BaseControl.h"
+
 namespace Screens
 {
     typedef std::function<void()> OnScreenWorkEnd;
@@ -23,6 +25,8 @@ namespace Screens
 
         virtual void EnterFocus() = 0;
         virtual void LeaveFocus();
+
+        std::vector<Controls::BaseControl *> controls;
 
     public:
         virtual void Loop();

@@ -35,6 +35,11 @@ namespace Screens
             return;
         }
 
+        for (auto control : controls)
+        {
+            control->SetScreenVisible(isVisible);
+        }
+
         if (isVisible == true)
         {
             EnterFocus();

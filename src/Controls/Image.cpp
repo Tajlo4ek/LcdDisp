@@ -15,7 +15,7 @@ namespace Controls
     {
         ClearRect();
 
-        if (this->isVisible == false || this->imageLen == 0)
+        if (this->isVisible == false || isScreenVisible == false || this->imageLen == 0)
         {
             return;
         }

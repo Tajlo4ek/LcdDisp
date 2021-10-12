@@ -45,6 +45,16 @@ namespace Controls
 
     void VisualizerControl::DrawSpectrum(byte *spectrumLeft, byte *spectrumRight)
     {
+        if (isVisible == false || isScreenVisible == false)
+        {
+            for (int i = 0; i < this->spectrumLineCount; i++)
+            {
+                this->nowLeftSpectrum[i] = spectrumLeft[i];
+                this->nowRightSpectrum[i] = spectrumRight[i];
+            }
+            return;
+        }
+
         this->SetViewPort();
 
         int leftOffsetY = this->spectrumMaxSize + 1;
@@ -259,10 +269,6 @@ namespace Controls
     void VisualizerControl::ReDraw()
     {
         ClearRect();
-        if (isVisible == false)
-        {
-            return;
-        }
         DrawSpectrum(this->nowLeftSpectrum, this->nowRightSpectrum);
     }
 
