@@ -10,6 +10,9 @@ namespace Controls
         this->controlRect = controlRect;
         this->backColor = DrawUtils::Get565Color(0, 0, 0);
         this->mainColor = DrawUtils::Get565Color(0, 255, 0);
+
+        this->isVisible = true;
+        this->isScreenVisible = true;
     }
 
     BaseControl::~BaseControl()
@@ -26,6 +29,11 @@ namespace Controls
 
         isVisible = val;
         ReDraw();
+    }
+
+    void BaseControl::SetScreenVisible(bool val)
+    {
+        this->isScreenVisible = val;
     }
 
     void BaseControl::SetMainColor(uint16_t color)

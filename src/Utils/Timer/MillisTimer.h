@@ -4,18 +4,18 @@
 
 namespace MillisTimer
 {
-    typedef std::function<void()> Timercallback;
 
     class Timer
     {
     public:
+        typedef std::function<void()> Timercallback;
+
         Timer();
-        Timer(Timercallback callback, unsigned long interval);
         void Tick();
 
         void Start();
+        void Resume();
         void Stop();
-        void Reset();
 
         Timercallback callback;
         void SetInterval(unsigned long);

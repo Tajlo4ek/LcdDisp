@@ -23,6 +23,15 @@ namespace TimerManager
         }
     }
 
+    void TimerManager::ResumeAll()
+    {
+        for (auto timer : this->timers)
+        {
+            timer->Resume();
+            timer->Tick();
+        }
+    }
+
     void TimerManager::StopAll()
     {
         for (auto timer : this->timers)

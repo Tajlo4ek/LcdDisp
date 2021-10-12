@@ -18,8 +18,9 @@ namespace Screens
 
         void CreateDefaultConfig() override;
 
-    public:
         void EnterFocus() override;
+
+    public:
         String ParseMessage(const String &message) override;
         void ReloadConfig() override;
         void ReDraw() override;

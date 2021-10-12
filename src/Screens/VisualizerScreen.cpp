@@ -22,6 +22,8 @@ namespace Screens
         Controls::ControlRect rect = {5, 0, 150, 128};
         this->visualizer = new Controls::VisualizerControl(lcd, rect);
 
+        controls.push_back(this->visualizer);
+
         this->ReloadConfig();
     }
 

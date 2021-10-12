@@ -16,11 +16,12 @@ namespace TimerManager
         void Tick();
 
         void StartAll();
+        void ResumeAll();
         void StopAll();
 
         void AddTimer(MillisTimer::Timer &timer);
 
     private:
-        std::list<MillisTimer::Timer*> timers;
+        std::list<MillisTimer::Timer *> timers;
     };
 }

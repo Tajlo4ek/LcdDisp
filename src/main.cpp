@@ -12,20 +12,12 @@
 #include "Utils/FileSystem/FileSystem.h"
 
 #include "Utils/Parsers/JsonParser.h"
-#include "Screens/HardwareScreens/CpuScreen.h"
 
 #include "Utils/Button.h"
 
-enum Mode
-{
-  MAIN_MODE,
-  SPECTRUM_MODE,
-  VIEW_HARDWARE_MODE,
-};
-
 /* #region func prototypes */
 
-void SetActiveScreen(Screens::Screen *screen, Mode nextMode);
+void SetActiveScreen(int screenNum);
 
 void CheckCommand(const String &data);
 
@@ -46,16 +38,13 @@ TFT_eSPI lcd = TFT_eSPI();
 bool isSTA;
 String serialData;
 
-Mode nowMode;
 Screens::Screen *activeScreen;
 
 Screens::Screen *mainScreen;
 Screens::Screen *visualizerScreen;
 
-#define HARDWARE_SCREEN_NOT_INIT_COUNT -1
-
-int cpuScreenCount = HARDWARE_SCREEN_NOT_INIT_COUNT;
-HardwareScreens::CpuScreen **cpuScreens;
+std::vector<Screens::Screen *> screens;
+int nowScreenNum;
 
 bool isBtnClicked[3];
 
@@ -87,7 +76,9 @@ void setup()
 
   visualizerScreen = new Screens::VisualizerScreen(&lcd);
 
-  SetActiveScreen(mainScreen, MAIN_MODE);
+  screens.push_back(mainScreen);
+  screens.push_back(visualizerScreen);
+  SetActiveScreen(0);
 }
 
 void InitWiFi()
@@ -124,15 +115,25 @@ void InitWiFi()
   }
 }
 
-void SetActiveScreen(Screens::Screen *screen, Mode nextMode)
+void SetActiveScreen(int screenNum)
 {
-  if (activeScreen != nullptr)
+  if (screenNum >= (int)screens.size())
   {
-    activeScreen->LeaveFocus();
+    screenNum -= screens.size();
   }
-  activeScreen = screen;
-  nowMode = nextMode;
-  activeScreen->EnterFocus();
+  else if (screenNum < 0)
+  {
+    screenNum += screens.size();
+  }
+  nowScreenNum = screenNum;
+
+  for (auto screen : screens)
+  {
+    screen->SetVisible(false);
+  }
+
+  activeScreen = screens[nowScreenNum];
+  activeScreen->SetVisible(true);
 }
 
 void CheckCommand(const String &data)
@@ -144,26 +145,24 @@ void CheckCommand(const String &data)
 
   if (data.startsWith(COMMAND_SET_MODE_SPECTRUM))
   {
-    SetActiveScreen(visualizerScreen, Mode::SPECTRUM_MODE);
+    Serial.print(visualizerScreen->ParseMessage(data));
   }
   else if (data.startsWith(COMMAND_SEND_SPECTRUM_DATA))
   {
-    if (nowMode != SPECTRUM_MODE)
-    {
-      return;
-    }
+    visualizerScreen->ParseMessage(data);
   }
   else if (data.startsWith(COMMAND_RELOAD_SCREEN))
   {
-    activeScreen->ReloadConfig();
+    for (auto screen : screens)
+    {
+      screen->ReloadConfig();
+    }
     activeScreen->ReDraw();
   }
-
-  Serial.print(activeScreen->ParseMessage(data));
 }
 
 /* #region parse pc data */
-
+/*
 void ParsePcData(const String &json)
 {
   //String json = "{\"cpuCount\":\"1\",\"hddCount\":\"2\",\"gpuCount\":\"1\",\"ramCount\":\"1\",\"cpu\":[{\"name\":\"Intel Core i3-4160\",\"coreCount\":\"2\",\"cores\":[{\"temp\":\"44\",\"load\":\"26\",\"clock\":\"1497\",\"num\":\"1\"},{\"temp\":\"45\",\"load\":\"24\",\"clock\":\"1497\",\"num\":\"2\"}]}],\"hdd\":[{\"name\":\"Samsung SSD 860 EVO 250GB\",\"temp\":\"38\",\"used\":\"55.9\",\"written\":\"13746\"},{\"name\":\"ST1000DM010-2EP102\",\"temp\":\"34\",\"used\":\"23.4\",\"written\":\"-1\"}],\"gpu\":[{\"name\":\"NVIDIA GeForce GTX 1050 Ti\",\"temp\":\"39\",\"clock\":\"607.5\",\"loadMem\":\"9.9\",\"fanRpm\":\"0\",\"fanPr\":\"0\",\"totalMem\":\"4096\"}],\"ram\":[{\"name\":\"Generic Memory\",\"usedPr\":\"42.76\",\"total\":\"15.9\"}]}";
@@ -172,14 +171,14 @@ void ParsePcData(const String &json)
   String cpuJson = JsonParser::GetJsonData(json, "cpu");
   ParseCpuData(cpuJson, cpuCount);
 
-  /*int hddCount = JsonParser::GetJsonData(json, "hddCount").toInt();
+  int hddCount = JsonParser::GetJsonData(json, "hddCount").toInt();
   String hddJson = JsonParser::GetJsonData(json, "hdd");
 
   int gpuCount = JsonParser::GetJsonData(json, "gpuCount").toInt();
   String gpuJson = JsonParser::GetJsonData(json, "gpu");
 
   int ramCount = JsonParser::GetJsonData(json, "ramCount").toInt();
-  String ramJson = JsonParser::GetJsonData(json, "ram");*/
+  String ramJson = JsonParser::GetJsonData(json, "ram");
 }
 
 void ParseCpuData(const String &json, int cpuCount)
@@ -201,7 +200,7 @@ void ParseCpuData(const String &json, int cpuCount)
 
     if (cpuScreenCount != 0)
     {
-      SetActiveScreen(cpuScreens[0], VIEW_HARDWARE_MODE);
+      //SetActiveScreen(cpuScreens[0]);
     }
   }
 
@@ -212,6 +211,7 @@ void ParseCpuData(const String &json, int cpuCount)
 
   delete[] cpuDatas;
 }
+*/
 
 /* #endregion */
 
@@ -222,7 +222,7 @@ void CheckButtons()
   {
     if (activeScreen->OnBtnLeftClick() == false)
     {
-      Serial.println("left");
+      SetActiveScreen(nowScreenNum + 1);
     }
     isBtnClicked[0] = false;
   }
@@ -240,13 +240,11 @@ void CheckButtons()
   {
     if (activeScreen->OnBtnRightClick() == false)
     {
-      Serial.println("right");
+      SetActiveScreen(nowScreenNum - 1);
     }
     isBtnClicked[2] = false;
   }
 }
-
-/* #region Loop */
 
 void loop()
 {
@@ -269,5 +267,3 @@ void loop()
   activeScreen->Loop();
   HttpServer::HandleServer();
 }
-
-/* #endregion */
