@@ -127,7 +127,7 @@ void SetActiveScreen(int screenNum)
   }
   nowScreenNum = screenNum;
 
-  for (auto screen : screens)
+  for (auto &screen : screens)
   {
     screen->SetVisible(false);
   }
@@ -152,7 +152,7 @@ String CheckCommand(const String &data)
   }
   else if (data.startsWith(COMMAND_RELOAD_SCREEN))
   {
-    for (auto screen : screens)
+    for (const auto &screen : screens)
     {
       screen->ReloadConfig();
     }

@@ -30,7 +30,7 @@ namespace Screens
 
     void Screen::SetVisible(bool isVisible)
     {
-        for (auto control : controls)
+        for (const auto &control : controls)
         {
             control->SetScreenVisible(isVisible);
         }

@@ -9,7 +9,7 @@ namespace TimerManager
 
     void TimerManager::Tick()
     {
-        for (auto timer : this->timers)
+        for (const auto &timer : this->timers)
         {
             timer->Tick();
         }
@@ -17,7 +17,7 @@ namespace TimerManager
 
     void TimerManager::StartAll()
     {
-        for (auto timer : this->timers)
+        for (const auto &timer : this->timers)
         {
             timer->Start();
         }
@@ -25,7 +25,7 @@ namespace TimerManager
 
     void TimerManager::ResumeAll()
     {
-        for (auto timer : this->timers)
+        for (const auto &timer : this->timers)
         {
             timer->Resume();
             timer->Tick();
@@ -34,7 +34,7 @@ namespace TimerManager
 
     void TimerManager::StopAll()
     {
-        for (auto timer : this->timers)
+        for (const auto &timer : this->timers)
         {
             timer->Stop();
         }
