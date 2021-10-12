@@ -2,6 +2,12 @@
 
 namespace Screens
 {
+    Screen::Screen(TFT_eSPI *lcd)
+    {
+        this->lcd = lcd;
+        isVisible = false;
+    }
+
     void Screen::LeaveFocus() {}
 
     void Screen::Loop() {}
@@ -16,12 +22,6 @@ namespace Screens
         this->hasEthernet = val;
     }
 
-    Screen::Screen(TFT_eSPI *lcd)
-    {
-        this->lcd = lcd;
-        isVisible = false;
-    }
-
     void Screen::ClearScreen()
     {
         lcd->resetViewport();
@@ -30,11 +30,6 @@ namespace Screens
 
     void Screen::SetVisible(bool isVisible)
     {
-        if (isVisible == this->isVisible)
-        {
-            return;
-        }
-
         for (auto control : controls)
         {
             control->SetScreenVisible(isVisible);

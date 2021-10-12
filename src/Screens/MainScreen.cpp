@@ -33,27 +33,15 @@ namespace Screens
         };
         this->clockTimer.SetInterval(500);
 
-        //check is need sync time 1 minute
         this->timeSyncTimer.callback = std::bind(&MainScreen::CheckTimeSync, this);
-        this->timeSyncTimer.SetInterval(60 * 1000);
 
-        //reset sync time 1 hour
-        this->resetSyncTimer.callback = [this]
-        {
-            this->isTimeSync = false;
-        };
-        this->resetSyncTimer.SetInterval(60 * 60 * 1000);
-
-        //update weather 10 minute
         this->weatherTimer.callback = [this]
         {
             this->GetWeather();
         };
-        this->weatherTimer.SetInterval(10 * 60 * 1000);
 
         timerManager.AddTimer(clockTimer);
         timerManager.AddTimer(timeSyncTimer);
-        timerManager.AddTimer(resetSyncTimer);
         timerManager.AddTimer(weatherTimer);
         timerManager.StopAll();
 
@@ -62,26 +50,33 @@ namespace Screens
         String message = F("IP: ");
         message += WifiUtils::GetIpString();
         this->labelMessage->DrawText(message, Controls::Label::TextAlignment::Center);
+        controls.push_back(this->labelMessage);
 
         controlRect = {0, 12, 160, 50};
         this->digitalClock = new Controls::DigitalClock(lcd, controlRect);
+        controls.push_back(this->digitalClock);
 
         controlRect = {0, 66, 160, 16};
         this->labelDate = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
+        controls.push_back(this->labelDate);
 
         controlRect = {0, 83, 160, 8};
         this->labelTimeSync = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);
         this->labelTimeSync->SetVisible(false);
         this->labelTimeSync->DrawText(F("time not sync"), Controls::Label::TextAlignment::Center);
+        controls.push_back(this->labelTimeSync);
 
         controlRect = {0, 92, 32, 32};
         this->imageWeather = new Controls::Image(lcd, controlRect);
+        controls.push_back(this->imageWeather);
 
         controlRect = {112, 100, 48, 16};
         this->labelTemp = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Big);
+        controls.push_back(this->labelTemp);
 
         controlRect = {33, 100, 79, 24};
         this->labelWeatherDescription = new Controls::MultilineLable(lcd, controlRect, Controls::Label::TextSize::Small);
+        controls.push_back(this->labelWeatherDescription);
 
         this->myClock.SetTimeChangeCallback(std::bind(&MainScreen::DrawTime, this));
         this->myClock.SetDateChangeCallback(std::bind(&MainScreen::DrawDate, this));
@@ -256,6 +251,9 @@ namespace Screens
                     myClock.ParseFromNtp(time);
                 }
             }
+
+            // if notsync then next 1 minute else 1h
+            this->timeSyncTimer.SetInterval(isTimeSync == false ? 60 * 1000 : 60 * 60 * 1000);
         }
         else
         {
@@ -278,6 +276,9 @@ namespace Screens
             {
                 nowWeather.temp = weather.temp;
             }
+
+            // if notsync then next 1m else 10m
+            this->timeSyncTimer.SetInterval(isOk == false ? 60 * 1000 : 10 * 60 * 1000);
         }
 
         DrawWeather();

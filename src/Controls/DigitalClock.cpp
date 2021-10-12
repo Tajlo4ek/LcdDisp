@@ -49,7 +49,7 @@ namespace Controls
     {
         ClearRect();
 
-        if (isVisible == false|| isScreenVisible == false)
+        if (isVisible == false || isScreenVisible == false)
         {
             return;
         }

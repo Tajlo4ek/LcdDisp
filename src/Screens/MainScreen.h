@@ -26,7 +26,6 @@ namespace Screens
         Clock::Clock myClock = Clock::Clock(3);
         MillisTimer::Timer clockTimer;
         MillisTimer::Timer timeSyncTimer;
-        MillisTimer::Timer resetSyncTimer;
         MillisTimer::Timer weatherTimer;
         TimerManager::TimerManager timerManager;
 

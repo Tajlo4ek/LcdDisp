@@ -127,9 +127,9 @@ void SetActiveScreen(int screenNum)
   }
   nowScreenNum = screenNum;
 
-  for (size_t i = 0; i < screens.size(); i++)
+  for (auto screen : screens)
   {
-    screens[i]->SetVisible(false);
+    screen->SetVisible(false);
   }
 
   activeScreen = screens[nowScreenNum];
