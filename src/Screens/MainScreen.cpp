@@ -51,11 +51,11 @@ namespace Screens
         };
         this->weatherTimer.SetInterval(10 * 60 * 1000);
 
-        clockTimersManager.AddTimer(clockTimer);
-        clockTimersManager.AddTimer(timeSyncTimer);
-        clockTimersManager.AddTimer(resetSyncTimer);
-        clockTimersManager.AddTimer(weatherTimer);
-        clockTimersManager.StopAll();
+        timerManager.AddTimer(clockTimer);
+        timerManager.AddTimer(timeSyncTimer);
+        timerManager.AddTimer(resetSyncTimer);
+        timerManager.AddTimer(weatherTimer);
+        timerManager.StopAll();
 
         Controls::ControlRect controlRect = {0, 2, 160, 8};
         this->labelMessage = new Controls::Label(lcd, controlRect, Controls::Label::TextSize::Small);
@@ -191,12 +191,7 @@ namespace Screens
     void MainScreen::EnterFocus()
     {
         ReDraw();
-
-        this->isTimeSync = false;
-        this->CheckTimeSync();
-        this->GetWeather();
-
-        clockTimersManager.StartAll();
+        timerManager.ResumeAll();
     }
 
     void MainScreen::DrawTime()
@@ -241,12 +236,12 @@ namespace Screens
 
     void MainScreen::LeaveFocus()
     {
-        clockTimersManager.StopAll();
+        timerManager.StopAll();
     }
 
     void MainScreen::Loop()
     {
-        clockTimersManager.Tick();
+        timerManager.Tick();
     }
 
     void MainScreen::CheckTimeSync()

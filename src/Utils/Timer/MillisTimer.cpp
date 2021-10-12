@@ -38,14 +38,14 @@ namespace MillisTimer
         this->nextCallback = millis() + this->interval;
     }
 
+    void Timer::Resume()
+    {
+        this->enabled = true;
+    }
+
     void Timer::Stop()
     {
         this->enabled = false;
-    }
-
-    void Timer::Reset()
-    {
-        this->Start();
     }
 
     void Timer::SetInterval(unsigned long val)

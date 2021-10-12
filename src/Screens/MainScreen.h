@@ -28,7 +28,7 @@ namespace Screens
         MillisTimer::Timer timeSyncTimer;
         MillisTimer::Timer resetSyncTimer;
         MillisTimer::Timer weatherTimer;
-        TimerManager::TimerManager clockTimersManager;
+        TimerManager::TimerManager timerManager;
 
         String weatherCity;
         String weatherApiKey;
@@ -49,9 +49,9 @@ namespace Screens
         void DrawWeather();
 
         void CreateDefaultConfig() override;
+        void EnterFocus() override;
 
     public:
-        void EnterFocus() override;
         void LeaveFocus() override;
         void Loop() override;
         void ReloadConfig() override;
