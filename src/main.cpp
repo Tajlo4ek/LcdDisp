@@ -153,7 +153,10 @@ void CheckCommand(const String &data)
   }
   else if (data.startsWith(COMMAND_RELOAD_SCREEN))
   {
-    activeScreen->ReloadConfig();
+    for (auto screen : screens)
+    {
+      screen->ReloadConfig();
+    }
     activeScreen->ReDraw();
   }
 }
