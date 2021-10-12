@@ -33,8 +33,6 @@ namespace Logger
         bData += ' ';
         bData += data;
         bData += COMMAND_STOP_CHAR;
-        bData += '\r';
-        bData += '\n';
 
         return bData;
     }
