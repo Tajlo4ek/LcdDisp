@@ -78,9 +78,6 @@ namespace Weather
             String decription = F("not sync. error: ");
             decription += cod;
             SetAbortWeather(weather, decription);
-
-            Serial.println(json);
-
             isOk = false;
             return;
         }
