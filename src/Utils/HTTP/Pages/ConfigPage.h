@@ -11,5 +11,6 @@ namespace Pages
 
     private:
         void Page() override;
+        void GetConfig();
     };
 }
