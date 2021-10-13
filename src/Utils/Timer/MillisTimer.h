@@ -11,6 +11,7 @@ namespace MillisTimer
         typedef std::function<void()> Timercallback;
 
         Timer();
+        Timer(Timercallback callback, int interval);
         void Tick();
 
         void Start();

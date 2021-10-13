@@ -1,7 +1,9 @@
 
+
+#include <ESP8266WebServer.h>
 #include "HttpServer.h"
 #include "Utils/FileSystem/FileSystem.h"
-#include <ESP8266WebServer.h>
+#include "Utils/Logger/Logger.h"
 
 #include "Pages/ConnectPage.h"
 #include "Pages/MainPage.h"
@@ -34,7 +36,7 @@ namespace HttpServer
 
         if (command.isEmpty() == false)
         {
-            getCommandCallback(command);
+            Logger::WebLog(getCommandCallback(command));
         }
     }
 

@@ -27,18 +27,12 @@ namespace Screens
         this->isTimeSync = false;
 
         //clock tick 500 ms
-        this->clockTimer.callback = [this]
-        {
-            this->myClock.Tick();
-        };
-        this->clockTimer.SetInterval(500);
+        this->clockTimer = MillisTimer::Timer([this]
+                                              { this->myClock.Tick(); },
+                                              500);
 
-        this->timeSyncTimer.callback = std::bind(&MainScreen::CheckTimeSync, this);
-
-        this->weatherTimer.callback = [this]
-        {
-            this->GetWeather();
-        };
+        this->timeSyncTimer = MillisTimer::Timer(std::bind(&MainScreen::CheckTimeSync, this), 100);
+        this->weatherTimer = MillisTimer::Timer(std::bind(&MainScreen::GetWeather, this), 100);
 
         timerManager.AddTimer(clockTimer);
         timerManager.AddTimer(timeSyncTimer);
@@ -250,14 +244,14 @@ namespace Screens
                 {
                     myClock.ParseFromNtp(time);
                 }
+                // if notsync then next 1 minute else 1h
+                this->timeSyncTimer.SetInterval(isTimeSync == false ? 60 * 1000 : 60 * 60 * 1000);
             }
-
-            // if notsync then next 1 minute else 1h
-            this->timeSyncTimer.SetInterval(isTimeSync == false ? 60 * 1000 : 60 * 60 * 1000);
         }
         else
         {
             isTimeSync = false;
+            this->timeSyncTimer.SetInterval(0);
         }
 
         DrawTime();
@@ -278,7 +272,7 @@ namespace Screens
             }
 
             // if notsync then next 1m else 10m
-            this->timeSyncTimer.SetInterval(isOk == false ? 60 * 1000 : 10 * 60 * 1000);
+            this->weatherTimer.SetInterval(isOk == false ? 60 * 1000 : 10 * 60 * 1000);
         }
 
         DrawWeather();

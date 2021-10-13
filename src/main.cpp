@@ -19,7 +19,7 @@
 
 void SetActiveScreen(int screenNum);
 
-void CheckCommand(const String &data);
+String CheckCommand(const String &data);
 
 void ParsePcData(const String &json);
 void ParseCpuData(const String &json, int cpuCount);
@@ -127,7 +127,7 @@ void SetActiveScreen(int screenNum)
   }
   nowScreenNum = screenNum;
 
-  for (auto screen : screens)
+  for (auto &screen : screens)
   {
     screen->SetVisible(false);
   }
@@ -136,29 +136,30 @@ void SetActiveScreen(int screenNum)
   activeScreen->SetVisible(true);
 }
 
-void CheckCommand(const String &data)
+String CheckCommand(const String &data)
 {
+  String res = F("ok");
+
   if (data[data.length() - 1] != COMMAND_STOP_CHAR)
   {
-    return;
+    return res;
   }
 
-  if (data.startsWith(COMMAND_SET_MODE_SPECTRUM))
+  if (data.startsWith(COMMAND_SET_MODE_SPECTRUM) ||
+      data.startsWith(COMMAND_SEND_SPECTRUM_DATA))
   {
-    Serial.print(visualizerScreen->ParseMessage(data));
-  }
-  else if (data.startsWith(COMMAND_SEND_SPECTRUM_DATA))
-  {
-    visualizerScreen->ParseMessage(data);
+    res = visualizerScreen->ParseMessage(data);
   }
   else if (data.startsWith(COMMAND_RELOAD_SCREEN))
   {
-    for (auto screen : screens)
+    for (const auto &screen : screens)
     {
       screen->ReloadConfig();
     }
     activeScreen->ReDraw();
   }
+
+  return res;
 }
 
 /* #region parse pc data */
@@ -258,7 +259,8 @@ void loop()
 
     if (ch == COMMAND_STOP_CHAR)
     {
-      CheckCommand(serialData);
+      Serial.print(CheckCommand(serialData));
+      Serial.print(COMMAND_STOP_CHAR);
       serialData.clear();
     }
   }
