@@ -30,6 +30,10 @@ void InitWiFi();
 
 /* #endregion */
 
+#define BTN_RIGHT_PIN PIN_D8
+#define BTN_OK_PIN PIN_D2
+#define BTN_LEFT_PIN PIN_D1
+
 TFT_eSPI lcd = TFT_eSPI();
 #define LCD_WIDTH 160
 #define LCD_HEIGHT 128
@@ -48,13 +52,13 @@ int nowScreenNum;
 
 bool isBtnClicked[3];
 
-Utils::Button butLeft(PIN_D8, []()
+Utils::Button butLeft(BTN_RIGHT_PIN, []()
                       { isBtnClicked[0] = true; });
 
-Utils::Button btnOk(PIN_D2, []()
+Utils::Button btnOk(BTN_OK_PIN, []()
                     { isBtnClicked[1] = true; });
 
-Utils::Button btnRight(PIN_D1, []()
+Utils::Button btnRight(BTN_LEFT_PIN, []()
                        { isBtnClicked[2] = true; });
 
 void setup()

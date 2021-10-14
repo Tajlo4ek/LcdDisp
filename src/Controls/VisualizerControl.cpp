@@ -5,10 +5,10 @@
 namespace Controls
 {
 
-#define SPECTRUM_MAX_PROC 45
-#define LINE_SIZE 3
+#define SPECTRUM_MAX_PROC 90
+#define LINE_WIDTH 3
 #define LINE_SPACE 1
-#define RECT_SIZE 1
+#define RECT_HEIGHT 1
 
     VisualizerControl::VisualizerControl(TFT_eSPI *lcd, ControlRect rect)
         : BaseControl(lcd, rect)
@@ -18,8 +18,8 @@ namespace Controls
         this->highColor = DrawUtils::Get565Color(255, 0, 0);
         this->maxColor = DrawUtils::Get565Color(0, 255, 255);
 
-        this->spectrumLineCount = rect.width / (LINE_SIZE + LINE_SPACE);
-        this->spectrumMaxSize = rect.height * SPECTRUM_MAX_PROC / 100;
+        this->spectrumLineCount = rect.width / (LINE_WIDTH + LINE_SPACE);
+        this->spectrumMaxSize = rect.height * SPECTRUM_MAX_PROC / 100 / 2;
         while (this->spectrumMaxSize % 3 != 0)
         {
             this->spectrumMaxSize--;
@@ -71,9 +71,9 @@ namespace Controls
             if (this->maxLeftSpectrumData[i] != 0)
             {
                 this->lcd->drawFastHLine(
-                    i * (LINE_SIZE + LINE_SPACE),
+                    i * (LINE_WIDTH + LINE_SPACE),
                     leftOffsetY - this->maxLeftSpectrumData[i] - 1,
-                    LINE_SIZE,
+                    LINE_WIDTH,
                     this->backColor);
             }
 
@@ -93,9 +93,9 @@ namespace Controls
             {
                 //left
                 this->lcd->fillRect(
-                    i * (LINE_SIZE + LINE_SPACE),
+                    i * (LINE_WIDTH + LINE_SPACE),
                     leftOffsetY - nowVal,
-                    LINE_SIZE,
+                    LINE_WIDTH,
                     nowVal - nextVal,
                     this->backColor);
             }
@@ -105,9 +105,9 @@ namespace Controls
 
                 //left
                 this->lcd->fillRect(
-                    i * (LINE_SIZE + LINE_SPACE),
+                    i * (LINE_WIDTH + LINE_SPACE),
                     leftOffsetY - lowSize,
-                    LINE_SIZE,
+                    LINE_WIDTH,
                     lowSize,
                     this->lowColor);
 
@@ -117,9 +117,9 @@ namespace Controls
 
                     //left
                     this->lcd->fillRect(
-                        i * (LINE_SIZE + LINE_SPACE),
+                        i * (LINE_WIDTH + LINE_SPACE),
                         leftOffsetY - lowSize - mediumSize,
-                        LINE_SIZE,
+                        LINE_WIDTH,
                         mediumSize,
                         this->mediumColor);
 
@@ -129,9 +129,9 @@ namespace Controls
 
                         //left
                         this->lcd->fillRect(
-                            i * (LINE_SIZE + LINE_SPACE),
+                            i * (LINE_WIDTH + LINE_SPACE),
                             leftOffsetY - lowSize - mediumSize - highSize,
-                            LINE_SIZE,
+                            LINE_WIDTH,
                             highSize,
                             this->highColor);
                     }
@@ -149,9 +149,9 @@ namespace Controls
             if (this->maxRightSpectrumData[i] != 0)
             {
                 this->lcd->drawFastHLine(
-                    i * (LINE_SIZE + LINE_SPACE),
+                    i * (LINE_WIDTH + LINE_SPACE),
                     rightOffsetY + this->maxRightSpectrumData[i],
-                    LINE_SIZE,
+                    LINE_WIDTH,
                     this->backColor);
             }
 
@@ -170,9 +170,9 @@ namespace Controls
             if (nowVal >= nextVal)
             {
                 this->lcd->fillRect(
-                    i * (LINE_SIZE + LINE_SPACE),
+                    i * (LINE_WIDTH + LINE_SPACE),
                     rightOffsetY + nextVal,
-                    LINE_SIZE,
+                    LINE_WIDTH,
                     nowVal - nextVal,
                     this->backColor);
             }
@@ -180,9 +180,9 @@ namespace Controls
             {
                 int lowSize = nextVal > this->spectrumMaxSizeDiv3 ? this->spectrumMaxSizeDiv3 : nextVal;
                 this->lcd->fillRect(
-                    i * (LINE_SIZE + LINE_SPACE),
+                    i * (LINE_WIDTH + LINE_SPACE),
                     rightOffsetY,
-                    LINE_SIZE,
+                    LINE_WIDTH,
                     lowSize,
                     this->lowColor);
 
@@ -190,9 +190,9 @@ namespace Controls
                 {
                     int mediumSize = nextVal > this->spectrumMaxSizeDiv3 * 2 ? this->spectrumMaxSizeDiv3 : nextVal - lowSize;
                     this->lcd->fillRect(
-                        i * (LINE_SIZE + LINE_SPACE),
+                        i * (LINE_WIDTH + LINE_SPACE),
                         rightOffsetY + lowSize,
-                        LINE_SIZE,
+                        LINE_WIDTH,
                         mediumSize,
                         this->mediumColor);
 
@@ -200,9 +200,9 @@ namespace Controls
                     {
                         int highSize = nextVal - this->spectrumMaxSizeDiv3 * 2;
                         this->lcd->fillRect(
-                            i * (LINE_SIZE + LINE_SPACE),
+                            i * (LINE_WIDTH + LINE_SPACE),
                             rightOffsetY + lowSize + mediumSize,
-                            LINE_SIZE,
+                            LINE_WIDTH,
                             highSize,
                             this->highColor);
                     }
@@ -210,19 +210,19 @@ namespace Controls
             }
         }
 
-        for (int i = 1; i < this->spectrumMaxSize / (RECT_SIZE + 1) + 1; i++)
+        for (int i = 1; i < this->spectrumMaxSize / (RECT_HEIGHT + 1) + 1; i++)
         {
             //left
             this->lcd->drawFastHLine(
                 0,
-                leftOffsetY - i * (RECT_SIZE + 1),
+                leftOffsetY - i * (RECT_HEIGHT + 1),
                 controlRect.width,
                 this->backColor);
 
             //right
             this->lcd->drawFastHLine(
                 0,
-                rightOffsetY + i * (RECT_SIZE + 1) - 1,
+                rightOffsetY + i * (RECT_HEIGHT + 1) - 1,
                 controlRect.width,
                 this->backColor);
         }
@@ -231,16 +231,16 @@ namespace Controls
         {
             //left
             this->lcd->drawFastHLine(
-                i * (LINE_SIZE + LINE_SPACE),
+                i * (LINE_WIDTH + LINE_SPACE),
                 leftOffsetY - this->maxLeftSpectrumData[i] - 1,
-                LINE_SIZE,
+                LINE_WIDTH,
                 this->maxColor);
 
             //right
             this->lcd->drawFastHLine(
-                i * (LINE_SIZE + LINE_SPACE),
+                i * (LINE_WIDTH + LINE_SPACE),
                 rightOffsetY + this->maxRightSpectrumData[i],
-                LINE_SIZE,
+                LINE_WIDTH,
                 this->maxColor);
         }
     }
